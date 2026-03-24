@@ -225,9 +225,9 @@ Unnecessary: "We discussed whether to keep the Q1 reports at root level. The use
 
 Reasoning IS worth capturing when a decision might be revisited: "Chose X over Y because Z." Process narration ("first we considered A, then B") is not, unless the alternatives themselves are important context.
 
-Log in coherent pieces at natural checkpoints. Write frequently; never defer to end of session. A growing log is a signal to write more often, not to keep appending. Start a new log file when a coherent entry is complete and a new unit of work begins.
+Write when substantive work has accumulated — when decisions, findings, or file changes would be hard to reconstruct if the session ended now. Write frequently; never defer to end of session. A growing log is a signal to write more often, not to keep appending. Start a new log file when the current entry is done and a new topic begins.
 
-Every time a log entry is written, also overwrite HANDOFF.txt. Both writes happen together.
+Every time a log entry is written, also overwrite HANDOFF.txt. Both writes happen together. When the log entry covers sub-project work, also verify the sub-project's status file reflects the current state.
 
 When file operations change the project's directory structure (creating, moving, or renaming files or directories), verify that Workflow Files/REFERENCE.txt reflects the current structure.
 
@@ -239,7 +239,7 @@ Before assessing an inbox item, check the project's existing work structure (sub
 
 Log without waiting to be asked. When substantive work has accumulated (file changes, decisions, analysis completed), write the session log and handoff. A missing entry means a future chat starts with a gap. An extra entry costs almost nothing.
 
-Logging is a checkpoint, not a conclusion. After writing a log entry, continue working. Do not summarize the session, prompt for next steps, or shift to a closing tone. The session continues until the user ends it.
+Logging is insurance against context loss, not a signal that work is finishing. After writing a log entry, continue working without shifting tone, offering to wrap up, or prompting for next steps. The session continues until the user ends it.
 
 ### Evolving State, Not Binary
 
