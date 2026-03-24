@@ -1,6 +1,6 @@
 # Project Instructions Template
 
-Paste this into your AI project's custom instructions. Replace `[path]` with the actual path to your project directory on your filesystem.
+Paste this into your AI project's custom instructions. Replace `[path]` with the actual path to your project directory on your filesystem. This is the same text that appears in the architecture document, extracted here for quick reference.
 
 The example below uses Claude Desktop's Filesystem extension. Adapt the tool names for other AI platforms with filesystem access.
 

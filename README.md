@@ -18,7 +18,7 @@ This was developed with and currently targets **Claude Desktop** (using the File
 
 The design is optimized for a core constraint: everything the AI reads at startup stays in context for the entire conversation and gets reprocessed every turn. A 50 KB startup across 20 turns means that content is processed roughly 20 times. Every design decision balances orientation quality against context cost.
 
-The result: the AI picks up exactly where you left off in every new chat, maintains its own session logs and documentation, knows what time it is and how long it's been since you last worked together, and keeps startup reads around 15 KB (down from 50+ KB before optimizing).
+The result: the AI picks up exactly where you left off in every new chat, maintains its own session logs and documentation, knows what time it is and how long it's been since you last worked together, and keeps startup reads around 12-23 KB (down from 30-55 KB before optimizing).
 
 ## What you get
 
@@ -26,7 +26,7 @@ The result: the AI picks up exactly where you left off in every new chat, mainta
 Every new conversation picks up where the last one left off. No re-explaining your project, your preferences, or what you were working on.
 
 **Context cost optimization.**<br>
-Startup reads ~15 KB instead of 50+. Chats stay responsive longer because the AI isn't burning context on unnecessary history.
+Startup reads ~12-23 KB instead of 30-55 KB. Chats stay responsive longer because the AI isn't burning context on unnecessary history.
 
 **Temporal awareness.**<br>
 The AI knows what day and time it is and how long since your last session. It can reason about deadlines, weekdays, and whether you've been away for an hour or a week.
@@ -54,6 +54,18 @@ Optional coordinator project with a shared knowledge base. Projects discover tec
 
 **Graceful degradation.**<br>
 Full features on desktop. On web or mobile, chats note what needs syncing when you're back.
+
+## Core concepts
+
+Four ideas shape the architecture. Understanding these makes the full document click.
+
+**Handoff-driven orientation.** Every new chat reads a compact state snapshot (HANDOFF.txt) that tells it where every area of the project stands, what's pending, and what to read for depth. The handoff is overwritten every time the AI logs anything, so it's always current. Session logs are the archive. The handoff is the orientation. Separating these two functions is what makes startup fast and accurate.
+
+**Context cost awareness.** Everything the AI reads at startup stays in context for the entire conversation and gets reprocessed every turn. This means every file in the startup sequence has to earn its place. The architecture keeps startup reads to 12-23 KB by loading only what the current chat needs: the workflow, the handoff, one session log for narrative continuity, an inbox listing, and a clock check. Everything else loads on demand.
+
+**Indexed collections.** Any folder where content accumulates gets an index file at creation time. The AI reads the index to know what's available, then pulls only the file it needs. Cost stays flat regardless of how large the collection grows. This is the card catalog principle applied to every growing folder in the workspace.
+
+**Temporal awareness.** AI assistants have no internal clock. The workspace gives them one through a persistent file whose modification timestamp becomes the current time. The AI also checks how long since the last session, giving it context about whether this is a continuation from an hour ago or a return after a week.
 
 ## The workspace structure
 
@@ -89,7 +101,7 @@ Every project follows the same layout:
 
 **Indexed collections** handle anything that accumulates. An index file plus individual topic files, like a card catalog. The AI reads the index to know what exists, pulls only what it needs. Cost is about 1 KB for the index regardless of how large the collection grows.
 
-**Startup reads about 15 KB total:** WORKFLOW.txt, HANDOFF.txt, session log(s) identified by the handoff, an inbox listing, and a clock check.
+**Startup reads about 12-23 KB total:** WORKFLOW.txt, HANDOFF.txt, session log(s) identified by the handoff, an inbox listing, and a clock check.
 
 ## How to use this
 
@@ -134,8 +146,8 @@ The architecture works for a single project or many. Each project gets its own d
 
 These are standalone documents, each covering one technique. They're not required to get started but become valuable as you use the workspace:
 
-- **[Temporal Awareness](patterns/temporal-awareness.md)**: How the AI determines the current time and detects gaps between sessions using a persistent Clock file and filesystem metadata.
-- **[Evolving State in Handoffs](patterns/evolving-state.md)**: Replacing binary open/closed tracking with state-of-thinking capture for topics that develop across sessions.
+- **[Temporal Awareness](patterns/temporal-awareness.md)**: How the AI determines the current time and detects gaps between sessions using a persistent Clock file and filesystem metadata. Solves a problem most people haven't articulated yet: AI assistants have no idea what time it is or how long you've been away.
+- **[Evolving State in Handoffs](patterns/evolving-state.md)**: Replacing binary open/closed tracking with state-of-thinking capture for topics that develop across sessions. Applies to anyone doing multi-session work with any AI.
 - **[Sub-Project Archive Pattern](patterns/archive-pattern.md)**: How to freeze completed sub-projects while keeping them discoverable.
 - **[Agentic Task Delegation](patterns/agentic-delegation.md)**: Delegating bounded mechanical tasks to agentic tools while retaining strategic oversight in chat.
 
@@ -152,6 +164,10 @@ A few things that shaped the architecture, learned through building it:
 **Start new chats often.** With this system you lose nothing by starting fresh. Every new chat reads the handoff, checks the inbox, and continues where the last one left off. Chats stay responsive and the context window stays wide.
 
 **Project memory masks bad instructions.** AI assistants compensate for inadequate instructions using memory from prior chats. Always test structural changes in fresh chats and sometimes fresh projects.
+
+## Contributing
+
+This is a reference implementation. Adapt it to your needs rather than submitting changes. If you've built something interesting on top of it, open an issue to share what you've learned.
 
 ## Background
 
