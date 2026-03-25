@@ -68,9 +68,11 @@ This is a foundational workflow in both directions. The user encounters somethin
 
 Inbox items are listed (filenames only) at startup as step 4. They are not read at startup. The listing surfaces what's waiting, and the chat processes items when directed or when relevant to the session's work.
 
+Inbox contents can change at any time. The user may add or clear items between any two messages. Every reference to specific inbox contents must be verified by listing the directory at the point of reference, not by relying on any earlier listing. This includes startup, mid-session processing, and handoff writing. The handoff records actions taken (wrote a delegation note, flagged a file for deletion) but does not carry inbox filenames as a persistent list. The directory listing is always the source of truth for what is currently in the inbox.
+
 Inbox items may represent undocumented task entries, work that has arrived but hasn't been triaged into the project's task list or session log. If you use a coordinator project (see Knowledge Architecture below), its task review should include inbox listings for this reason.
 
-See INBOX PROCESSING in Key Principles for how to assess items once processing begins.
+See Inbox: Verify and Check Before Referencing in Key Principles for the full verification and assessment procedure.
 
 ---
 
@@ -231,7 +233,9 @@ Every time a log entry is written, also overwrite HANDOFF.txt. Both writes happe
 
 When file operations change the project's directory structure (creating, moving, or renaming files or directories), verify that Workflow Files/REFERENCE.txt reflects the current structure.
 
-### Inbox Processing: Check Before Assessing
+### Inbox: Verify and Check Before Referencing
+
+List the inbox directory before any reference to its contents. This applies at startup, before mid-session processing, before mentioning inbox items to the user, and before writing inbox references into the handoff. Inbox contents change between messages. The user adds and clears items at any time. No earlier listing, and no handoff text, is a reliable substitute for the current directory state.
 
 Before assessing an inbox item, check the project's existing work structure (sub-projects, case folders, task queues, archives) for related items. A fresh chat has no memory of past work. Directory listings are the recognition mechanism. Without this step, a chat may treat a familiar item as new, failing to connect it to work the project has already done.
 

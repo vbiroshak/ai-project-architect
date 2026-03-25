@@ -99,7 +99,7 @@ Every project follows the same layout:
 
 **The Clock file** gives the AI temporal awareness. The AI writes to the file (establishing the current time) and reads its last-modified metadata to calculate how long since the previous session. No more confusion about whether it's been an hour or three days.
 
-**Indexed collections** handle anything that accumulates. An index file plus individual topic files, like a card catalog. The AI reads the index to know what exists, pulls only what it needs. Cost is about 1 KB for the index regardless of how large the collection grows.
+**Indexed collections** handle anything that accumulates. An index file plus individual topic files, like a card catalog. The AI reads the index to know what exists, pulls only what it needs. Cost is the index read plus the one file you need, rather than reading the entire collection to find it.
 
 **Startup reads about 12-23 KB total:** WORKFLOW.txt, HANDOFF.txt, session log(s) identified by the handoff, an inbox listing, and a clock check.
 
@@ -110,13 +110,13 @@ Every project follows the same layout:
 - **Claude Desktop app** (macOS or Windows) with the Filesystem extension enabled
 - **A single dedicated directory on your local drive** where all project directories will live (e.g., `AI Projects` on your Desktop)
 
-This is built for people who manage projects through AI chat and want persistent continuity between conversations. The full system works in the Claude Desktop app, where Chat manages the project, Cowork handles mechanical tasks, and Code handles development work, all sharing the same filesystem. It does not work on web or mobile interfaces (no filesystem access), but the workspace degrades gracefully: chats on web or mobile note what needs syncing when you're back on desktop.
+This is built for people who manage projects through AI chat and want persistent continuity between conversations. The full system works in the Claude Desktop app, where Chat manages the project and can delegate to Cowork and Code. Cowork runs agents on a local VM and can coordinate multiple workstreams in parallel. Code operates from the terminal with direct access to development tools. Both have capabilities Chat doesn't, and the workspace gives Chat the context to delegate effectively. It does not work on web or mobile interfaces (no filesystem access), but the workspace degrades gracefully: chats on web or mobile note what needs syncing when you're back on desktop.
 
 ### Quick start (Claude Desktop)
 
 1. **Create a dedicated root directory** for all your project files. This is a single folder (e.g., `AI Projects` on your Desktop) where every project directory will live. Starting with an empty directory is cleanest.
 
-2. **Enable the Filesystem extension** in the Claude Desktop app. Go to Settings, find the Filesystem extension, turn it on, and grant it access to this directory. The extension grants access to one directory and everything inside it, with no finer-grained control. This means every project can read every other project's files, which is by design: it enables cross-project coordination, the shared knowledge base, and delegation via inbox notes.
+2. **Enable the Filesystem extension** in the Claude Desktop app. Go to Settings, find the Filesystem extension, turn it on, and grant it access to this directory. You can add multiple directories to the extension, but the same permissions apply to all of them. Every project and chat in the desktop app can access everything you've granted. In this setup, you grant access to one root directory containing all your projects. That means every project can read every other project's files, which is by design: it enables cross-project coordination, the shared knowledge base, and delegation via inbox notes.
 
 3. **Set tool permissions to Always Allow.** In Settings under Tool Permissions, set the Filesystem tools to "Always allow." The workspace involves frequent file reads and writes during normal conversation. If permissions are set to ask every time, you'll be approving dozens of tool calls per session. Always Allow lets the AI work fluidly.
 
@@ -132,7 +132,7 @@ The workspace architecture document is designed to be understood by any capable 
 
 ### Scaling up
 
-The architecture works for a single project or many. Each project gets its own directory and AI project. For multiple projects, you can optionally add a coordinator project that tracks cross-project changes and maintains a shared knowledge base (documented in the architecture document under "Knowledge Architecture").
+The architecture works for a single project or many. Each project gets its own directory and its own project in your AI application. For multiple projects, you can optionally add a coordinator project that tracks cross-project changes and maintains a shared knowledge base (documented in the architecture document under "Knowledge Architecture").
 
 ## What's in this repo
 
@@ -146,10 +146,10 @@ The architecture works for a single project or many. Each project gets its own d
 
 These are standalone documents, each covering one technique. They're not required to get started but become valuable as you use the workspace:
 
-- **[Temporal Awareness](patterns/temporal-awareness.md)**: How the AI determines the current time and detects gaps between sessions using a persistent Clock file and filesystem metadata. Solves a problem most people haven't articulated yet: AI assistants have no idea what time it is or how long you've been away.
-- **[Evolving State in Handoffs](patterns/evolving-state.md)**: Replacing binary open/closed tracking with state-of-thinking capture for topics that develop across sessions. Applies to anyone doing multi-session work with any AI.
+- **[Temporal Awareness](patterns/temporal-awareness.md)**: How the AI determines the current time and detects gaps between sessions using a persistent Clock file and filesystem metadata. AI assistants have no idea what time it is or how long you've been away.
+- **[Evolving State in Handoffs](patterns/evolving-state.md)**: Logging in-progress topics at their current state of thinking, not just as open or closed. Prevents the next session from restarting work that's already been partially decided.
 - **[Sub-Project Archive Pattern](patterns/archive-pattern.md)**: How to freeze completed sub-projects while keeping them discoverable.
-- **[Agentic Task Delegation](patterns/agentic-delegation.md)**: Delegating bounded mechanical tasks to agentic tools while retaining strategic oversight in chat.
+- **[Agentic Task Delegation](patterns/agentic-delegation.md)**: Collaborating with agentic tools that have capabilities Chat doesn't. Chat provides the strategic context, agents review plans, improve prompts, and execute.
 
 ## Design principles
 
@@ -157,9 +157,9 @@ A few things that shaped the architecture, learned through building it:
 
 **Instructions must be action sequences, not conditions.** "When X happens, do Y" fails because AI assistants don't reliably check conditions before acting. "Do A to check for X. If X, then do Y" works because the check is itself an action.
 
-**Orientation and archive are separate functions.** HANDOFF.txt orients. Session logs archive. Loading session logs at startup conflates the two and wastes context on history that doesn't help the current chat.
+**Orientation and archive are separate functions.** HANDOFF.txt orients. Session logs archive. Loading all session logs at startup conflates the two. The handoff points to specific logs to load, so startup reads scale to the project rather than growing with history.
 
-**Directory structure is UX.** When you open a project folder, the visual hierarchy should communicate the project's organization without explanation. Sub-project folders tell you what the project does. Infrastructure is visually subordinate.
+**Directory structure is UX.** When you open a project folder, it should be transparent and easy to navigate. Sub-project folders show what the project does. System files are organized out of the way.
 
 **Start new chats often.** With this system you lose nothing by starting fresh. Every new chat reads the handoff, checks the inbox, and continues where the last one left off. Chats stay responsive and the context window stays wide.
 
@@ -167,7 +167,7 @@ A few things that shaped the architecture, learned through building it:
 
 ## Contributing
 
-This is a reference implementation. Adapt it to your needs rather than submitting changes. If you've built something interesting on top of it, open an issue to share what you've learned.
+This is a reference implementation. Adapt it to your needs rather than submitting pull requests. If something doesn't work the way you expected, or if you've built something interesting on top of it, open an issue. Hearing what breaks is as useful as hearing what works.
 
 ## Background
 
@@ -175,7 +175,7 @@ This system was built by a non-developer through iterative design and daily use 
 
 ## Status
 
-Active development. The architecture is stable and tested across multiple projects spanning different domains. Supporting patterns continue to be refined.
+Active development. The architecture is tested across multiple projects spanning different domains, but it is still being built. Not everything works reliably yet. It continues to be refined through daily use.
 
 ## License
 
