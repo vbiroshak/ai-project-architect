@@ -23,11 +23,11 @@ Temporal awareness has two components, both essential:
 
 The first gives you the current moment. The second gives you context: is this a continuation from an hour ago, or a return after three days? Both inform how the AI orients to the work. A project that knows it's Friday afternoon but doesn't know the last session was Monday morning is missing half the picture.
 
-The mechanism: a persistent Clock file and a filesystem metadata call. The Clock file lives permanently in the project directory. The AI edits it (add or remove a word) and then reads the modified timestamp. The most recent session log's metadata provides the second component. No throwaway files, no cleanup needed.
+The mechanism: a persistent Clock file and filesystem metadata. The Clock file lives permanently in the project directory. The AI edits it (add or remove a word) and then reads the modified timestamp. The most recent session log's metadata provides the second component. No throwaway files, no cleanup needed.
 
 **Critical distinction:** Reading metadata on an old file tells you when *that file* was written, not what time it is now. Only a freshly modified file reflects the actual current time.
 
-**Important (macOS):** Read only the "modified" field from file metadata. Ignore the "created" field. On macOS APFS, "created" is the file's birth time and never updates after initial creation. If the Clock file was created on a Monday and edited on a Wednesday, "created" still says Monday. Only "modified" reflects the edit.
+**Important (macOS):** Read only the "modified" field from the file's metadata. Ignore the "created" field. On macOS APFS, "created" is the file's birth time and never updates after initial creation. If the Clock file was created on a Monday and edited on a Wednesday, "created" still says Monday. Only "modified" reflects the edit.
 
 ---
 
@@ -48,7 +48,7 @@ Contents can be anything. A description like "This file exists so the AI can che
 ### 1. Knowing What Time It Is Now
 
 1. Edit the Clock file (add or remove a word, toggle between "tick" and "tock", anything that changes the content)
-2. Read the file's metadata (e.g., `get_file_info` from Claude's Filesystem extension)
+2. Get the file's info using your Filesystem tools
 3. Read the "modified" field only (ignore "created")
 4. Compare the returned date to the system prompt date. If the Clock returns a date earlier than the system prompt date, the reading is stale. Repeat steps 1-3 once more
 
@@ -58,11 +58,11 @@ Do not create throwaway files. Do not rely on metadata from files written in pre
 
 ### 2. Knowing When the Last Action Happened
 
-Read the file metadata on the most recent log file or the last file written in a previous exchange. That timestamp tells you when the previous work session happened.
+Get the file info on the most recent log file or the last file written in a previous exchange using Filesystem tools. That timestamp tells you when the previous work session happened.
 
 ### 3. Detecting Time Gaps (Baseline Startup Behavior)
 
-At session startup, after checking the Clock, read the metadata on the most recent session log. Compare its modified timestamp to the current time from the Clock. The difference tells you how long it's been since the last session.
+At session startup, after checking the Clock, get the most recent session log's file info using Filesystem tools. Compare its modified timestamp to the current time from the Clock. The difference tells you how long it's been since the last session.
 
 This is not optional. Every startup should produce both the current time and the time since last session. The gap informs orientation: a return after three days means more may have changed than a continuation from an hour ago. It also informs logging: whether to append to a current entry or start a new one.
 
@@ -80,7 +80,7 @@ Screenshot filenames often contain timestamps (e.g. "Screenshot 2026-03-06 at 16
 
 ## Copy-Paste Implementation for WORKFLOW.txt
 
-Adapt this to your project's logging system. The example uses tool names from Claude's Filesystem extension; substitute the equivalent for your AI platform.
+Adapt this to your project's logging system.
 
 ```
 TIMESTAMPS AND TEMPORAL AWARENESS
@@ -92,7 +92,7 @@ use the Clock file:
 
 Process:
   1. Edit the file (add or remove a word)
-  2. Read the file's metadata
+  2. Get the file's info using Filesystem tools
   3. Read the "modified" field only. Ignore "created"
      (macOS APFS "created" is birth time, never updates)
   4. Compare the returned date to the system prompt date.
@@ -105,9 +105,9 @@ Reading metadata on an old file tells you when THAT FILE
 was written, not what time it is now. Only a freshly
 modified file reflects the actual current time.
 
-At startup, also check the most recent session log's
-modified time. Compare it to the Clock reading to
-determine how long since the last session. Both the
+At startup, also get the most recent session log's
+file info using Filesystem tools. Compare it to the
+Clock reading to determine how long since the last session. Both the
 current time and the time gap are baseline startup
 information. Note both when greeting the user.
 

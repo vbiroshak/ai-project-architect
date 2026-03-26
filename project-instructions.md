@@ -2,20 +2,18 @@
 
 Paste this into your AI project's custom instructions. Replace `[path]` with the actual path to your project directory on your filesystem. This is the same text that appears in the architecture document, extracted here for quick reference.
 
-The example below uses Claude Desktop's Filesystem extension. Adapt the tool names for other AI platforms with filesystem access.
+The example below uses Claude Desktop's Filesystem extension. Adapt for other AI platforms with filesystem access.
 
 ```
-Workspace: All project files live on the filesystem at [path]. At session startup, call Filesystem:list_allowed_directories to confirm filesystem access. Then call Filesystem:list_directory on the project path to confirm you can read it. These tools provide full read and write access to the project filesystem, including write_file, edit_file, move_file, and create_directory.
+Workspace: All project files live on the filesystem at [path]. You have Filesystem tools that give you full access to this directory and everything inside it, including reading, writing, creating, editing, searching, and moving files and directories. At session startup, use these tools to read WORKFLOW.txt at the project path and follow its procedures.
 
-When Filesystem is available, read WORKFLOW.txt and follow its procedures.
-
-When Filesystem is unavailable, let the user know and explain that the session will operate from project memory and conversation context. Capabilities will be limited compared to Desktop sessions. Note any decisions or information that should be synced to the filesystem next time Desktop access is available.
+When Filesystem tools are not available, let the user know and explain that the session will operate from project memory and conversation context. Capabilities will be limited. Remember any work that should be logged or written to the filesystem per your workflow instructions, and do so when these tools become available again.
 ```
 
 ## Why it's structured this way
 
-The three-block structure exists because AI assistants skip evaluating implicit conditions. "When Filesystem is available, do X" assumes the AI has already checked availability, but nothing forces that check. Making the check an explicit action in the first block fixes this.
+The instructions describe capabilities using verbs (reading, writing, creating, editing, searching, moving) rather than naming specific tools. This means extension updates that rename, add, or remove tools don't require instruction changes. "Filesystem tools" maps to the prefix the AI sees on every tool in its context.
 
-The first block tells the AI exactly what tool calls to make and confirms both access and write capabilities. The second block routes to WORKFLOW.txt, which contains everything else. The third block handles graceful degradation when filesystem access isn't available.
+The first block asserts what the tools can do and commands an action: read WORKFLOW.txt. There is no evaluation step where the AI decides whether it has access. The second block handles graceful degradation when the tools aren't available (web, mobile) and instructs the AI to catch up on logging when the tools return.
 
 You paste this once and never edit it again. All workflow evolution happens in the filesystem files that the AI maintains directly.

@@ -152,30 +152,27 @@ A routing flowchart for new content:
 
 These go into your AI application's project settings. The path is the only variable. Identical for every project.
 
-The example below uses Claude Desktop's Filesystem extension. Adapt the tool names and syntax for other AI platforms that provide filesystem access.
+The example below uses Claude Desktop's Filesystem extension. Adapt for other AI platforms with filesystem access.
 
 ```
-Workspace: All project files live on the filesystem at [path]. At session
-startup, call Filesystem:list_allowed_directories to confirm filesystem
-access. Then call Filesystem:list_directory on the project path to confirm
-you can read it. These tools provide full read and write access to the
-project filesystem, including write_file, edit_file, move_file, and
-create_directory.
+Workspace: All project files live on the filesystem at [path]. You have
+Filesystem tools that give you full access to this directory and everything
+inside it, including reading, writing, creating, editing, searching, and
+moving files and directories. At session startup, use these tools to read
+WORKFLOW.txt at the project path and follow its procedures.
 
-When Filesystem is available, read WORKFLOW.txt and follow its procedures.
-
-When Filesystem is unavailable, let the user know and explain that the
-session will operate from project memory and conversation context.
-Capabilities will be limited compared to Desktop sessions. Note any
-decisions or information that should be synced to the filesystem next
-time Desktop access is available.
+When Filesystem tools are not available, let the user know and explain that
+the session will operate from project memory and conversation context.
+Capabilities will be limited. Remember any work that should be logged or
+written to the filesystem per your workflow instructions, and do so when
+these tools become available again.
 ```
 
 The user pastes this once and never updates it. All evolution happens in filesystem files that the AI maintains directly.
 
 A backup copy lives in the workspace at Config/PROJECT_INSTRUCTIONS.txt. This makes the project fully portable: everything needed to recreate the project in a new account, on a different device, or for another person lives on the filesystem. The AI can also reference this backup to verify its own instructions if needed.
 
-The three-block structure exists because AI assistants will skip evaluating implicit conditions. "When Filesystem is available" requires the AI to have already determined availability, but nothing forces that check. The fix: make the check an unconditional first action ("At session startup, check whether Filesystem tools are available"), then branch on the result. See INSTRUCTION COMPOSITION below.
+The instructions describe capabilities using verbs (reading, writing, creating, editing, searching, moving) rather than naming specific tools. This means tool updates don't require instruction changes. "Filesystem tools" maps to the prefix the AI sees on every tool in its context. The first block asserts what the tools can do and commands an action: read WORKFLOW.txt. There is no evaluation step where the AI decides whether it has access. The fallback block handles sessions where the tools are absent (web, mobile) and instructs the AI to catch up on logging when the tools return. See INSTRUCTION COMPOSITION below.
 
 ---
 
@@ -483,7 +480,7 @@ The existing structure works well for its scope. Migrate when the project grows 
 3. Create Workflow Files/HANDOFF.txt and REFERENCE.txt
 4. Ensure Inbox/ stays at root
 5. Rewrite WORKFLOW.txt: lean version with handoff-driven startup procedure
-6. Simplify project instructions to the three-block format
+6. Set up project instructions (see Project Instructions above)
 7. Update Config backup to match
 
 ---

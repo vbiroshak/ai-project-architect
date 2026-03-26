@@ -118,7 +118,7 @@ This is built for people who manage projects through AI chat and want persistent
 
 2. **Enable the Filesystem extension** in the Claude Desktop app. Go to Settings, find the Filesystem extension, turn it on, and grant it access to this directory. You can add multiple directories to the extension, but the same permissions apply to all of them. Every project and chat in the desktop app can access everything you've granted. In this setup, you grant access to one root directory containing all your projects. That means every project can read every other project's files, which is by design: it enables cross-project coordination, the shared knowledge base, and delegation via inbox notes.
 
-3. **Set tool permissions to Always Allow.** In Settings under Tool Permissions, the Filesystem tools are grouped into read-only, write/delete, and other categories. Set all three to "Always allow." The workspace involves frequent file reads and writes during normal conversation. If permissions are set to ask every time, you'll be approving dozens of tool calls per session. Always Allow lets the AI work fluidly.
+3. **Set tool permissions to Always Allow.** In Settings under Tool Permissions, set the Filesystem tools to "Always allow." The workspace involves frequent file reads and writes during normal conversation. If permissions are set to ask every time, you'll be approving dozens of tool calls per session. Always Allow lets the AI work fluidly.
 
 4. **Give Claude the architecture document.** In a new or existing project, start a chat and give Claude the [workspace architecture document](workspace-architecture.md). Tell it about your project and ask it to build the workspace structure for you.
 
@@ -139,7 +139,7 @@ The architecture works for a single project or many. Each project gets its own d
 | File | What it is |
 |------|-----------|
 | [workspace-architecture.md](workspace-architecture.md) | The complete workspace design. This is the core document. Give it to your AI to build your workspace. |
-| [project-instructions.md](project-instructions.md) | The text you paste into Claude's project settings. Three lines, identical for every project except the file path. Adapt for other AI platforms. |
+| [project-instructions.md](project-instructions.md) | The text you paste into Claude's project settings. Identical for every project except the file path. Adapt for other AI platforms. |
 | [patterns/](patterns/) | Supporting patterns and techniques developed through use. Optional reading that adds depth as your workspace matures. |
 
 ### Patterns
@@ -155,7 +155,7 @@ These are standalone documents, each covering one technique. They're not require
 
 A few things that shaped the architecture, learned through building it:
 
-**Instructions must be action sequences, not conditions.** "When X happens, do Y" fails because AI assistants don't reliably check conditions before acting. "Do A to check for X. If X, then do Y" works because the check is itself an action.
+**Instructions must be action sequences, not conditions.** "When X happens, do Y" fails because AI assistants don't reliably check conditions before acting. "Do A to check for X. If X, then do Y" works because the check is itself an action. Describe capabilities with verbs, not tool names, so instructions survive tool updates.
 
 **Orientation and archive are separate functions.** HANDOFF.txt orients. Session logs archive. Loading all session logs at startup conflates the two. The handoff points to specific logs to load, so startup reads scale to the project rather than growing with history.
 
