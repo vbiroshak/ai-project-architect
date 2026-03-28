@@ -227,7 +227,7 @@ Reasoning IS worth capturing when a decision might be revisited: "Chose X over Y
 
 Write when substantive work has accumulated — when decisions, findings, or file changes would be hard to reconstruct if the session ended now. Write frequently; never defer to end of session. A growing log is a signal to write more often, not to keep appending. Start a new log file when the current entry is done and a new topic begins.
 
-Every time a log entry is written, also overwrite HANDOFF.txt. Both writes happen together. When the log entry covers sub-project work, also verify the sub-project's status file reflects the current state.
+Every time a log entry is written, also overwrite HANDOFF.txt. Both writes happen together. When the log entry covers sub-project work, also verify the sub-project's status file reflects the current state. All files written or verified during paired writes get their freshness lines refreshed (see Freshness Tracking).
 
 When file operations change the project's directory structure (creating, moving, or renaming files or directories), verify that Workflow Files/REFERENCE.txt reflects the current structure.
 
@@ -297,6 +297,64 @@ If a project already has PROJECT CONTEXT entries covering verification, data acc
 If a project's work is primarily creative or advisory, it may not need the verification piece at all.
 
 When project files and training data conflict on a matter of fact, the project files are authoritative.
+
+---
+
+## Freshness Tracking
+
+Every MFP-prescribed file carries two freshness lines immediately after its title line:
+
+```
+Last updated: [Month DD, YYYY] (Session NNN)
+Last reviewed: [Month DD, YYYY]
+```
+
+These lines tell any reader when the file's content was last changed and when it was last confirmed current. File metadata can provide modification timestamps, but that costs a tool call per file and doesn't distinguish between content changes and formatting passes. The freshness lines are visible the moment the file is read.
+
+### Definitions
+
+**"Last updated"** means the file's content was intentionally changed: information added, removed, revised, or restructured. Routine freshness line maintenance (updating the date on these lines themselves) does not count as an update. When you change content, update this line. When you only review the file, leave this line unchanged.
+
+**"Last reviewed"** means the file was read and its content confirmed to still be accurate, or corrected on the spot. Update this line whenever you read the file during substantive work, whether or not you changed anything else. A review that finds and fixes errors counts as both a review and an update: refresh both lines.
+
+### Format
+
+```
+Last updated: Month DD, YYYY (Session NNN)
+Last reviewed: Month DD, YYYY
+```
+
+Date comes first because temporal distance is the primary signal. Session number follows in parentheses for traceability within the project. "Last reviewed" omits the session number because there is no corresponding log entry to trace back to; the date is the only information that matters.
+
+Both lines always present. If a file has never been reviewed separately from its last update, both lines carry the same date.
+
+### Which Files
+
+All MFP-prescribed files carry both freshness lines: WORKFLOW.txt, HANDOFF.txt, REFERENCE.txt, STATUS files, TASKS.txt, INDEX.txt files, sub-project reference files, and LESSONS_INDEX.txt. The title line carries only the file's identity. Freshness lines occupy lines 2-3.
+
+Session logs do not carry freshness lines (they are append-only historical records with timestamps in their entries). Clock files and Config backups do not carry them.
+
+Archived files retain whatever freshness lines they had at the time of archiving. Do not maintain freshness lines on files after they are archived. During the archiving process itself, refresh both freshness lines as part of the closing write (the closing note changes content and confirms final state).
+
+Shared knowledge base documents that carry version numbers (Version X.X — Month YYYY) keep them instead of freshness lines. Version numbers serve a different purpose: they identify which version of a pattern has been adopted. All other shared files (README, INDEX files, templates, examples) use standard freshness lines.
+
+### New Files
+
+When creating a new file, set both freshness lines to the creation date and session. Do not use "Created:" or leave the lines blank. Every file starts with both lines populated from the moment it exists.
+
+### Maintenance
+
+Freshness lines are maintained as part of existing workflow triggers, not as a separate procedure:
+
+- **Paired writes:** When writing a log entry and overwriting the handoff, refresh the handoff's freshness lines. When overwriting a STATUS file as part of the same paired write, refresh its freshness lines. For files that are overwritten wholesale (HANDOFF, STATUS files rewritten during state changes), both lines carry the same date because rewriting is both an update and a review.
+- **Fix on Contact:** When correcting stale or incorrect information in any file, refresh both "Last updated" and "Last reviewed" (you changed the content and confirmed the rest).
+- **Structure verification:** When verifying REFERENCE.txt after directory structure changes, refresh "Last updated" if content changed, and refresh "Last reviewed" regardless (you just confirmed it).
+- **Task queue review:** When reading the task queue at startup and fixing completed items, refresh "Last reviewed" (you just confirmed the list is current). If you added or removed items, also refresh "Last updated."
+- **Sub-project reference files:** When reading a sub-project reference file during substantive work, refresh "Last reviewed" before writing the session log. If you changed content, also refresh "Last updated."
+
+### WORKFLOW Integration
+
+The WORKFLOW SESSION LOGS section carries a compressed version of the definitions and maintenance rules so that every session has them in context. The full specification lives in this document and in the MFP; the WORKFLOW carries the operational instructions (~150-200 tokens).
 
 ---
 
@@ -481,8 +539,9 @@ The existing structure works well for its scope. Migrate when the project grows 
 3. Create Workflow Files/HANDOFF.txt and REFERENCE.txt
 4. Ensure Inbox/ stays at root
 5. Rewrite WORKFLOW.txt: lean version with handoff-driven startup procedure
-6. Set up project instructions (see Project Instructions above)
-7. Update Config backup to match
+6. Add freshness lines (Last updated, Last reviewed) to all files created in steps 1-5. See Freshness Tracking.
+7. Simplify project instructions to match the template in Project Instructions above
+8. Update Config backup to match
 
 ---
 
