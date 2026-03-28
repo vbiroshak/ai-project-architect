@@ -78,17 +78,18 @@ See Inbox: Verify and Check Before Referencing in Key Principles for the full ve
 
 ## Startup
 
-Startup reads five things:
+Startup reads six things, in an order where each step builds on the context established by the previous ones:
 
 1. **WORKFLOW.txt** (~4-6 KB)
-2. **Workflow Files/HANDOFF.txt** (~1-2 KB)
-3. **Session log(s) identified by the handoff** (~5-15 KB). If no specific pointer, read the highest-numbered log. If the project is new with no logs, skip.
-4. **Inbox/ listing** (filenames only)
-5. **Check the clock and session age** (see Temporal Awareness)
+2. **Check the clock and time since last logged interaction** (see Temporal Awareness) — establishes temporal frame before any project state loads
+3. **Workflow Files/HANDOFF.txt** (~1-2 KB) — concise current state, now read with temporal context
+4. **Session log(s) identified by the handoff** (~5-15 KB). If no specific pointer, read the highest-numbered log. If the project is new with no logs, skip.
+5. **Project-level task queue**, if the project uses one. Fix any completed items on the spot.
+6. **Inbox/ listing** (filenames only) — last, because inbox items could be from any time and benefit from having all project state loaded first
 
 Total: ~12-23 KB of reads, plus the clock check. Down from 30-55 KB under the old "read three most recent session logs" heuristic.
 
-The handoff gives the current state snapshot: where things stand per functional area, priorities, what to read for depth. The session log(s) give the narrative: how things got to the current state, what was tried, what was decided and why. Together they orient a fresh chat to continue the work with both the snapshot and the story. The clock check gives temporal context: what day and time it is, whether this is a continuation or a return after hours or days.
+The clock check comes early because temporal context informs how everything after it is read. Knowing whether the last logged interaction was an hour ago or three days ago changes how the handoff and session log land. The handoff gives the current state snapshot: where things stand per functional area, priorities, what to read for depth. The session log(s) give the narrative: how things got to the current state, what was tried, what was decided and why. Together they orient a fresh chat to continue the work with both the snapshot and the story. The inbox is listed last because its items may be old or new, and having the full project state loaded first enables recognition of how inbox items connect to existing work.
 
 The session log was added back after testing showed that handoff-only startup lost narrative continuity. A chat reading only the handoff knew what the current state was but not how it got there, causing it to fall back on stale memory and past chat search. One session log restores the narrative thread at modest cost (~5-15 KB) while still achieving 50-70% reduction from the old three-log startup.
 
@@ -455,7 +456,7 @@ Complex projects may need multiple task queues split by function or sub-project.
 AI assistants have no internal clock. Temporal awareness has two components, both baseline startup behaviors:
 
 1. **What time is it now?**
-2. **How long has it been since the last session?**
+2. **How long has it been since the last logged interaction?**
 
 The first gives the current moment. The second gives context: is this a return after three days or a continuation from an hour ago? Both inform orientation. Temporal awareness is not just knowing the time but reasoning about what it means for the work: day of week, business hours, calendar deadlines, how much may have changed.
 

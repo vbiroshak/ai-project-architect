@@ -19,11 +19,11 @@ This matters because the filesystem is a long-term record. Logs without timestam
 Temporal awareness has two components, both essential:
 
 1. **What time is it now?**
-2. **How long has it been since the last session?**
+2. **How long has it been since the last logged interaction?**
 
-The first gives you the current moment. The second gives you context: is this a continuation from an hour ago, or a return after three days? Both inform how the AI orients to the work. A project that knows it's Friday afternoon but doesn't know the last session was Monday morning is missing half the picture.
+The first gives you the current moment. The second gives you context: is this a continuation from an hour ago, or a return after three days? Both inform how the AI orients to the work. A project that knows it's Friday afternoon but doesn't know the last logged interaction was Monday morning is missing half the picture.
 
-The mechanism: a persistent Clock file and filesystem metadata. The Clock file lives permanently in the project directory. The AI edits it (add or remove a word) and then reads the modified timestamp. The most recent session log's metadata provides the second component. No throwaway files, no cleanup needed.
+The mechanism: a persistent Clock file and filesystem metadata. The Clock file lives permanently in the project directory. The AI writes to it (overwriting the content) and then reads the modified timestamp. The most recent session log's metadata provides the second component. No throwaway files, no cleanup needed.
 
 **Critical distinction:** Reading metadata on an old file tells you when *that file* was written, not what time it is now. Only a freshly modified file reflects the actual current time.
 
@@ -47,10 +47,9 @@ Contents can be anything. A description like "This file exists so the AI can che
 
 ### 1. Knowing What Time It Is Now
 
-1. Edit the Clock file (add or remove a word, toggle between "tick" and "tock", anything that changes the content)
-2. Get the file's info using your Filesystem tools
-3. Read the "modified" field only (ignore "created")
-4. Compare the returned date to the system prompt date. If the Clock returns a date earlier than the system prompt date, the reading is stale. Repeat steps 1-3 once more
+1. Write "tick" to the Clock file (overwrite)
+2. Get the file's info using your Filesystem tools — the "modified" field is the current time
+3. If the modified date is earlier than the system prompt date, repeat both steps once
 
 The first read of a session may return stale metadata from a prior session's edit due to filesystem caching. The sanity check against the system prompt date catches this without requiring an external time reference.
 
@@ -58,13 +57,13 @@ Do not create throwaway files. Do not rely on metadata from files written in pre
 
 ### 2. Knowing When the Last Action Happened
 
-Get the file info on the most recent log file or the last file written in a previous exchange using Filesystem tools. That timestamp tells you when the previous work session happened.
+Get the file info on the most recent log file or the last file written in a previous exchange using Filesystem tools. That timestamp tells you when the previous logged interaction happened.
 
 ### 3. Detecting Time Gaps (Baseline Startup Behavior)
 
-At session startup, after checking the Clock, get the most recent session log's file info using Filesystem tools. Compare its modified timestamp to the current time from the Clock. The difference tells you how long it's been since the last session.
+At session startup, after checking the Clock, get the most recent session log's file info using Filesystem tools. Compare its modified timestamp to the current time from the Clock. The difference tells you how long it's been since the last logged interaction.
 
-This is not optional. Every startup should produce both the current time and the time since last session. The gap informs orientation: a return after three days means more may have changed than a continuation from an hour ago. It also informs logging: whether to append to a current entry or start a new one.
+This is not optional. Every startup should produce both the current time and the time since last logged interaction. The gap informs orientation: a return after three days means more may have changed than a continuation from an hour ago. It also informs logging: whether to append to a current entry or start a new one.
 
 Within a single long chat, the same technique detects when the human left and came back. Check the Clock when activity resumes; compare to the last file write. If hours have passed, you're in a new work session within the same chat.
 
@@ -85,34 +84,20 @@ Adapt this to your project's logging system.
 ```
 TIMESTAMPS AND TEMPORAL AWARENESS
 
-The AI has no internal clock. To know the current time,
-use the Clock file:
+The AI has no internal clock. To know the current time, use the Clock file:
 
   Workflow Files/Clock/timestamp.txt
 
 Process:
-  1. Edit the file (add or remove a word)
-  2. Get the file's info using Filesystem tools
-  3. Read the "modified" field only. Ignore "created"
-     (macOS APFS "created" is birth time, never updates)
-  4. Compare the returned date to the system prompt date.
-     If the Clock returns a date earlier than the system
-     prompt date, the reading is stale. Repeat steps
-     1-3 once more
+  1. Write "tick" to the file (overwrite)
+  2. Get the file's info using Filesystem tools — the "modified" field is the current time
+  If the modified date is earlier than the system prompt date, repeat both steps once.
 
-The file is persistent and reusable. Never delete it.
-Reading metadata on an old file tells you when THAT FILE
-was written, not what time it is now. Only a freshly
-modified file reflects the actual current time.
+The file is persistent and reusable. Never delete it. Reading metadata on an old file tells you when THAT FILE was written, not what time it is now. Only a freshly modified file reflects the actual current time.
 
-At startup, also get the most recent session log's
-file info using Filesystem tools. Compare it to the
-Clock reading to determine how long since the last session. Both the
-current time and the time gap are baseline startup
-information. Note both when greeting the user.
+At startup, also get the most recent session log's file info using Filesystem tools. Compare it to the Clock reading to determine how long since the last logged interaction. Both the current time and the time gap are baseline startup information. Note both when greeting the user.
 
-When writing log entries, include timestamps derived
-from file metadata.
+When writing log entries, include timestamps derived from file metadata.
 
 Format: [date, ~time timezone] ENTRY HEADING
 ```
