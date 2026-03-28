@@ -233,6 +233,8 @@ When file operations change the project's directory structure (creating, moving,
 
 When you encounter stale or incorrect information in a workflow or status file during normal work, fix it immediately (see Fix on Contact below).
 
+Log topics at their current state of progress, not as binary open/closed. Capture what was gathered, what options were considered, where thinking landed, and what specifically remains (see Evolving State below).
+
 ### Inbox: Verify and Check Before Referencing
 
 List the inbox directory before any reference to its contents. This applies at startup, before mid-session processing, before mentioning inbox items to the user, and before writing inbox references into the handoff. Inbox contents change between messages. The user adds and clears items at any time. No earlier listing, and no handoff text, is a reliable substitute for the current directory state.
