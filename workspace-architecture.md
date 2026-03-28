@@ -237,6 +237,10 @@ List the inbox directory before any reference to its contents. This applies at s
 
 Before assessing an inbox item, check the project's existing work structure (sub-projects, case folders, task queues, archives) for related items. A fresh chat has no memory of past work. Directory listings are the recognition mechanism. Without this step, a chat may treat a familiar item as new, failing to connect it to work the project has already done.
 
+### Fix on Contact
+
+When you encounter stale or incorrect information in a workflow or status file during normal work, fix it immediately. If a completed task is still on the task queue, remove it. If a status file contradicts the handoff, update it. If a reference file lists a structure that has changed, correct it. The cost of fixing on contact is a few seconds. The cost of deferring is a stale file that misleads the next session.
+
 ### Proactive Logging
 
 Log without waiting to be asked. When substantive work has accumulated (file changes, decisions, analysis completed), write the session log and handoff. A missing entry means a future chat starts with a gap. An extra entry costs almost nothing.
