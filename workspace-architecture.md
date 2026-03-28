@@ -40,7 +40,7 @@ This document describes a workspace architecture that balances orientation quali
                             projects that use one.
     Clock/timestamp.txt     temporal awareness
     Config/
-      PROJECT_INSTRUCTIONS.txt  backup for portability
+      PROJECT_INSTRUCTIONS.txt  backup for portability, synced at startup
     Lessons/                operational knowledge
       LESSONS_INDEX.txt     routing index
       [topic].txt           one file per topic
@@ -68,7 +68,7 @@ The AI writes to the Inbox when it has something for the user: drafts for review
 
 This is a foundational workflow in both directions. The user encounters something relevant, saves it to the appropriate project's inbox, and moves on. The AI produces a draft or flags a file and places it in the inbox for the user to find. The inbox bridges the gap between when work arrives and when the project is active, regardless of which direction it flows.
 
-Inbox items are listed (filenames only) at startup as step 6. They are not read at startup. The listing surfaces what's waiting, and the chat processes items when directed or when relevant to the session's work.
+Inbox items are listed (filenames only) at startup as step 7. They are not read at startup. The listing surfaces what's waiting, and the chat processes items when directed or when relevant to the session's work.
 
 Inbox contents can change at any time. The user may add or clear items between any two messages. Every reference to specific inbox contents must be verified by listing the directory at the point of reference, not by relying on any earlier listing. This includes startup, mid-session processing, and handoff writing. The handoff records actions taken (wrote a delegation note, flagged a file for deletion) but does not carry inbox filenames as a persistent list. The directory listing is always the source of truth for what is currently in the inbox.
 
@@ -80,16 +80,17 @@ See Inbox: Verify and Check Before Referencing in Key Principles for the full ve
 
 ## Startup
 
-Startup reads six things, in an order where each step builds on the context established by the previous ones:
+Startup reads seven things, in an order where each step builds on the context established by the previous ones:
 
 1. **WORKFLOW.txt** (~4-6 KB)
-2. **Check the clock and time since last logged interaction** (see Temporal Awareness) — establishes temporal frame before any project state loads
-3. **Workflow Files/HANDOFF.txt** (~1-2 KB) — concise current state, now read with temporal context
-4. **Session log(s) identified by the handoff** (~5-15 KB). If no specific pointer, read the highest-numbered log. If the project is new with no logs, skip.
-5. **Project-level task queue**, if the project uses one. Fix any completed items on the spot. Sub-project or function-specific queues load at activation, not startup.
-6. **Inbox/ listing** (filenames only) — last, because inbox items could be from any time and benefit from having all project state loaded first
+2. **Read Workflow Files/Config/PROJECT_INSTRUCTIONS.txt.** If it differs from the project instructions in context, update the file to match. This keeps the backup current for project portability and recreation.
+3. **Check the clock and time since last logged interaction** (see Temporal Awareness) — establishes temporal frame before any project state loads
+4. **Workflow Files/HANDOFF.txt** (~1-2 KB) — concise current state, now read with temporal context
+5. **Session log(s) identified by the handoff** (~5-15 KB). If no specific pointer, read the highest-numbered log. If the project is new with no logs, skip.
+6. **Project-level task queue**, if the project uses one. Fix any completed items on the spot. Sub-project or function-specific queues load at activation, not startup.
+7. **Inbox/ listing** (filenames only) — last, because inbox items could be from any time and benefit from having all project state loaded first
 
-Total: ~12-23 KB of reads, plus the clock check. Down from 30-55 KB under the old "read three most recent session logs" heuristic.
+Total: ~12-23 KB of reads, plus the clock check and config sync. Down from 30-55 KB under the old "read three most recent session logs" heuristic.
 
 The clock check comes early because temporal context informs how everything after it is read. Knowing whether the last logged interaction was an hour ago or three days ago changes how the handoff and session log land. The handoff gives the current state snapshot: where things stand per functional area, priorities, what to read for depth. The session log(s) give the narrative: how things got to the current state, what was tried, what was decided and why. Together they orient a fresh chat to continue the work with both the snapshot and the story. The inbox is listed last because its items may be old or new, and having the full project state loaded first enables recognition of how inbox items connect to existing work.
 
@@ -173,7 +174,7 @@ these tools become available again.
 
 The user pastes this once and never updates it. All evolution happens in filesystem files that the AI maintains directly.
 
-A backup copy lives in the workspace at Config/PROJECT_INSTRUCTIONS.txt. This makes the project fully portable: everything needed to recreate the project in a new account, on a different device, or for another person lives on the filesystem. The AI can also reference this backup to verify its own instructions if needed.
+A backup copy lives in the workspace at Config/PROJECT_INSTRUCTIONS.txt, synced automatically at startup (step 2). This makes the project fully portable: everything needed to recreate the project in a new account, on a different device, or for another person lives on the filesystem. It also serves as the source text when guiding project creation: the AI reads the file and presents its contents in conversation rather than directing the user to dig through Workflow Files.
 
 The instructions describe capabilities using verbs (reading, writing, creating, editing, searching, moving) rather than naming specific tools. This means tool updates don't require instruction changes. "Filesystem tools" maps to the prefix the AI sees on every tool in its context. The first block asserts what the tools can do and commands an action: read WORKFLOW.txt. There is no evaluation step where the AI decides whether it has access. The fallback block handles sessions where the tools are absent (web, mobile) and instructs the AI to catch up on logging when the tools return. See INSTRUCTION COMPOSITION below.
 
