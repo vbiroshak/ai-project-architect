@@ -78,7 +78,7 @@ Every project follows the same layout:
   Workflow Files/
     HANDOFF.txt             ← state snapshot, overwritten constantly
     REFERENCE.txt           ← on-demand: structure, procedures, sub-project pointers
-    TASKS.txt               ← active items only, on-demand
+    TASKS.txt               ← active items only, read at startup
     Clock/timestamp.txt     ← temporal awareness mechanism
     Lessons/
       LESSONS_INDEX.txt     ← index for accumulated knowledge

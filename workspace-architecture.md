@@ -35,7 +35,9 @@ This document describes a workspace architecture that balances orientation quali
                             specs, procedures, sub-project
                             pointers. Not a container for
                             domain knowledge.
-    TASKS.txt               active items only, on-demand.
+    TASKS.txt               optional — active items only, no
+                            DONE section. Read at startup for
+                            projects that use one.
     Clock/timestamp.txt     temporal awareness
     Config/
       PROJECT_INSTRUCTIONS.txt  backup for portability
@@ -66,7 +68,7 @@ The AI writes to the Inbox when it has something for the user: drafts for review
 
 This is a foundational workflow in both directions. The user encounters something relevant, saves it to the appropriate project's inbox, and moves on. The AI produces a draft or flags a file and places it in the inbox for the user to find. The inbox bridges the gap between when work arrives and when the project is active, regardless of which direction it flows.
 
-Inbox items are listed (filenames only) at startup as step 4. They are not read at startup. The listing surfaces what's waiting, and the chat processes items when directed or when relevant to the session's work.
+Inbox items are listed (filenames only) at startup as step 6. They are not read at startup. The listing surfaces what's waiting, and the chat processes items when directed or when relevant to the session's work.
 
 Inbox contents can change at any time. The user may add or clear items between any two messages. Every reference to specific inbox contents must be verified by listing the directory at the point of reference, not by relying on any earlier listing. This includes startup, mid-session processing, and handoff writing. The handoff records actions taken (wrote a delegation note, flagged a file for deletion) but does not carry inbox filenames as a persistent list. The directory listing is always the source of truth for what is currently in the inbox.
 
@@ -84,7 +86,7 @@ Startup reads six things, in an order where each step builds on the context esta
 2. **Check the clock and time since last logged interaction** (see Temporal Awareness) — establishes temporal frame before any project state loads
 3. **Workflow Files/HANDOFF.txt** (~1-2 KB) — concise current state, now read with temporal context
 4. **Session log(s) identified by the handoff** (~5-15 KB). If no specific pointer, read the highest-numbered log. If the project is new with no logs, skip.
-5. **Project-level task queue**, if the project uses one. Fix any completed items on the spot.
+5. **Project-level task queue**, if the project uses one. Fix any completed items on the spot. Sub-project or function-specific queues load at activation, not startup.
 6. **Inbox/ listing** (filenames only) — last, because inbox items could be from any time and benefit from having all project state loaded first
 
 Total: ~12-23 KB of reads, plus the clock check. Down from 30-55 KB under the old "read three most recent session logs" heuristic.
@@ -350,6 +352,8 @@ Shared knowledge base documents that carry version numbers (Version X.X — Mont
 
 When creating a new file, set both freshness lines to the creation date and session. Do not use "Created:" or leave the lines blank. Every file starts with both lines populated from the moment it exists.
 
+Domain files (working documents inside sub-projects that are not MFP-prescribed) also benefit from adopting the freshness standard. The more files that carry freshness lines, the easier it is to assess the currency of any file at a glance. When creating or editing domain files, add the standard freshness lines.
+
 ### Maintenance
 
 Freshness lines are maintained as part of existing workflow triggers, not as a separate procedure:
@@ -362,7 +366,7 @@ Freshness lines are maintained as part of existing workflow triggers, not as a s
 
 ### WORKFLOW Integration
 
-The WORKFLOW SESSION LOGS section carries a compressed version of the definitions and maintenance rules so that every session has them in context. The full specification lives in this document and in the MFP; the WORKFLOW carries the operational instructions (~150-200 tokens).
+The WORKFLOW SESSION LOGS section carries a compressed version of the definitions and maintenance rules so that every session has them in context. The full specification lives in this document; the WORKFLOW carries the operational instructions (~150-200 tokens).
 
 ---
 
@@ -497,7 +501,7 @@ Extended tier means permission for: longer orientation files, bigger session log
 
 Startup and activation are separate loading steps.
 
-**Startup** (at session open): Read WORKFLOW.txt, HANDOFF.txt, most recent session log, Inbox listing. The project-level HANDOFF.txt carries a brief summary of each sub-project's state and a pointer to its orientation file.
+**Startup** (at session open): Read WORKFLOW.txt, check the clock, read HANDOFF.txt, read most recent session log, read task queue if present, list Inbox. The project-level HANDOFF.txt carries a brief summary of each sub-project's state and a pointer to its orientation file.
 
 **Activation** (when user directs work to the sub-project): Read the sub-project's orientation file. Read the session log referenced in its "last active" pointer, if different from the session log already loaded at startup. Report sub-project state to the user and wait for direction.
 
@@ -509,7 +513,7 @@ The WORKFLOW.txt must include an explicit activation sequence for each Extended 
 
 Active items only. When a task is completed, remove it from the queue and note completion in the session log. The session log is the archive. No DONE section, no archive file. A DONE section or archive creates a growing document that must be read and rewritten every time a task is completed. The context cost of maintaining an archive exceeds its value, since the session logs already contain the completion record.
 
-On-demand reads, not startup. The handoff can include a top-priority nudge so startup is priority-aware without loading the full queue.
+The project-level task queue reads at startup. Task queues are short (active items only, no DONE section) and the cost of reading them is low. The alternative — on-demand loading — demonstrably leads to stale queues because the demand never comes when the handoff carries enough context to proceed. Sub-project or function-specific queues read at sub-project activation rather than startup.
 
 Task queues take different shapes depending on the work. A priority queue lists what to work on next, organized by urgency or category (active, follow-up, backlog). A living checklist tracks items being worked through during a session, with items checked off as they're completed. Both are valid. Some projects use one, some the other, some both for different purposes.
 
