@@ -105,6 +105,8 @@ Every project follows the same layout:
 
 ## How to use this
 
+**Before you start:** AI assistants fetching web pages may silently receive cached content that is days or weeks out of date. Before building from this repo, check that your AI is fetching the current version and not an outdated cached one.
+
 ### What you'll need
 
 - **Claude Desktop app** (macOS or Windows) with the Filesystem extension enabled
@@ -120,7 +122,7 @@ This is built for people who manage projects through AI chat and want persistent
 
 3. **Set tool permissions to Always Allow.** In Settings under Tool Permissions, set the Filesystem tools to "Always allow." The workspace involves frequent file reads and writes during normal conversation. If permissions are set to ask every time, you'll be approving dozens of tool calls per session. Always Allow lets the AI work fluidly.
 
-4. **Give Claude the architecture document.** In a new or existing project, start a chat and give Claude the [workspace architecture document](workspace-architecture.md). Tell it about your project and ask it to build the workspace structure for you. For best results, check first to ensure that your AI is fetching the current version of the repo and not an outdated cached one.
+4. **Give Claude the architecture document.** In a new or existing project, start a chat and give Claude the [workspace architecture document](workspace-architecture.md). Tell it about your project and ask it to build the workspace structure for you.
 
 That's it. Claude will scaffold the directory, create the files, and provide you with the project instructions to paste into your project settings (customized with your actual file path). From then on, every new chat in that project reads the workspace and picks up where the last one left off.
 
