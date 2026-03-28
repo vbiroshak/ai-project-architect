@@ -231,6 +231,8 @@ Every time a log entry is written, also overwrite HANDOFF.txt. Both writes happe
 
 When file operations change the project's directory structure (creating, moving, or renaming files or directories), verify that Workflow Files/REFERENCE.txt reflects the current structure.
 
+When you encounter stale or incorrect information in a workflow or status file during normal work, fix it immediately (see Fix on Contact below).
+
 ### Inbox: Verify and Check Before Referencing
 
 List the inbox directory before any reference to its contents. This applies at startup, before mid-session processing, before mentioning inbox items to the user, and before writing inbox references into the handoff. Inbox contents change between messages. The user adds and clears items at any time. No earlier listing, and no handoff text, is a reliable substitute for the current directory state.
