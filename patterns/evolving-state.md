@@ -92,3 +92,7 @@ This applies to any project that tracks decisions, design questions, or ongoing 
 - Sub-project reference files that evolve through use
 
 The general principle: when something is in process, log the state of the process, not just the fact that it is in process.
+
+---
+
+The evolving state principle is deployed through the EVOLVING STATE subsection of the [session logs template](../templates/workflow-sections/session-logs.md).

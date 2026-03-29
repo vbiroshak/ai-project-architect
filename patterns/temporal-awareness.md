@@ -77,30 +77,7 @@ Screenshot filenames often contain timestamps (e.g. "Screenshot 2026-03-06 at 16
 
 ---
 
-## Copy-Paste Implementation for WORKFLOW.txt
-
-Adapt this to your project's logging system.
-
-```
-TIMESTAMPS AND TEMPORAL AWARENESS
-
-The AI has no internal clock. To know the current time, use the Clock file:
-
-  Workflow Files/Clock/timestamp.txt
-
-Process:
-  1. Write "tick" to the file (overwrite)
-  2. Get the file's info using Filesystem tools — the "modified" field is the current time
-  If the modified date is earlier than the system prompt date, repeat both steps once.
-
-The file is persistent and reusable. Never delete it. Reading metadata on an old file tells you when THAT FILE was written, not what time it is now. Only a freshly modified file reflects the actual current time.
-
-At startup, also get the most recent session log's file info using Filesystem tools. Compare it to the Clock reading to determine how long since the last logged interaction. Both the current time and the time gap are baseline startup information. Note both when greeting the user.
-
-When writing log entries, include timestamps derived from file metadata.
-
-Format: [date, ~time timezone] ENTRY HEADING
-```
+For the deployable WORKFLOW section text, see the [temporal awareness template](../templates/workflow-sections/temporal-awareness.md).
 
 ---
 

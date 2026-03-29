@@ -70,3 +70,9 @@ When remaining work from a completed sub-project becomes a new sub-project, seed
 **Activation sequence maintenance:** When a sub-project is archived and a new one created, WORKFLOW.txt's sub-project activation section must be rewritten to point at the new sub-project. The old activation sequence should be removed entirely since archived sub-projects are read directly, not activated through the workflow.
 
 **Archive size over time:** Projects with many completed sub-projects will accumulate large Archive/ directories. Not a practical concern yet. If it becomes one, ARCHIVE_INDEX.txt provides the index layer so Archive/ itself rarely needs to be listed.
+
+---
+
+## Templates
+
+For deployable text, see the [WORKFLOW archive section template](../templates/workflow-sections/archive.md) and the [ARCHIVE_INDEX.txt template](../templates/mandated-files/archive-index.md).

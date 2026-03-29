@@ -1,5 +1,7 @@
 # Workspace Architecture for Sustained Knowledge Work with AI
 
+Version 4.0
+
 A workspace architecture optimized for context cost and continuity.
 
 Developed through iterative design and daily use across multiple projects spanning different domains. Applicable to any project where an AI assistant serves one or more areas of ongoing work.
@@ -31,10 +33,10 @@ This document describes a workspace architecture that balances orientation quali
     HANDOFF.txt             current state,
                             priorities, reading pointers.
                             Overwritten with every log entry.
-    REFERENCE.txt           on-demand: file structure, format
-                            specs, procedures, sub-project
-                            pointers. Not a container for
-                            domain knowledge.
+    REFERENCE.txt           file structure, format specs,
+                            procedures, sub-project pointers.
+                            Read at startup with HANDOFF.
+                            Not a container for domain knowledge.
     TASKS.txt               optional — active items only, no
                             DONE section. Read at startup for
                             projects that use one.
@@ -70,11 +72,9 @@ This is a foundational workflow in both directions. The user encounters somethin
 
 Inbox items are listed (filenames only) at startup as step 7. They are not read at startup. The listing surfaces what's waiting, and the chat processes items when directed or when relevant to the session's work.
 
-Inbox contents can change at any time. The user may add or clear items between any two messages. Every reference to specific inbox contents must be verified by listing the directory at the point of reference, not by relying on any earlier listing. This includes startup, mid-session processing, and handoff writing. The handoff records actions taken (wrote a delegation note, flagged a file for deletion) but does not carry inbox filenames as a persistent list. The directory listing is always the source of truth for what is currently in the inbox.
+Inbox contents can change at any time between messages. See Inbox: Verify and Check Before Referencing in Key Principles for the verification procedure.
 
 Inbox items may represent undocumented task entries, work that has arrived but hasn't been triaged into the project's task list or session log. If you use a coordinator project (see Knowledge Architecture below), its task review should include inbox listings for this reason.
-
-See Inbox: Verify and Check Before Referencing in Key Principles for the full verification and assessment procedure.
 
 ---
 
@@ -82,19 +82,17 @@ See Inbox: Verify and Check Before Referencing in Key Principles for the full ve
 
 Startup reads seven things, in an order where each step builds on the context established by the previous ones:
 
-1. **WORKFLOW.txt** (~4-6 KB)
+1. **WORKFLOW.txt**
 2. **Read Workflow Files/Config/PROJECT_INSTRUCTIONS.txt.** If it differs from the project instructions in context, update the file to match. This keeps the backup current for project portability and recreation.
 3. **Check the clock and time since last logged interaction** (see Temporal Awareness) — establishes temporal frame before any project state loads
-4. **Workflow Files/HANDOFF.txt** (~1-2 KB) — concise current state, now read with temporal context
-5. **Session log(s) identified by the handoff** (~5-15 KB). If no specific pointer, read the highest-numbered log. If the project is new with no logs, skip.
+4. **Workflow Files/REFERENCE.txt and Workflow Files/HANDOFF.txt** — REFERENCE gives structural context (what exists, where), HANDOFF gives state context (what's happening, what to read next)
+5. **Most recent session log in Workflow Files/Session Logs/**, plus any additional logs the handoff identifies.
 6. **Project-level task queue**, if the project uses one. Fix any completed items on the spot. Sub-project or function-specific queues load at activation, not startup.
 7. **Inbox/ listing** (filenames only) — last, because inbox items could be from any time and benefit from having all project state loaded first
 
-Total: ~12-23 KB of reads, plus the clock check and config sync. Down from 30-55 KB under the old "read three most recent session logs" heuristic.
-
 The clock check comes early because temporal context informs how everything after it is read. Knowing whether the last logged interaction was an hour ago or three days ago changes how the handoff and session log land. The handoff gives the current state snapshot: where things stand per functional area, priorities, what to read for depth. The session log(s) give the narrative: how things got to the current state, what was tried, what was decided and why. Together they orient a fresh chat to continue the work with both the snapshot and the story. The inbox is listed last because its items may be old or new, and having the full project state loaded first enables recognition of how inbox items connect to existing work.
 
-The session log was added back after testing showed that handoff-only startup lost narrative continuity. A chat reading only the handoff knew what the current state was but not how it got there, causing it to fall back on stale memory and past chat search. One session log restores the narrative thread at modest cost (~5-15 KB) while still achieving 50-70% reduction from the old three-log startup.
+The session log was added back after testing showed that handoff-only startup lost narrative continuity. A chat reading only the handoff knew what the current state was but not how it got there, causing it to fall back on stale memory and past chat search. One session log restores the narrative thread at modest cost while significantly reducing context load compared to reading multiple logs at startup.
 
 When writing a handoff after structural or meta work (like project optimization or file reorganization), note which earlier session contains the last domain work. The startup log may be about structural changes, not the actual work. The handoff pointer lets the chat load the domain narrative.
 
@@ -138,6 +136,30 @@ A baseline registry with 10 sections in fixed order:
 
 Universal sections carry identical mechanical text across all projects. Project-specific sections use the same heading and position but carry project-specific content. Optional sections are included only when needed.
 
+For the actual deployable text of each section, see the [workflow section templates](templates/workflow-sections/).
+
+### Section Descriptions
+
+**Session Startup Procedure** — The seven-step startup sequence: read WORKFLOW, sync config backup, check the clock and time since last logged interaction, read REFERENCE and HANDOFF, read the most recent session log plus any additional logs the handoff identifies, read task queue if present, list Inbox. Identical across all projects.
+
+**Base Path** — The project's filesystem root. One line.
+
+**What This Project Does** — Brief project description and current sub-project list with one-line descriptions. Updated when sub-projects are added or archived.
+
+**Sub-Project Activation** — Three-step activation pattern: read reference file, read everything the handoff identifies for that sub-project, load additional files as needed. Loading depth varies by sub-project and is governed by the handoff's pointers. When reading a sub-project's status file, verify it is consistent with the handoff and fix discrepancies on the spot (see Fix on Contact). Universal pattern with project-specific reference file pointers. Also establishes the write direction: domain knowledge produced during work goes into files inside the sub-project directory, not REFERENCE.txt. Every sub-project listed must have a reference file; if the directory exists, a seeded file exists.
+
+**Task Queue** — For projects that use a task queue. Standard location: Workflow Files/TASKS.txt. Active items only (no DONE section), read at startup, add immediately when items arise, remove on completion and note in session log. Include only in projects that maintain a task queue file.
+
+**Session Logs** — Logging mechanics. Per unit of work, not per chat. Sequential numbering. Write when substantive work accumulates; never defer to end of session. Keep logs concise; a growing log signals writing more often. Paired writes with HANDOFF (including freshness lines). Structure changes trigger REFERENCE.txt verification. Fix on contact for stale information. Evolving state: log topics at current progress, not binary. Handoff pointers scaled to complexity. Freshness line definitions and maintenance rules. Identical across all projects.
+
+**Temporal Awareness** — Clock mechanism (write to file, get file info, read modified field, stale-reading retry) and time since last logged interaction. Identical across all projects.
+
+**Inbox** — Asynchronous interface between the user and the project, both directions. The user drops files for processing; the AI writes drafts, deletion flags, delegation notes, or anything needing the user's attention. Processing guidance: list the directory before any reference to inbox contents (startup, mid-session, handoff writing), read on demand, check existing project structure before assessing items. Identical across all projects.
+
+**Shared Knowledge Base** — Path and one-line description. Identical across all projects.
+
+**Project Context** — Project-specific material earning its place in every context window but not covered by account-wide user preferences. Domain context, operational conventions. Accumulates through use. A file deletion convention is always present as a seed entry. Content already in account-wide preferences should not be duplicated here. Detailed procedures and file structure documentation belong in REFERENCE.txt, not here.
+
 Additional sections may be prescribed by shared patterns (e.g., an Archive section prescribed by the archive pattern, sitting after Sub-Project Activation). These are governed by their pattern documentation, not the base registry.
 
 A routing flowchart for new content:
@@ -146,7 +168,7 @@ A routing flowchart for new content:
 - Needed every session, mechanical/procedural → check the registry for an existing section
 - Applies to all projects, behavioral/personal → account-wide user preferences
 - Needed only when working a specific sub-project → sub-project reference file
-- Reference material, procedures, loaded on demand → REFERENCE.txt
+- Reference material, procedures, file structure → REFERENCE.txt
 - Domain knowledge for a specific sub-project → a file inside the sub-project directory (REFERENCE.txt points to it, does not hold it)
 - New section type not in the registry → evaluate for registry expansion
 
@@ -202,23 +224,19 @@ Naming: natural case (Inbox, not INBOX). ALLCAPS reads as system files in a file
 
 Orientation and archive are separate functions that need separate files. Session logs are the archive. HANDOFF.txt is the orientation. Loading the archive at startup conflates the two and wastes context on historical content that doesn't help the current chat continue the work.
 
-HANDOFF.txt is overwritten with every log entry write, never deferred to session end. Sessions can end without warning (context limit, connection drop, user leaving). "End of session" is not a reliable trigger.
-
 Handoff notes flag known fragilities, not just steps. A task with hidden complexity needs a caution line naming the risk and pointing to documentation.
 
-### Lean Workflow, On-Demand Reference
+### Lean Workflow, Structural Reference
 
 WORKFLOW.txt keeps only what earns its place in every context window: startup procedure, project description, temporal awareness, logging guidance, project context.
 
-Everything else (file structure listings, detailed format specs, procedural notes, sub-project pointers) moves to Workflow Files/REFERENCE.txt, read on demand. REFERENCE.txt is infrastructure: it describes the project's file structure, points to sub-project files, and holds procedural notes. It is not a container for domain knowledge. Domain content belongs in sub-project files; REFERENCE.txt points to those files.
+Everything else (file structure listings, detailed format specs, procedural notes, sub-project pointers) lives in Workflow Files/REFERENCE.txt. REFERENCE.txt is infrastructure: it describes the project's file structure, points to sub-project files, and holds procedural notes. It is not a container for domain knowledge. Domain content belongs in sub-project files; REFERENCE.txt points to those files. Both files read at startup, but they serve different roles: WORKFLOW carries procedure and behavioral rules, REFERENCE carries structural context.
 
 ### Concise Logging
 
 Session logs capture every decision, state change, and rationale. They do not narrate the conversational process.
 
 Logs are per unit of work, not per chat. A single chat may produce multiple log files; a brief chat may produce one small one. Numbering is sequential across the project.
-
-Entry format: each entry begins with a header line: `[Date, ~Time Timezone] TOPIC`
 
 Thoroughness applies to coverage (what is captured). Conciseness applies to expression (how it is written). These are not in tension.
 
@@ -228,15 +246,9 @@ Unnecessary: "We discussed whether to keep the Q1 reports at root level. The use
 
 Reasoning IS worth capturing when a decision might be revisited: "Chose X over Y because Z." Process narration ("first we considered A, then B") is not, unless the alternatives themselves are important context.
 
-Write when substantive work has accumulated — when decisions, findings, or file changes would be hard to reconstruct if the session ended now. Write frequently; never defer to end of session. A growing log is a signal to write more often, not to keep appending. Start a new log file when the current entry is done and a new topic begins.
+Log without waiting to be asked. When substantive work has accumulated, write the session log and handoff. Logging is insurance against context loss, not a signal that work is finishing. After writing a log entry, continue working without shifting tone, offering to wrap up, or prompting for next steps.
 
-Every time a log entry is written, also overwrite HANDOFF.txt. Both writes happen together. When the log entry covers sub-project work, also verify the sub-project's status file reflects the current state. All files written or verified during paired writes get their freshness lines refreshed (see Freshness Tracking).
-
-When file operations change the project's directory structure (creating, moving, or renaming files or directories), verify that Workflow Files/REFERENCE.txt reflects the current structure.
-
-When you encounter stale or incorrect information in a workflow or status file during normal work, fix it immediately (see Fix on Contact below).
-
-Log topics at their current state of progress, not as binary open/closed. Capture what was gathered, what options were considered, where thinking landed, and what specifically remains (see Evolving State below).
+For the mechanical rules that implement these principles in every WORKFLOW (paired writes, entry format, structure verification, fix on contact, evolving state), see the [session logs template](templates/workflow-sections/session-logs.md).
 
 ### Inbox: Verify and Check Before Referencing
 
@@ -246,13 +258,7 @@ Before assessing an inbox item, check the project's existing work structure (sub
 
 ### Fix on Contact
 
-When you encounter stale or incorrect information in a workflow or status file during normal work, fix it immediately. If a completed task is still on the task queue, remove it. If a status file contradicts the handoff, update it. If a reference file lists a structure that has changed, correct it. The cost of fixing on contact is a few seconds. The cost of deferring is a stale file that misleads the next session.
-
-### Proactive Logging
-
-Log without waiting to be asked. When substantive work has accumulated (file changes, decisions, analysis completed), write the session log and handoff. A missing entry means a future chat starts with a gap. An extra entry costs almost nothing.
-
-Logging is insurance against context loss, not a signal that work is finishing. After writing a log entry, continue working without shifting tone, offering to wrap up, or prompting for next steps. The session continues until the user ends it.
+When you encounter stale or incorrect information in a workflow, handoff, reference, status, task queue, or index file during normal work, fix it then and there before continuing with other work. Do not defer in any form — noting it for later, flagging it as pending, or adding it to a task list all count as deferring. If a completed task is still on the task queue, remove it. If a status file contradicts the handoff, update it. If a reference file lists a structure that has changed, correct it. The cost of fixing on contact is a few seconds. The cost of deferring is a stale file that misleads the next session.
 
 ### Evolving State, Not Binary
 
@@ -261,6 +267,10 @@ Topics that develop across sessions must be logged at their current state of pro
 Each in-progress item should capture: what information was gathered, what options were considered, where the person's thinking landed, and what specifically remains. This protects the human from repeating themselves. Their memory of conversational decisions fades between sessions just as the AI's context window ends.
 
 See the companion pattern: [Evolving State in Handoffs](patterns/evolving-state.md).
+
+### Act at the Moment of Decision
+
+When a conversation produces a decision, execute it immediately rather than logging it for future action. A decision captured only as a to-do item requires the next handler — human or AI — to reconstruct the reasoning behind it. A decision executed immediately preserves the reasoning in the action itself.
 
 ### Session Logs Are Project-Wide
 
@@ -313,7 +323,7 @@ When project files and training data conflict on a matter of fact, the project f
 
 ## Freshness Tracking
 
-Every MFP-prescribed file carries two freshness lines immediately after its title line:
+Every architecture-prescribed file carries two freshness lines immediately after its title line:
 
 ```
 Last updated: [Month DD, YYYY] (Session NNN)
@@ -341,7 +351,7 @@ Both lines always present. If a file has never been reviewed separately from its
 
 ### Which Files
 
-All MFP-prescribed files carry both freshness lines: WORKFLOW.txt, HANDOFF.txt, REFERENCE.txt, STATUS files, TASKS.txt, INDEX.txt files, sub-project reference files, and LESSONS_INDEX.txt. The title line carries only the file's identity. Freshness lines occupy lines 2-3.
+All architecture-prescribed files carry both freshness lines: WORKFLOW.txt, HANDOFF.txt, REFERENCE.txt, STATUS files, TASKS.txt, INDEX.txt files, sub-project reference files, and LESSONS_INDEX.txt. The title line carries only the file's identity. Freshness lines occupy lines 2-3.
 
 Session logs do not carry freshness lines (they are append-only historical records with timestamps in their entries). Clock files and Config backups do not carry them.
 
@@ -353,7 +363,7 @@ Shared knowledge base documents that carry version numbers (Version X.X — Mont
 
 When creating a new file, set both freshness lines to the creation date and session. Do not use "Created:" or leave the lines blank. Every file starts with both lines populated from the moment it exists.
 
-Domain files (working documents inside sub-projects that are not MFP-prescribed) also benefit from adopting the freshness standard. The more files that carry freshness lines, the easier it is to assess the currency of any file at a glance. When creating or editing domain files, add the standard freshness lines.
+Domain files (working documents inside sub-projects that are not architecture-prescribed) also benefit from adopting the freshness standard. The more files that carry freshness lines, the easier it is to assess the currency of any file at a glance. When creating or editing domain files, add the standard freshness lines.
 
 ### Maintenance
 
@@ -367,7 +377,25 @@ Freshness lines are maintained as part of existing workflow triggers, not as a s
 
 ### WORKFLOW Integration
 
-The WORKFLOW SESSION LOGS section carries a compressed version of the definitions and maintenance rules so that every session has them in context. The full specification lives in this document; the WORKFLOW carries the operational instructions (~150-200 tokens).
+The WORKFLOW SESSION LOGS section carries a compressed version of the definitions and maintenance rules so that every session has them in context. The full specification lives in this document; the WORKFLOW carries the operational instructions (~150-200 tokens):
+
+```
+FRESHNESS LINES: Every project file (except session logs
+and Clock) carries two lines after its title:
+
+  Last updated: [Month DD, YYYY] (Session NNN)
+  Last reviewed: [Month DD, YYYY]
+
+"Last updated" means content was intentionally changed —
+adding, removing, revising, or restructuring. Updating
+only the freshness lines themselves does not count.
+"Last reviewed" means content was read and confirmed
+accurate during substantive work, whether or not anything
+changed. A correction refreshes both.
+
+For files overwritten wholesale (HANDOFF, STATUS) or
+newly created, both lines carry the same date and session.
+```
 
 ---
 
@@ -502,11 +530,21 @@ Extended tier means permission for: longer orientation files, bigger session log
 
 Startup and activation are separate loading steps.
 
-**Startup** (at session open): Read WORKFLOW.txt, check the clock, read HANDOFF.txt, read most recent session log, read task queue if present, list Inbox. The project-level HANDOFF.txt carries a brief summary of each sub-project's state and a pointer to its orientation file.
+**Startup** (at session open): Follow the standard startup sequence (see Startup). The project-level HANDOFF.txt carries a brief summary of each sub-project's state and a pointer to its orientation file.
 
 **Activation** (when user directs work to the sub-project): Read the sub-project's orientation file. Read the session log referenced in its "last active" pointer, if different from the session log already loaded at startup. Report sub-project state to the user and wait for direction.
 
-The WORKFLOW.txt must include an explicit activation sequence for each Extended sub-project, specifying the files to read and their order.
+The WORKFLOW.txt must include an explicit activation sequence for each Extended sub-project, specifying the files to read and their order. Example:
+
+```
+When the user indicates work on [Sub-Project]:
+1. Read [Sub-Project]/[STATUS_FILE].txt
+2. Read the session log named in its "last active" pointer
+   (unless already loaded at startup)
+3. Report sub-project state and wait for direction
+```
+
+This keeps startup lean while giving Extended sub-projects the full context load they need when activated. The orientation file must have a distinctive name that cannot be confused with the project-level HANDOFF.txt. Use a name that reflects the sub-project's domain. The name should make the file's scope obvious from a directory listing.
 
 ---
 
@@ -543,6 +581,8 @@ See the companion pattern: [Temporal Awareness](patterns/temporal-awareness.md).
 
 Start with this structure even for single-function projects. Create one sub-project folder to establish the pattern. This avoids restructuring when the project expands.
 
+The [templates](templates/) directory contains deployable text for every WORKFLOW section and structural templates for every mandated file. Use them as your starting point.
+
 ### For Existing Projects
 
 The existing structure works well for its scope. Migrate when the project grows or when starting fresh is worthwhile:
@@ -565,3 +605,5 @@ The existing structure works well for its scope. Migrate when the project grows 
 **Chat search is typically project-scoped.** Built-in chat search usually only sees conversations within the current project. It will never find anything from another project. But the filesystem spans everything. When you need cross-project context, the AI reads the other project's files directly.
 
 **Domain file design is domain-specific.** This architecture prescribes standard file roles inside sub-projects (STATUS for orientation, REFERENCE for domain knowledge) and naming conventions, but the specific content and additional domain files depend on the nature of the work.
+
+**Project memory.** This system works with your AI application's project memory turned on or off. With memory on, you may find duplication between memory and filesystem state. With memory off, you may find less long-term usefulness on mobile or web where the filesystem is unavailable. Experiment with both to see what works for your use case.
