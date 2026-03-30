@@ -23,3 +23,6 @@ TIME SINCE LAST LOGGED INTERACTION — Get the most recent session log's file in
 
 Consider what both imply: day of week, business hours, calendar deadlines, how much may have changed since last contact.
 ```
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

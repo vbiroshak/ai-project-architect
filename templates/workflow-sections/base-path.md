@@ -10,3 +10,6 @@ BASE PATH
 
 [full filesystem path to project root]
 ```
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

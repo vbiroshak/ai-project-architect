@@ -35,3 +35,6 @@ PENDING
 CURRENT STATE is always present. Effort-specific sections and PENDING appear as needed — a simple sub-project may have only CURRENT STATE; a complex one may have multiple effort sections.
 
 Status files orient sessions to sub-project state without requiring session log parsing — the sub-project equivalent of HANDOFF.txt.
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

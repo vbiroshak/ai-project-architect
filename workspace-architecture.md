@@ -607,3 +607,6 @@ The existing structure works well for its scope. Migrate when the project grows 
 **Domain file design is domain-specific.** This architecture prescribes standard file roles inside sub-projects (STATUS for orientation, REFERENCE for domain knowledge) and naming conventions, but the specific content and additional domain files depend on the nature of the work.
 
 **Project memory.** This system works with your AI application's project memory turned on or off. With memory on, you may find duplication between memory and filesystem state. With memory off, you may find less long-term usefulness on mobile or web where the filesystem is unavailable. Experiment with both to see what works for your use case.
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

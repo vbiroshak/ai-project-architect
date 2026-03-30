@@ -44,3 +44,6 @@ FRESHNESS LINES: Every project file (except session logs and Clock) carries two 
 
 For files overwritten wholesale (HANDOFF, STATUS) or newly created, both lines carry the same date and session.
 ```
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

@@ -99,3 +99,6 @@ The examples below use Claude's Cowork feature, but the pattern applies to any a
 The delegate handles work that is bounded and describable without project context. The conversational AI handles everything that requires strategic judgment, project knowledge, voice calibration, or integration across the project.
 
 The division: the delegate reads, processes, sorts, audits, and documents. The conversational AI judges, writes, connects, and integrates.
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

@@ -31,3 +31,6 @@ Sections follow in order, each with a `---` separator and ALL CAPS heading:
 Project-specific sections (2, 3, 4 file pointers, 10 entries) get filled with project content. All others use the template text verbatim.
 
 Target size: 4-6 KB assembled.
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

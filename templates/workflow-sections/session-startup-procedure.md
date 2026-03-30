@@ -18,3 +18,6 @@ SESSION STARTUP PROCEDURE
 
 Then present a brief orientation: where we left off, what's pending. Not education on what each item is about.
 ```
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

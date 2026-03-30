@@ -23,3 +23,6 @@ Routing index for operational knowledge. Read this first; load only the file rel
 Each entry names a topic, points to its file, and describes scope enough to route correctly. Arrow format (→) is convention, not required.
 
 Lesson files capture distilled operational knowledge — patterns, edge cases, mitigations — not chronological events.
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

@@ -22,3 +22,6 @@ Last reviewed: [date]
 Entry format adapts to the domain (topic tags for references, status for work plans, type classifications for templates).
 
 Key principle: enough description per entry to decide whether to load without opening. An INDEX is a routing table, not a table of contents.
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

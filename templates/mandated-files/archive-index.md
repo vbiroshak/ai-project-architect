@@ -26,3 +26,6 @@ ARCHIVED [EFFORTS/SUB-PROJECTS]
 Each entry: name, completion date (YYYY-MM), and enough description to know contents without opening. Location pointers included when not obvious from the entry name.
 
 Date format YYYY-MM matches the archival naming convention (e.g., "Research Project - 2026-03").
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

@@ -24,3 +24,6 @@ Sub-project reference files:
 ## Notes
 
 The domain examples phrase varies per project to match the work. Examples: "configuration notes, troubleshooting findings, setup procedures" for a technical project; "case data, draft history, research findings" for a correspondence project; "portfolio analysis, trade rationale, strategy updates" for a financial project. Choose examples that reflect the kinds of domain knowledge the sub-project produces.
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

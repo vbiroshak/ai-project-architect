@@ -59,3 +59,6 @@ Active development. Tested across multiple projects in different domains, still 
 ## License
 
 [MIT](LICENSE)
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

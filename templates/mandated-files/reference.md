@@ -66,3 +66,6 @@ Project/
 Three universal sections (PROJECT FILE STRUCTURE, SESSION LOG FORMAT, CONFIG BACKUP) appear in every REFERENCE.txt. SHARED KNOWLEDGE BASE is included only for multi-project setups. Project-specific sections follow.
 
 PROJECT FILE STRUCTURE must stay current when directory structure changes (see STRUCTURE CHANGES in the [session logs template](../workflow-sections/session-logs.md)).
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

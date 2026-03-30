@@ -29,3 +29,6 @@ Two categories:
 - [Lessons Index](mandated-files/lessons-index.md) — operational knowledge routing
 - [Tasks](mandated-files/tasks.md) — active items queue
 - [Archive Index](mandated-files/archive-index.md) — archived sub-project inventory
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

@@ -9,3 +9,6 @@ Workspace: All project files live on the filesystem at [path]. You have Filesyst
 
 When Filesystem tools are not available, let the user know and explain that the session will operate from project memory and conversation context. Capabilities will be limited. Remember any work that should be logged or written to the filesystem per your workflow instructions, and do so when these tools become available again.
 ```
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*

@@ -90,3 +90,6 @@ This only works with filesystem access (typically a desktop application). On mob
 File metadata reflects the timezone of the machine, which is useful but means the AI needs to note the timezone in log entries.
 
 Within a single rapid exchange (messages seconds apart), the timestamps won't be meaningfully different. This is most useful for detecting gaps of minutes to hours.
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*
