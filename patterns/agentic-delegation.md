@@ -1,117 +1,101 @@
 # Agentic Task Delegation
 
-A methodology for delegating bounded mechanical tasks to agentic tools while retaining strategic oversight in conversation.
-
-The examples below use Claude's Cowork feature, but the pattern applies to any AI workflow where a separate agent or tool can perform filesystem operations independently: Claude Code, custom scripts, or equivalent features in other AI platforms.
+A methodology for delegating bounded tasks to agentic tools while retaining strategic oversight in conversation.
 
 ---
 
-## When to Use This Pattern
+## When to Delegate
 
-The pattern works well when a task is:
+Delegation works well when a task is:
 
-- Mechanical but detail-intensive (reading many files, renaming, sorting, building indexes)
-- Clearly bounded to a specific folder or set of files
+- Detail-intensive at scale (reading many files, auditing, sorting, building indexes, bulk edits)
+- Clearly bounded to a specific scope
 - Describable without needing the full project context
 - Something that would consume significant context window and conversation time if done inline
 
-Examples: organizing source documents into case folders, sorting and identifying meaningful data in archival collections, categorizing and renaming financial documents, processing batches of emails or screenshots, building inventories of large file collections, extracting structured data from unstructured sources.
+Examples: organizing source documents into case folders, sorting and identifying meaningful data in archival collections, categorizing and renaming financial documents, processing batches of emails or screenshots, building inventories of large file collections, extracting structured data from unstructured sources, auditing files for consistency, applying mechanical changes across a codebase or workspace.
 
-The pattern does NOT work well for tasks requiring strategic judgment or project context, drafting that needs voice calibration, work that depends on decisions not yet made, or anything where the "right answer" requires understanding the broader project.
-
----
-
-## The Workflow
-
-### 1. Scope the Task (Claude + Human, in conversation)
-
-Identify what needs doing, what the inputs are, and what the output should look like. Make key decisions before writing the prompt. Cowork agents can't make judgment calls about where things belong or how they relate to other parts of the project.
-
-Questions to resolve: What folder(s) does Cowork need access to? What's the output structure? Are there files that belong elsewhere? What documentation should Cowork produce? Are there files Cowork should NOT touch or open?
-
-### 2. Draft the Prompt (Claude, saved to project)
-
-Write detailed task instructions as a standalone text file. The prompt must contain everything the Cowork agent needs to do the job without any other context. See "What Makes a Good Prompt" below.
-
-### 2b. Optional: Prompt Review by Cowork
-
-For complex delegations, consider having Cowork review and critique the prompt before running it. Start a Cowork session, provide the draft prompt, and ask for feedback on feasibility, efficiency, and potential issues.
-
-Cowork brings a distinct operational perspective, particularly around parallel agent architecture, batch sizing, filesystem operations, and verification strategies. A prompt that looks complete to the Chat instance that wrote it may have significant improvements that Cowork identifies immediately.
-
-The general principle: Claude in Chat, Claude Code, and Cowork are all capable peers with different operational contexts, not subordinates receiving instructions. Treat delegation prompts as proposals that the receiving instance can improve.
-
-### 3. Hand Off to Cowork (Human)
-
-Switch to Cowork. Point it at the specific folder it needs to work in, not a parent directory. Provide the prompt. Start a fresh Cowork session for each task.
-
-### 4. Monitor (Human + Claude)
-
-Claude doesn't need filesystem access during this step. The human can relay progress updates, screenshots of Cowork's plan, or questions that arise. Claude advises from the web or mobile interface if needed.
-
-Watch for: Cowork requesting permissions it shouldn't need (especially delete permissions when the prompt says not to delete), subagents creating extraneous files, and error messages (especially image dimension limits).
-
-### 5. Move Output Into Place (Human)
-
-After Cowork finishes, move the organized output from the staging area into the project's file structure. Cowork creates output in an Organized/ subfolder within its working directory. Move the contents to the final destination.
-
-### 6. Review and Integrate (Claude, back on desktop)
-
-Claude reviews what Cowork produced: checks file names, reads indexes and narrative files, verifies nothing is missing or misfiled. Then Claude does the integration work that requires project context: writing case files, updating cross-references, adding to lessons or other project-level documents.
-
-### 7. Clean Up (Human + Claude)
-
-Delete the original source files once the organized versions are confirmed. Remove the staging folder. Completed Cowork prompts can stay as templates or be removed.
+Delegation does not work well for tasks requiring strategic judgment or project context, drafting that needs voice calibration, work that depends on decisions not yet made, or anything where the right answer requires understanding the broader project.
 
 ---
 
-## What Makes a Good Prompt
+## Know Your Delegate
 
-The prompt is the entire interface between the project's knowledge and the Cowork agent. It needs to be thorough because Cowork has no access to the project's history, conventions, or strategic context.
+The most common mistake in writing delegation prompts is not understanding who you're writing for. Different agents have different models, tools, and capabilities. A prompt written for the wrong level of capability either over-constrains a capable agent (spelling out what it can figure out) or under-specifies for a limited one (assuming judgment it can't exercise).
 
-A strong prompt follows this structure:
+Before writing a prompt, establish:
 
-1. One-line task summary
-2. Background context (what the files are, why they matter)
-3. Directory structure the agent will find
-4. Output structure to create
-5. File-by-file handling instructions where needed
-6. Naming conventions
-7. Documentation to produce (INDEX.txt, narrative files)
-8. Format specifications for those documents
-9. Rules and constraints (especially "do not delete")
-10. Technical notes (how to read unusual file types)
+- **What model is the agent running?** A frontier model (Claude Opus, etc.) reasons, infers, and adapts. A smaller model needs more explicit structure. Writing step-by-step instructions for a frontier model wastes prompt space on procedure it would handle better on its own. Writing loose goals for a small model produces unreliable results.
+- **What tools does it have?** Filesystem access, code execution, web search, sub-agent coordination, ability to delete files? The prompt should be written for the tools available, not for the tools the prompt author uses.
+- **What can it do that you can't?** Agentic tools often have capabilities the conversational AI doesn't: running scripts, coordinating parallel workers, processing files at scale, interacting with the filesystem in ways a chat session cannot. A good prompt leverages these rather than dictating a procedure the agent would improve on.
+- **What context does it lack?** The agent typically has no access to project history, conventions, or strategic context. The prompt supplies the context the agent needs, not a procedure to follow.
 
-**Be explicit about everything.** Cowork doesn't infer from context. If files from 2023 shouldn't be mixed with files from 2024, say so and explain why.
-
-**Specify the output structure before the file handling instructions.** The agent needs to know where things go before it starts sorting them.
-
-**Include background context.** Even though the agent doesn't need the full project history, knowing what the files represent helps it make better naming and description decisions.
-
-**Ask for documentation.** INDEX.txt files and narrative summaries are the bridge between Cowork's mechanical work and Claude's integration work.
-
-**Always say "do not delete any files."** Cowork should copy to the organized structure, leaving originals in place until confirmed correct.
-
-**Include technical notes for unusual file types.** Instructions for reading .eml files (multipart MIME boundaries, quoted-printable encoding, where to find the plain text body) prevent errors.
+The general principle: delegation prompts are proposals, not instructions. A capable agent receiving a well-contextualized prompt will often find a better approach than the one the prompt author imagined. Write for understanding, not compliance.
 
 ---
 
-## Known Issues and Workarounds
+## The Process
 
-**Image dimension limits.** Cowork hits an error when processing multiple images larger than 2000px. Resize images before handing off. On macOS: `sips --resampleWidth 1000 *.png`
+### 1. Scope the Task
 
-**Subagent file creation.** Cowork sometimes uses subagents that create extraneous files in the source directory. If Cowork requests delete permission for these, deny it unless you can verify exactly what it wants to delete.
+Identify what needs doing, what the inputs are, and what the output should look like. Make key decisions before writing the prompt. The delegate has no project context to inform judgment calls.
 
-**Copy vs move.** Because the prompt says "do not delete," Cowork copies files rather than moving them. Originals remain in the source directory. This is intentional. Delete originals after confirming the organized versions are correct.
+Questions to resolve: What's the scope (which files, folders, systems)? What does the output look like? What should the delegate not touch? What documentation should it produce?
 
-**Session isolation.** Start a fresh Cowork session for each task. Leftover context from a previous task can cause unexpected behavior.
+### 2. Draft the Prompt
 
-**Folder scope.** Point Cowork at the specific folder it needs, not a parent directory. Broader access lets it get distracted by other folders.
+Write task instructions as a standalone text file saved to the project. The prompt must contain everything the delegate needs without any other context.
+
+What goes in the prompt depends on the delegate's capabilities (see Know Your Delegate). For a capable agent, focus on:
+
+- What the task is and why it matters (context, not just procedure)
+- What the files or inputs actually look like, with concrete examples
+- What the output should look like
+- Constraints and boundaries (what not to modify, what to skip)
+- Where to write results
+
+For less capable agents, add more explicit structure: step-by-step sequences, format specifications, verification checklists.
+
+The prompt author is typically a conversational AI with project context but without the delegate's tools. This means the prompt may contain assumptions about the filesystem, file contents, or approach that don't hold. The next step catches this.
+
+### 3. Have the Delegate Review the Prompt
+
+Before running the task, give the delegate the prompt and ask for feedback. This is not optional for complex delegations.
+
+The delegate brings operational perspective the prompt author lacks: knowledge of its own tools, awareness of edge cases in filesystem operations, better strategies for parallelism or batching, and ability to spot assumptions that don't match the actual file state. A prompt that looks complete from the conversational side often has significant improvements the delegate identifies immediately.
+
+The review-then-iterate cycle is the core of good delegation. The conversational AI provides project context and strategic intent. The delegate provides operational expertise. Neither alone writes the best prompt.
+
+### 4. Hand Off
+
+The human provides the prompt to the delegate and points it at the appropriate scope. Start a fresh session for each task. Leftover context from previous tasks causes unexpected behavior.
+
+Scope the delegate's access to what it needs. Broader access than necessary lets it get distracted or make changes outside the task boundary.
+
+### 5. Monitor
+
+The human monitors execution. The conversational AI advises if questions arise, relaying information between the delegate and the conversation as needed. Watch for the delegate requesting permissions beyond what the task requires, or creating unexpected artifacts.
+
+### 6. Review and Integrate
+
+The conversational AI reviews what the delegate produced: checks outputs, reads any documentation or reports, verifies nothing was missed or mishandled. Then does the integration work that requires project context: updating cross-references, writing to project files, connecting the output to the broader project state.
 
 ---
 
-## What Stays in Chat vs. What Goes to Cowork
+## Examples
 
-Cowork handles the mechanical work. Chat handles everything that requires project context: strategic decisions about filing and organization, voice-calibrated drafting, case file writing and updates, lessons and pattern documentation, and quality review of Cowork output.
+The examples below use Claude's Cowork feature, but the pattern applies to any agentic delegation: Claude Code, custom scripts, or equivalent features in other AI platforms.
 
-The division: Cowork reads, renames, sorts, and documents. Claude in Chat judges, writes, connects, and integrates.
+**Cowork (Claude Desktop):** Runs Claude Opus. Has full filesystem access including the ability to delete files. Can coordinate and run sub-agents in parallel. Can run code. Can process files at scale. The prompt should provide context and constraints, not step-by-step procedure. Cowork will figure out the approach.
+
+**Claude Code:** Runs in the terminal. Has code execution and filesystem access. Strong at programmatic tasks: writing and running scripts, git operations, code refactoring. The prompt can describe the goal and let it choose the implementation.
+
+**Custom scripts or smaller models:** May need more explicit structure, verification steps, and output format specifications depending on capability.
+
+---
+
+## What Stays in Conversation vs. What Gets Delegated
+
+The delegate handles work that is bounded and describable without project context. The conversational AI handles everything that requires strategic judgment, project knowledge, voice calibration, or integration across the project.
+
+The division: the delegate reads, processes, sorts, audits, and documents. The conversational AI judges, writes, connects, and integrates.

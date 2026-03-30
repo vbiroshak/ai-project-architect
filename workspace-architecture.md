@@ -1,6 +1,6 @@
 # Workspace Architecture for Sustained Knowledge Work with AI
 
-Version 4.0
+Version 4.1
 
 A workspace architecture optimized for context cost and continuity.
 
