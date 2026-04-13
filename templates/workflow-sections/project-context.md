@@ -26,4 +26,4 @@ Current context:
 The preamble (first three lines through "mention it.") and the FILE DELETION seed entry are universal. FACTUAL GROUNDING uses a domain-specific template (see [Factual Grounding](../../workspace-architecture.md#factual-grounding) in the architecture document). All other entries are project-specific and accumulate over time.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*

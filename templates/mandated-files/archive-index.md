@@ -1,6 +1,6 @@
 # Archive Index
 
-Per project, required when a project archives its first sub-project. Inventory of archived sub-projects at project root. Prescribed by the [archive pattern](../../patterns/archive-pattern.md).
+Per project, required when a project archives its first sub-project. Lives inside Archive/. Inventory of archived sub-projects. Prescribed by the [archive pattern](../../patterns/archive-pattern.md).
 
 Carries freshness lines. Updated when a sub-project is archived.
 
@@ -28,4 +28,4 @@ Each entry: name, completion date (YYYY-MM), and enough description to know cont
 Date format YYYY-MM matches the archival naming convention (e.g., "Research Project - 2026-03").
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*

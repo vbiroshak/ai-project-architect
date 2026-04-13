@@ -1,6 +1,6 @@
 # Workspace Architecture for Sustained Knowledge Work with AI
 
-Version 4.1
+Version 4.2
 
 A workspace architecture optimized for context cost and continuity.
 
@@ -33,10 +33,8 @@ This document describes a workspace architecture that balances orientation quali
     HANDOFF.txt             current state,
                             priorities, reading pointers.
                             Overwritten with every log entry.
-    REFERENCE.txt           file structure, format specs,
-                            procedures, sub-project pointers.
+    PROJECT_INDEX.txt       file structure index.
                             Read at startup with HANDOFF.
-                            Not a container for domain knowledge.
     TASKS.txt               optional — active items only, no
                             DONE section. Read at startup for
                             projects that use one.
@@ -85,14 +83,14 @@ Startup reads seven things, in an order where each step builds on the context es
 1. **WORKFLOW.txt**
 2. **Read Workflow Files/Config/PROJECT_INSTRUCTIONS.txt.** If it differs from the project instructions in context, update the file to match. This keeps the backup current for project portability and recreation.
 3. **Check the clock and time since last logged interaction** (see Temporal Awareness) — establishes temporal frame before any project state loads
-4. **Workflow Files/REFERENCE.txt and Workflow Files/HANDOFF.txt** — REFERENCE gives structural context (what exists, where), HANDOFF gives state context (what's happening, what to read next)
+4. **Workflow Files/PROJECT_INDEX.txt and Workflow Files/HANDOFF.txt** — PROJECT_INDEX gives structural context (what exists, where), HANDOFF gives state context (what's happening, what to read next)
 5. **Most recent session log in Workflow Files/Session Logs/**, plus any additional logs the handoff identifies.
 6. **Project-level task queue**, if the project uses one. Fix any completed items on the spot. Sub-project or function-specific queues load at activation, not startup.
 7. **Inbox/ listing** (filenames only) — last, because inbox items could be from any time and benefit from having all project state loaded first
 
 The clock check comes early because temporal context informs how everything after it is read. Knowing whether the last logged interaction was an hour ago or three days ago changes how the handoff and session log land. The handoff gives the current state snapshot: where things stand per functional area, priorities, what to read for depth. The session log(s) give the narrative: how things got to the current state, what was tried, what was decided and why. Together they orient a fresh chat to continue the work with both the snapshot and the story. The inbox is listed last because its items may be old or new, and having the full project state loaded first enables recognition of how inbox items connect to existing work.
 
-The session log was added back after testing showed that handoff-only startup lost narrative continuity. A chat reading only the handoff knew what the current state was but not how it got there, causing it to fall back on stale memory and past chat search. One session log restores the narrative thread at modest cost while significantly reducing context load compared to reading multiple logs at startup.
+The session log carries the narrative thread: how the current state was reached, what was tried, what was decided and why. Without it, a chat reads the handoff and knows what the current state is but not how it got there, which pushes it toward stale memory and past-chat search to reconstruct context. The default load is the most recent log — enough narrative to continue the work at modest context cost. When the most recent log covers structural or meta work rather than the current domain work, or when continuing the work requires earlier context the most recent log doesn't carry, the handoff points to the additional logs that need to load alongside (see step 5).
 
 When writing a handoff after structural or meta work (like project optimization or file reorganization), note which earlier session contains the last domain work. The startup log may be about structural changes, not the actual work. The handoff pointer lets the chat load the domain narrative.
 
@@ -119,20 +117,21 @@ WORKFLOW.txt is the only file read in every context window. Its sections should 
 
 Before adding a section to a WORKFLOW, check the registry. If the content fits an existing section, put it there. If no section fits and the content genuinely needs to be in every context window, evaluate it as a potential registry expansion. Don't invent WORKFLOW sections ad hoc within individual projects.
 
-A baseline registry with 10 sections in fixed order:
+A baseline registry with 11 sections in fixed order:
 
 | # | Section | Status |
 |---|---------|--------|
 | 1 | Session Startup Procedure | Universal |
 | 2 | Base Path | Project-specific |
-| 3 | What This Project Does | Project-specific |
-| 4 | Sub-Project Activation | Universal pattern, project-specific pointers |
-| 5 | Task Queue | Optional |
-| 6 | Session Logs | Universal |
-| 7 | Temporal Awareness | Universal |
-| 8 | Inbox | Universal |
-| 9 | Shared Knowledge Base | Universal |
-| 10 | Project Context | Project-specific |
+| 3 | Tool Guides | Universal |
+| 4 | What This Project Does | Project-specific |
+| 5 | Sub-Project Activation | Universal pattern, project-specific pointers |
+| 6 | Task Queue | Optional |
+| 7 | Session Logs | Universal |
+| 8 | Temporal Awareness | Universal |
+| 9 | Inbox | Universal |
+| 10 | Shared Knowledge Base | Universal |
+| 11 | Project Context | Project-specific |
 
 Universal sections carry identical mechanical text across all projects. Project-specific sections use the same heading and position but carry project-specific content. Optional sections are included only when needed.
 
@@ -140,25 +139,25 @@ For the actual deployable text of each section, see the [workflow section templa
 
 ### Section Descriptions
 
-**Session Startup Procedure** — The seven-step startup sequence: read WORKFLOW, sync config backup, check the clock and time since last logged interaction, read REFERENCE and HANDOFF, read the most recent session log plus any additional logs the handoff identifies, read task queue if present, list Inbox. Identical across all projects.
+**Session Startup Procedure** — The seven-step startup sequence: read WORKFLOW, sync config backup, check the clock and time since last logged interaction, read PROJECT_INDEX and HANDOFF, read the most recent session log plus any additional logs the handoff identifies, read task queue if present, list Inbox. Identical across all projects.
 
 **Base Path** — The project's filesystem root. One line.
 
 **What This Project Does** — Brief project description and current sub-project list with one-line descriptions. Updated when sub-projects are added or archived.
 
-**Sub-Project Activation** — Three-step activation pattern: read reference file, read everything the handoff identifies for that sub-project, load additional files as needed. Loading depth varies by sub-project and is governed by the handoff's pointers. When reading a sub-project's status file, verify it is consistent with the handoff and fix discrepancies on the spot (see Fix on Contact). Universal pattern with project-specific reference file pointers. Also establishes the write direction: domain knowledge produced during work goes into files inside the sub-project directory, not REFERENCE.txt. Every sub-project listed must have a reference file; if the directory exists, a seeded file exists.
+**Sub-Project Activation** — Three-step activation pattern: read reference file, read everything the handoff identifies for that sub-project, load additional files as needed. Loading depth varies by sub-project and is governed by the handoff's pointers. When reading a sub-project's status file, verify it is consistent with the handoff and fix discrepancies on the spot (see Fix on Contact). Universal pattern with project-specific reference file pointers. Also establishes the write direction: domain knowledge produced during work goes into files inside the sub-project directory, not PROJECT_INDEX.txt. Every sub-project listed must have a reference file; if the directory exists, a seeded file exists.
 
 **Task Queue** — For projects that use a task queue. Standard location: Workflow Files/TASKS.txt. Active items only (no DONE section), read at startup, add immediately when items arise, remove on completion and note in session log. Include only in projects that maintain a task queue file.
 
-**Session Logs** — Logging mechanics. Per unit of work, not per chat. Sequential numbering. Write when substantive work accumulates; never defer to end of session. Keep logs concise; a growing log signals writing more often. Paired writes with HANDOFF (including freshness lines). Structure changes trigger REFERENCE.txt verification. Fix on contact for stale information. Evolving state: log topics at current progress, not binary. Handoff pointers scaled to complexity. Freshness line definitions and maintenance rules. Identical across all projects.
+**Session Logs** — Logging mechanics. Per unit of work, not per chat. Sequential numbering. Write when substantive work accumulates; never defer to end of session. Keep logs concise; a growing log signals writing more often. Paired writes with HANDOFF (including freshness lines). Structure changes trigger PROJECT_INDEX.txt verification. Fix on contact for stale information. Evolving state: log topics at current progress, not binary. Handoff pointers scaled to complexity. Freshness line definitions and maintenance rules. Identical across all projects.
 
-**Temporal Awareness** — Clock mechanism (write to file, get file info, read modified field, stale-reading retry) and time since last logged interaction. Identical across all projects.
+**Temporal Awareness** — Clock mechanism and two check points: at startup (current time + time since last interaction) and mid-chat (detect gaps when the human returns to a continuing chat after hours or days). Identical across all projects.
 
 **Inbox** — Asynchronous interface between the user and the project, both directions. The user drops files for processing; the AI writes drafts, deletion flags, delegation notes, or anything needing the user's attention. Processing guidance: list the directory before any reference to inbox contents (startup, mid-session, handoff writing), read on demand, check existing project structure before assessing items. Identical across all projects.
 
 **Shared Knowledge Base** — Path and one-line description. Identical across all projects.
 
-**Project Context** — Project-specific material earning its place in every context window but not covered by account-wide user preferences. Domain context, operational conventions. Accumulates through use. A file deletion convention is always present as a seed entry. Content already in account-wide preferences should not be duplicated here. Detailed procedures and file structure documentation belong in REFERENCE.txt, not here.
+**Project Context** — Project-specific material earning its place in every context window but not covered by account-wide user preferences. Domain context, operational conventions. Accumulates through use. A file deletion convention is always present as a seed entry. Content already in account-wide preferences should not be duplicated here. File structure documentation belongs in PROJECT_INDEX.txt, not here.
 
 Additional sections may be prescribed by shared patterns (e.g., an Archive section prescribed by the archive pattern, sitting after Sub-Project Activation). These are governed by their pattern documentation, not the base registry.
 
@@ -168,8 +167,8 @@ A routing flowchart for new content:
 - Needed every session, mechanical/procedural → check the registry for an existing section
 - Applies to all projects, behavioral/personal → account-wide user preferences
 - Needed only when working a specific sub-project → sub-project reference file
-- Reference material, procedures, file structure → REFERENCE.txt
-- Domain knowledge for a specific sub-project → a file inside the sub-project directory (REFERENCE.txt points to it, does not hold it)
+- File structure documentation → PROJECT_INDEX.txt
+- Domain knowledge for a specific sub-project → a file inside the sub-project directory (PROJECT_INDEX.txt points to it, does not hold it)
 - New section type not in the registry → evaluate for registry expansion
 
 ---
@@ -212,7 +211,7 @@ Every instruction must be composed as explicit action sequences, not conditional
 
 This applies at every level: project instructions, startup procedures, sub-project reference files, inbox checks, temporal awareness steps. Every conditional phrase ("when," "if," "once," "after") is a candidate for conversion into an explicit action step.
 
-Discovered through multiple iterations of the project instructions template. Each version was clear to a human reader. The problem was never clarity. It was the assumption that the AI processes instructions the way humans read them.
+The failure mode is subtle because conditional instructions read as clear to a human. Clarity to a human reader is not the bar. The bar is whether the instruction composes as an action the AI will execute, rather than a condition the AI is expected to evaluate before acting.
 
 ### Directory Design Is UX Design
 
@@ -226,11 +225,11 @@ Orientation and archive are separate functions that need separate files. Session
 
 Handoff notes flag known fragilities, not just steps. A task with hidden complexity needs a caution line naming the risk and pointing to documentation.
 
-### Lean Workflow, Structural Reference
+### Lean Workflow, Structural Index
 
 WORKFLOW.txt keeps only what earns its place in every context window: startup procedure, project description, temporal awareness, logging guidance, project context.
 
-Everything else (file structure listings, detailed format specs, procedural notes, sub-project pointers) lives in Workflow Files/REFERENCE.txt. REFERENCE.txt is infrastructure: it describes the project's file structure, points to sub-project files, and holds procedural notes. It is not a container for domain knowledge. Domain content belongs in sub-project files; REFERENCE.txt points to those files. Both files read at startup, but they serve different roles: WORKFLOW carries procedure and behavioral rules, REFERENCE carries structural context.
+The project's file structure lives in Workflow Files/PROJECT_INDEX.txt: a pure structural index listing what exists and where. It is not a container for domain knowledge, procedures, or format specifications — those belong in the WORKFLOW (if they earn their place in every context window) or in sub-project reference files (if they're domain-specific). Both files read at startup, but they serve different roles: WORKFLOW carries procedure and behavioral rules, PROJECT_INDEX carries the structural map.
 
 ### Concise Logging
 
@@ -351,7 +350,7 @@ Both lines always present. If a file has never been reviewed separately from its
 
 ### Which Files
 
-All architecture-prescribed files carry both freshness lines: WORKFLOW.txt, HANDOFF.txt, REFERENCE.txt, STATUS files, TASKS.txt, INDEX.txt files, sub-project reference files, and LESSONS_INDEX.txt. The title line carries only the file's identity. Freshness lines occupy lines 2-3.
+All architecture-prescribed files carry both freshness lines: WORKFLOW.txt, HANDOFF.txt, PROJECT_INDEX.txt, STATUS files, TASKS.txt, INDEX.txt files, sub-project reference files, and LESSONS_INDEX.txt. The title line carries only the file's identity. Freshness lines occupy lines 2-3.
 
 Session logs do not carry freshness lines (they are append-only historical records with timestamps in their entries). Clock files and Config backups do not carry them.
 
@@ -371,7 +370,7 @@ Freshness lines are maintained as part of existing workflow triggers, not as a s
 
 - **Paired writes:** When writing a log entry and overwriting the handoff, refresh the handoff's freshness lines. When overwriting a STATUS file as part of the same paired write, refresh its freshness lines. For files that are overwritten wholesale (HANDOFF, STATUS files rewritten during state changes), both lines carry the same date because rewriting is both an update and a review.
 - **Fix on Contact:** When correcting stale or incorrect information in any file, refresh both "Last updated" and "Last reviewed" (you changed the content and confirmed the rest).
-- **Structure verification:** When verifying REFERENCE.txt after directory structure changes, refresh "Last updated" if content changed, and refresh "Last reviewed" regardless (you just confirmed it).
+- **Structure verification:** When verifying PROJECT_INDEX.txt after directory structure changes, refresh "Last updated" if content changed, and refresh "Last reviewed" regardless (you just confirmed it).
 - **Task queue review:** When reading the task queue at startup and fixing completed items, refresh "Last reviewed" (you just confirmed the list is current). If you added or removed items, also refresh "Last updated."
 - **Sub-project reference files:** When reading a sub-project reference file during substantive work, refresh "Last reviewed" before writing the session log. If you changed content, also refresh "Last updated."
 
@@ -435,7 +434,7 @@ Knowledge flows upward through three levels:
 
 **Sub-project reference files:** Domain-specific knowledge managed by each sub-project in whatever form serves the work. A client management sub-project has case files and communication logs. A research sub-project has analytical frameworks and source annotations. A media sub-project has taste profiles and tracking lists. These are living documents that capture the current state of the sub-project's thinking.
 
-Domain knowledge always lives in sub-project files, not in the project-level REFERENCE.txt. When a sub-project accumulates context, write that content into a file inside the sub-project directory. The project-level REFERENCE.txt carries a pointer to the sub-project file and a one-line scope description — never a summary or duplication of the content itself.
+Domain knowledge always lives in sub-project files, not in the project-level PROJECT_INDEX.txt. When a sub-project accumulates context, write that content into a file inside the sub-project directory. The project-level PROJECT_INDEX.txt carries a pointer to the sub-project file and a one-line scope description — never a summary or duplication of the content itself.
 
 **Project operational lessons:** Cross-cutting knowledge that any sub-project might need. Tool quirks, workarounds, migration procedures, context cost behavior. Centralized in Workflow Files/Lessons/ with an index routing to topical files. When a sub-project discovers something operationally useful, it surfaces here.
 
@@ -473,13 +472,13 @@ The coordinator's relationship to domain projects is consultative, not controlli
 
 ## Sub-Projects
 
-Each functional area gets its own directory at the project root. This directory is the authoritative home for all domain knowledge in that area. Everything the AI learns about the domain — case data, research threads, tracking lists, analytical frameworks, procedural notes — is written into files inside the sub-project directory. The project-level REFERENCE.txt points to these files but never holds domain content itself.
+Each functional area gets its own directory at the project root. This directory is the authoritative home for all domain knowledge in that area. Everything the AI learns about the domain — case data, research threads, tracking lists, analytical frameworks, procedural notes — is written into files inside the sub-project directory. The project-level PROJECT_INDEX.txt points to these files but never holds domain content itself.
 
 Always create at least one sub-project folder, even for single-focus projects, to establish the pattern and avoid restructuring later.
 
 ### Sub-Project Internal Structure
 
-A sub-project's internal structure mirrors the project level: an orientation file for current state, a reference file for accumulated domain knowledge, and domain folders shaped by the work. The same architectural logic that separates WORKFLOW.txt from REFERENCE.txt at the project level applies inside each sub-project.
+A sub-project's internal structure mirrors the project level: an orientation file for current state, a reference file for accumulated domain knowledge, and domain folders shaped by the work. The same architectural logic that separates WORKFLOW.txt from PROJECT_INDEX.txt at the project level applies inside each sub-project.
 
 Standard file roles:
 
@@ -488,11 +487,11 @@ Standard file roles:
 - **[named domain files]** — Working documents shaped by the domain. Case folders, design briefs, tracking lists, configuration files, research notes. Named for what they contain (e.g., voice_config.txt, not config.txt).
 - **[domain folders]** — Cases/, Testing Reports/, Research/, etc. Shaped by the work.
 
-**Naming rules:** Files inside sub-project directories must include the sub-project name or a domain-specific identifier. No generic names like REFERENCE.txt or STATUS.txt — these collide with the project-level files and with each other when read into context. A chat reading VOICEMODE_STATUS.txt or SUPPLEMENTS_REFERENCE.txt knows immediately what sub-project it belongs to. Exception: a sub-project with a single primary file may use a content-descriptive name instead (e.g., trust_analysis.txt). The test is whether the filename alone identifies the sub-project.
+**Naming rules:** Files inside sub-project directories must include the sub-project name or a domain-specific identifier. No generic names like STATUS.txt or REFERENCE.txt — these collide with each other when read into context. A chat reading VOICEMODE_STATUS.txt or SUPPLEMENTS_REFERENCE.txt knows immediately what sub-project it belongs to. Exception: a sub-project with a single primary file may use a content-descriptive name instead (e.g., trust_analysis.txt). The test is whether the filename alone identifies the sub-project.
 
 **Development trajectory:** A new sub-project starts with a status file and possibly a reference file. As work accumulates, named domain files and folders emerge. As domain files grow, the indexed collection pattern applies. The AI should recognize when infrastructure needs to develop and build it, following the patterns in this document and looking at how peer sub-projects have organized their work.
 
-Standing rule: when a sub-project directory is created, seed it with at least a status file immediately. An empty sub-project directory has no gravity — domain knowledge will flow to the project-level REFERENCE.txt instead, because that file already exists and has structure. A seeded file reverses that pull.
+Standing rule: when a sub-project directory is created, seed it with at least a status file immediately. An empty sub-project directory has no gravity — domain knowledge will flow to the project-level PROJECT_INDEX.txt instead, because that file already exists and has structure. A seeded file reverses that pull.
 
 Sub-project structure depends on the shape of the work:
 
@@ -510,7 +509,7 @@ When a sub-project outgrows its parent project, it can be split into its own pro
 
 ### Archiving
 
-When a sub-project completes, it moves to Archive/ at the project root with a completion-date name (e.g., "Project Name - 2026-03"). The sub-project's status file gets a closing note before archiving. An ARCHIVE_INDEX.txt at the project root maintains an inventory of archived sub-projects for discoverability. Active sub-projects always live at root, never inside Archive/.
+When a sub-project completes, it moves to Archive/ at the project root with a completion-date name (e.g., "Project Name - 2026-03"). The sub-project's status file gets a closing note before archiving. An ARCHIVE_INDEX.txt inside the Archive/ directory maintains an inventory of archived sub-projects for discoverability. Active sub-projects always live at root, never inside Archive/.
 
 See the companion pattern: [Sub-Project Archive Pattern](patterns/archive-pattern.md).
 
@@ -562,16 +561,34 @@ Complex projects may need multiple task queues split by function or sub-project.
 
 ## Temporal Awareness
 
-AI assistants have no internal clock. Temporal awareness has two components, both baseline startup behaviors:
+AI assistants have no internal clock and cannot estimate, infer, or guess the time. Temporal awareness is a continuous behavior with two components:
 
 1. **What time is it now?**
-2. **How long has it been since the last logged interaction?**
+2. **How long has it been since the last known time reference?**
 
-The first gives the current moment. The second gives context: is this a return after three days or a continuation from an hour ago? Both inform orientation. Temporal awareness is not just knowing the time but reasoning about what it means for the work: day of week, business hours, calendar deadlines, how much may have changed.
+The mechanism uses a persistent Clock file (Workflow Files/Clock/timestamp.txt) and filesystem metadata. The AI writes to the Clock file and reads the resulting modification timestamp. This is the only reliable time source.
 
-The mechanism uses a persistent Clock file (Workflow Files/Clock/timestamp.txt) and filesystem metadata. Each project's WORKFLOW.txt carries the implementation steps.
+The clock is checked at two points: at startup (step 3), and mid-chat before the first filesystem operation in each response. The startup check establishes the current time and calculates time since the last logged interaction. The mid-chat check detects gaps when the human leaves a continuing chat and returns hours or days later. Without the mid-chat check, the AI's only time reference is its startup reading, and it will fabricate timestamps when that reading goes stale.
+
+Each project's WORKFLOW.txt carries the implementation steps.
 
 See the companion pattern: [Temporal Awareness](patterns/temporal-awareness.md).
+
+---
+
+## Tool Guides
+
+Tool guides are operational reference for using a specific capability well. They answer "how do I use this tool efficiently and correctly?" — front-loading the working approach so the AI doesn't have to rediscover it mid-session.
+
+Tool guides are distinct from patterns. A pattern describes a type of thing in the workspace, a technique that shapes how work is done, or a design that solves a structural problem. A tool guide describes how to operate a specific tool well. Patterns answer "what is this and why does it exist?" Tool guides answer "how do I use this proficiently?"
+
+The two can coexist around related territory without overlapping. The agentic delegation pattern covers what delegation is, when to use it, and how it fits the workspace. A Cowork tool guide would cover Cowork-specific operational details: its model, its tools, its sub-agent behavior, its working directory conventions. They cross-reference each other but serve different questions.
+
+Tool guides live per-project in `Workflow Files/Tool Guides/`, loaded on demand when work that uses the tool begins. They are not loaded at startup. Each guide is self-contained operational reference for one tool.
+
+The repo carries tool guides as a collection ([tool-guides/](tool-guides/)) from which projects adopt what they need. A project that doesn't use Chrome doesn't need the Chrome guide. A project that uses Chrome adopts the guide into its own `Workflow Files/Tool Guides/` directory.
+
+Scope: tool guides cover universal tool behavior. Task-specific operational detail (how to fill out a particular form on a particular site, for example) belongs in domain files inside the relevant sub-project, not in the tool guide. The tool guide is the reusable layer; the domain file is the work-specific layer.
 
 ---
 
@@ -589,7 +606,7 @@ The existing structure works well for its scope. Migrate when the project grows 
 
 1. Create a sub-project folder for the current work and move domain-specific files into it
 2. Create Workflow Files/ and move Clock/, Config/, Session Logs/ into it
-3. Create Workflow Files/HANDOFF.txt and REFERENCE.txt
+3. Create Workflow Files/HANDOFF.txt and PROJECT_INDEX.txt
 4. Ensure Inbox/ stays at root
 5. Rewrite WORKFLOW.txt: lean version with handoff-driven startup procedure
 6. Add freshness lines (Last updated, Last reviewed) to all files created in steps 1-5. See Freshness Tracking.
@@ -609,4 +626,4 @@ The existing structure works well for its scope. Migrate when the project grows 
 **Project memory.** This system works with your AI application's project memory turned on or off. With memory on, you may find duplication between memory and filesystem state. With memory off, you may find less long-term usefulness on mobile or web where the filesystem is unavailable. Experiment with both to see what works for your use case.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*

@@ -26,7 +26,7 @@ You need the **Claude Desktop app** (macOS or Windows) with the Filesystem exten
 
 3. **Set tool permissions to Always Allow** for the smoothest experience. The AI reads and writes files frequently during normal work, and prompting on each one adds friction. If the Filesystem extension is only scoped to your AI project directory, the AI can only touch files it manages itself, not your personal files.
 
-4. **Give Claude the architecture document and templates.** Link it to this repo or download the files and provide them directly. (Some AI assistants may fetch outdated cached content from the web, so check to ensure it's getting the newest version or download it instead if you prefer.) Describe your project and ask Claude to build the workspace. It will scaffold the directory, create the files, and give you the project instructions to paste into your project settings.
+4. **Give Claude the architecture document and templates.** Link it to this repo, [download the latest version](https://github.com/vbiroshak/ai-project-architect/tags), or provide the files directly. (Some AI assistants may fetch outdated cached content from the web, so check to ensure it's getting the newest version or download it instead if you prefer.) Describe your project and ask Claude to build the workspace. It will scaffold the directory, create the files, and give you the project instructions to paste into your project settings.
 
 That's it. Every new chat in that project reads the workspace and continues where the last one left off.
 
@@ -38,6 +38,7 @@ That's it. Every new chat in that project reads the workspace and continues wher
 | [workspace-architecture.md](workspace-architecture.md) | The complete architecture. Principles, structure, file roles, startup sequence, knowledge organization. Start here. |
 | [templates/](templates/) | Deployable text for every file in the system. Workflow sections go into WORKFLOW.txt verbatim. Mandated file templates show the prescribed structure for handoffs, references, status files, indexes, and more. |
 | [patterns/](patterns/) | Supporting patterns developed through use: [temporal awareness](patterns/temporal-awareness.md), [evolving state](patterns/evolving-state.md), [archiving](patterns/archive-pattern.md), [agentic delegation](patterns/agentic-delegation.md). |
+| [tool-guides/](tool-guides/) | Operational reference for using specific tools well. Adopted per-project as needed, loaded on demand. |
 
 ## Contributing
 
@@ -56,4 +57,4 @@ Active development. Tested across multiple projects in different domains, contin
 [MIT](LICENSE)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*

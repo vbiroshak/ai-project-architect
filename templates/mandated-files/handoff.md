@@ -19,9 +19,9 @@ ACTIVATION CONTEXT:
   [Label]: [Status file, work plan, or other relevant file]
 
 ---
-[EFFORT OR TOPIC] — [STATUS PHRASE]
+[SUB-PROJECT OR EFFORT] — [STATUS PHRASE]
 
-[Current state of an active effort. What's next, decisions pending. One section per active effort needing its own context.]
+[Current state of an active sub-project or effort. What's next, decisions pending. One section per unit of work that needs its own context. In projects with multiple sub-projects, organize by sub-project where the work belongs to one — a sub-project gets its own section whenever it has active work, even if that work is "nothing pending." Work that doesn't belong to any sub-project gets its own effort or topic section alongside the sub-project sections. Projects without sub-projects organize by effort or topic throughout.]
 
 ---
 KNOWN FIXES NEEDED
@@ -55,4 +55,4 @@ SESSION CONTEXT carries compressed summaries of recent sessions (typically 3-5).
 ACTIVATION CONTEXT scales to complexity: one session log for lightweight efforts, a work plan plus status file plus log range for complex ones.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*

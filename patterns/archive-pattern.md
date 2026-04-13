@@ -17,7 +17,6 @@ Deleting is wrong (the historical record has value). Leaving in place is wrong (
 ```
 Project/
   WORKFLOW.txt
-  ARCHIVE_INDEX.txt        ← archive inventory lives here
   Inbox/
   Workflow Files/
     HANDOFF.txt
@@ -25,6 +24,7 @@ Project/
     Clock/
     Config/
   Archive/
+    ARCHIVE_INDEX.txt      ← archive inventory
     Completed Project - YYYY-MM/   ← frozen
   Active Project/                  ← live work
 ```
@@ -41,7 +41,7 @@ Before moving a sub-project to Archive/, add a closing note to its status file. 
 
 Two layers ensure past work is findable:
 
-1. **ARCHIVE_INDEX.txt** at the project root carries a brief inventory of archived sub-projects. A few lines per entry: what the project covered, when it completed, where it lives in Archive/, and key files inside it. This is the index. Future sessions check here when past work is referenced.
+1. **ARCHIVE_INDEX.txt** inside the Archive/ directory carries a brief inventory of archived sub-projects. A few lines per entry: what the project covered, when it completed, where it lives in Archive/, and key files inside it. This is the index. Future sessions check here when past work is referenced.
 
 2. **WORKFLOW.txt** gets an Archive section that tells future sessions where completed sub-projects live and to consult ARCHIVE_INDEX.txt for the inventory. This is the pointer. It ensures the archive is reachable from the standard startup path without adding to startup reads.
 
@@ -78,4 +78,4 @@ When remaining work from a completed sub-project becomes a new sub-project, seed
 For deployable text, see the [WORKFLOW archive section template](../templates/workflow-sections/archive.md) and the [ARCHIVE_INDEX.txt template](../templates/mandated-files/archive-index.md).
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*

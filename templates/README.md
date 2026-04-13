@@ -8,6 +8,7 @@ Two categories:
 
 - [Session Startup Procedure](workflow-sections/session-startup-procedure.md) — universal
 - [Base Path](workflow-sections/base-path.md) — project-specific
+- [Tool Guides](workflow-sections/tool-guides.md) — universal
 - [What This Project Does](workflow-sections/what-this-project-does.md) — project-specific
 - [Sub-Project Activation](workflow-sections/sub-project-activation.md) — universal pattern, file pointers vary
 - [Task Queue](workflow-sections/task-queue.md) — optional
@@ -23,7 +24,7 @@ Two categories:
 - [Project Instructions](mandated-files/project-instructions.md) — canonical text, path is only variable
 - [WORKFLOW](mandated-files/workflow.md) — assembly instructions
 - [HANDOFF](mandated-files/handoff.md) — structural template
-- [REFERENCE](mandated-files/reference.md) — structural template
+- [PROJECT INDEX](mandated-files/project-index.md) — structural template
 - [Status File](mandated-files/status-file.md) — per sub-project
 - [Index File](mandated-files/index-file.md) — per collection folder
 - [Lessons Index](mandated-files/lessons-index.md) — operational knowledge routing
@@ -31,4 +32,4 @@ Two categories:
 - [Archive Index](mandated-files/archive-index.md) — archived sub-project inventory
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*

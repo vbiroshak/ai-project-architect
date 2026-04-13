@@ -23,7 +23,7 @@ KEEP LOGS CONCISE: If a log file is growing large, log more frequently in smalle
 
 PAIRED WRITES: Every log entry is paired with a HANDOFF.txt overwrite — both happen together, every time. When the entry covers sub-project work, also verify the sub-project's status file reflects the current state.
 
-STRUCTURE CHANGES: When file operations change directory structure (creating, moving, or renaming files or directories), verify Workflow Files/REFERENCE.txt reflects the current structure.
+STRUCTURE CHANGES: When file operations change directory structure (creating, moving, or renaming files or directories), verify Workflow Files/PROJECT_INDEX.txt reflects the current structure.
 
 FIX ON CONTACT: When you encounter stale or incorrect information in a workflow, handoff, reference, status, task queue, or index file during normal work, fix it then and there before continuing with other work. Do not defer in any form — noting it for later, flagging it as pending, or adding it to a task list all count as deferring. Remove completed tasks from the queue, update status files that contradict the handoff, correct outdated structure in reference files.
 
@@ -33,7 +33,7 @@ HANDOFF POINTERS: The handoff controls how much context loads at activation. Poi
 
 After structural or meta work, note which earlier sessions contain the last domain work and carry a compressed domain narrative.
 
-Lessons go to lesson files (indexed), not session logs. See Workflow Files/REFERENCE.txt for locations and format.
+Lessons go to lesson files (indexed), not session logs. See Workflow Files/PROJECT_INDEX.txt for locations.
 
 FRESHNESS LINES: Every project file (except session logs and Clock) carries two lines after its title:
 
@@ -46,4 +46,4 @@ For files overwritten wholesale (HANDOFF, STATUS) or newly created, both lines c
 ```
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*

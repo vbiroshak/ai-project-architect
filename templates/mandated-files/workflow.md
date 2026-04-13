@@ -18,19 +18,19 @@ Sections follow in order, each with a `---` separator and ALL CAPS heading:
 |---|---------|-----------------|
 | 1 | Session Startup Procedure | always |
 | 2 | Base Path | always |
-| 3 | What This Project Does | always (structure varies by tier) |
-| 4 | Sub-Project Activation | always |
-| 5 | Task Queue | only if the project uses one |
-| 6 | Session Logs | always |
-| 7 | Temporal Awareness | always |
-| 8 | Inbox | always |
-| 9 | Shared Knowledge Base | always (if running multiple projects) |
-| 10 | Project Context | always |
-| 11 | Archive | when archived sub-projects exist |
+| 3 | Tool Guides | always |
+| 4 | What This Project Does | always (structure varies by tier) |
+| 5 | Sub-Project Activation | always |
+| 6 | Task Queue | only if the project uses one |
+| 7 | Session Logs | always |
+| 8 | Temporal Awareness | always |
+| 9 | Inbox | always |
+| 10 | Shared Knowledge Base | always (if running multiple projects) |
+| 11 | Project Context | always |
+
+Additional sections prescribed by patterns sit outside the numbered registry. The Archive section (prescribed by the [archive pattern](../../patterns/archive-pattern.md)) is added after Sub-Project Activation when the project archives its first sub-project.
 
 Project-specific sections (2, 3, 4 file pointers, 10 entries) get filled with project content. All others use the template text verbatim.
 
-Target size: 4-6 KB assembled.
-
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*

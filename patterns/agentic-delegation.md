@@ -21,11 +21,11 @@ Delegation does not work well for tasks requiring strategic judgment or project 
 
 ## Know Your Delegate
 
-The most common mistake in writing delegation prompts is not understanding who you're writing for. Different agents have different models, tools, and capabilities. A prompt written for the wrong level of capability either over-constrains a capable agent (spelling out what it can figure out) or under-specifies for a limited one (assuming judgment it can't exercise).
+One common mistake in writing delegation prompts is not understanding who you're writing for. Different agents have different models, tools, and capabilities. A prompt written for the wrong level of capability either over-constrains a capable agent (spelling out what it can figure out) or under-specifies for a limited one (assuming judgment it can't exercise).
 
 Before writing a prompt, establish:
 
-- **What model is the agent running?** A frontier model (Claude Opus, etc.) reasons, infers, and adapts. A smaller model needs more explicit structure. Writing step-by-step instructions for a frontier model wastes prompt space on procedure it would handle better on its own. Writing loose goals for a small model produces unreliable results.
+- **What model is the agent running?** A frontier model reasons, infers, and adapts. A smaller model needs more explicit structure. Writing step-by-step instructions for a frontier model wastes prompt space on procedure it would handle better on its own. Writing loose goals for a small model produces unreliable results.
 - **What tools does it have?** Filesystem access, code execution, web search, sub-agent coordination, ability to delete files? The prompt should be written for the tools available, not for the tools the prompt author uses.
 - **What can it do that you can't?** Agentic tools often have capabilities the conversational AI doesn't: running scripts, coordinating parallel workers, processing files at scale, interacting with the filesystem in ways a chat session cannot. A good prompt leverages these rather than dictating a procedure the agent would improve on.
 - **What context does it lack?** The agent typically has no access to project history, conventions, or strategic context. The prompt supplies the context the agent needs, not a procedure to follow.
@@ -86,7 +86,7 @@ The conversational AI reviews what the delegate produced: checks outputs, reads 
 
 The examples below use Claude's Cowork feature, but the pattern applies to any agentic delegation: Claude Code, custom scripts, or equivalent features in other AI platforms.
 
-**Cowork (Claude Desktop):** Runs Claude Opus. Has full filesystem access including the ability to delete files. Can coordinate and run sub-agents in parallel. Can run code. Can process files at scale. The prompt should provide context and constraints, not step-by-step procedure. Cowork will figure out the approach.
+**Cowork (Claude Desktop):** Has full filesystem access including the ability to delete files. Can coordinate and run sub-agents in parallel. Can run code. Can process files at scale. The prompt should provide context and constraints, not step-by-step procedure. Cowork will figure out the approach. See the companion [Cowork Delegation Guide](../tool-guides/cowork-delegation-guide.md) for operational details.
 
 **Claude Code:** Runs in the terminal. Has code execution and filesystem access. Strong at programmatic tasks: writing and running scripts, git operations, code refactoring. The prompt can describe the goal and let it choose the implementation.
 
@@ -101,4 +101,4 @@ The delegate handles work that is bounded and describable without project contex
 The division: the delegate reads, processes, sorts, audits, and documents. The conversational AI judges, writes, connects, and integrates.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.1*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*
