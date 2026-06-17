@@ -17,7 +17,7 @@ WHAT TO LOG: Decisions, state changes, reasoning, and the current state of evolv
 
 LOG WHEN WORK ACCUMULATES: Write a log entry when substantive decisions, findings, or file changes have accumulated — when losing context now would cost the next session. Each entry should be self-contained. Multiple distinct topics means multiple entries and potentially multiple log files.
 
-WRITE FREQUENTLY: Sessions can end without warning. Never defer logging to "end of session" or wait to be asked. Logging is insurance against context loss, not a signal that work is finishing. After writing a log entry, continue working without shifting tone or prompting for next steps.
+WRITE FREQUENTLY: Sessions can end without warning. Never defer logging to "end of session" or wait to be asked. Logging is insurance against context loss, not a signal that work is finishing. After writing a log entry, continue working.
 
 KEEP LOGS CONCISE: If a log file is growing large, log more frequently in smaller pieces rather than appending. Start a new file with the next sequential number when a new unit of work begins.
 
@@ -46,4 +46,4 @@ For files overwritten wholesale (HANDOFF, STATUS) or newly created, both lines c
 ```
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*

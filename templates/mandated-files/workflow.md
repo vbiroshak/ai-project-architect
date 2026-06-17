@@ -33,4 +33,4 @@ Additional sections prescribed by patterns sit outside the numbered registry. Th
 Project-specific sections (2, 3, 4 file pointers, 10 entries) get filled with project content. All others use the template text verbatim.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*

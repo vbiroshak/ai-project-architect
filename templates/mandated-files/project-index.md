@@ -45,4 +45,4 @@ PROJECT_INDEX.txt is a pure structural index. It contains the project's director
 PROJECT_INDEX.txt must stay current when directory structure changes (see STRUCTURE CHANGES in the [session logs template](../workflow-sections/session-logs.md)).
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*

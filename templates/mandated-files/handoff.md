@@ -50,9 +50,9 @@ Session NNN — [Topic]
 
 Sections are situational. A fresh project may have only the session summary and activation context. Other sections appear as needed and disappear when resolved.
 
-SESSION CONTEXT carries compressed summaries of recent sessions (typically 3-5). Older sessions roll off or get absorbed into FOR DEPTH.
+SESSION CONTEXT carries compressed summaries of recent sessions. Older sessions roll off or get absorbed into FOR DEPTH.
 
 ACTIVATION CONTEXT scales to complexity: one session log for lightweight efforts, a work plan plus status file plus log range for complex ones.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*

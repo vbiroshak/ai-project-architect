@@ -8,7 +8,7 @@ WORKFLOW section — universal, identical across all projects.
 ---
 SESSION STARTUP PROCEDURE
 
-1. Read WORKFLOW.txt (this file)
+1. Confirm Filesystem tools are loaded for these essential operations: reading, writing, editing, creating directories, listing directory contents, getting file info, searching for files, moving files, and copying files to Claude. Use tool search queries broad enough to cover these operations together — per-verb queries often miss operations like move and search. If any of these essential filesystem operations aren't loaded now, run additional broad queries now until all are loaded.
 2. Read Workflow Files/Config/PROJECT_INSTRUCTIONS.txt. If it differs from the project instructions in context, update the file to match. Do not narrate unless a discrepancy is found.
 3. Check the clock and time since last logged interaction (see TEMPORAL AWARENESS below)
 4. Read Workflow Files/PROJECT_INDEX.txt and Workflow Files/HANDOFF.txt
@@ -20,4 +20,4 @@ Then present a brief orientation: where we left off, what's pending. Not educati
 ```
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*

@@ -153,4 +153,4 @@ Anthropic's official documentation (capabilities may have changed since this gui
 - [Install Claude Desktop](https://support.claude.com/en/articles/10065433-install-claude-desktop)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*

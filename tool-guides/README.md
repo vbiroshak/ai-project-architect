@@ -19,4 +19,4 @@ Tool guides are distinct from patterns. A pattern describes a type of thing in t
 Copy the guides you need into your project's `Workflow Files/Tool Guides/` directory. List them in your WORKFLOW.txt's TOOL GUIDES section so the AI knows which are available and reads them on demand when relevant work begins.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*

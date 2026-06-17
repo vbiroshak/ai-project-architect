@@ -2,7 +2,7 @@
 
 Deployable templates for building and maintaining workspaces. Each template contains the exact text or structural pattern to use in your project files.
 
-Two categories:
+Three categories:
 
 **[Workflow Sections](workflow-sections/)** — The sections that make up WORKFLOW.txt. Universal sections are deployed verbatim; project-specific sections show the structure with fill-in areas. See the [WORKFLOW Section Registry](../workspace-architecture.md#workflow-section-registry) in the architecture document for the prescribed order and descriptions.
 
@@ -31,5 +31,13 @@ Two categories:
 - [Tasks](mandated-files/tasks.md) — active items queue
 - [Archive Index](mandated-files/archive-index.md) — archived sub-project inventory
 
+**[Claude Code](claude-code/)** — Hooks, settings, and preference templates for running the architecture in Claude Code. See the [setup guide](../claude-code-setup.md).
+
+- [temporal-awareness.py](claude-code/temporal-awareness.py) — hook: injects local time each turn
+- [archive-transcripts.py](claude-code/archive-transcripts.py) — hook: archives session transcripts
+- [transcript-to-md.py](claude-code/transcript-to-md.py) — renders transcripts as readable Markdown
+- [settings-template.json](claude-code/settings-template.json) — permissions, deny rules, hook registration
+- [PREFERENCES-template.md](claude-code/PREFERENCES-template.md) — starter structure for user preferences
+
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*

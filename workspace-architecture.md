@@ -1,6 +1,6 @@
 # Workspace Architecture for Sustained Knowledge Work with AI
 
-Version 4.2
+Version 4.3
 
 A workspace architecture optimized for context cost and continuity.
 
@@ -80,7 +80,7 @@ Inbox items may represent undocumented task entries, work that has arrived but h
 
 Startup reads seven things, in an order where each step builds on the context established by the previous ones:
 
-1. **WORKFLOW.txt**
+1. **Confirm Filesystem tools loaded for essential operations** — these are the foundation for every step that follows. Tool discovery mechanisms may return narrow results for per-verb queries and miss sibling operations, so use broad queries covering the full set.
 2. **Read Workflow Files/Config/PROJECT_INSTRUCTIONS.txt.** If it differs from the project instructions in context, update the file to match. This keeps the backup current for project portability and recreation.
 3. **Check the clock and time since last logged interaction** (see Temporal Awareness) — establishes temporal frame before any project state loads
 4. **Workflow Files/PROJECT_INDEX.txt and Workflow Files/HANDOFF.txt** — PROJECT_INDEX gives structural context (what exists, where), HANDOFF gives state context (what's happening, what to read next)
@@ -88,9 +88,7 @@ Startup reads seven things, in an order where each step builds on the context es
 6. **Project-level task queue**, if the project uses one. Fix any completed items on the spot. Sub-project or function-specific queues load at activation, not startup.
 7. **Inbox/ listing** (filenames only) — last, because inbox items could be from any time and benefit from having all project state loaded first
 
-The clock check comes early because temporal context informs how everything after it is read. Knowing whether the last logged interaction was an hour ago or three days ago changes how the handoff and session log land. The handoff gives the current state snapshot: where things stand per functional area, priorities, what to read for depth. The session log(s) give the narrative: how things got to the current state, what was tried, what was decided and why. Together they orient a fresh chat to continue the work with both the snapshot and the story. The inbox is listed last because its items may be old or new, and having the full project state loaded first enables recognition of how inbox items connect to existing work.
-
-The session log carries the narrative thread: how the current state was reached, what was tried, what was decided and why. Without it, a chat reads the handoff and knows what the current state is but not how it got there, which pushes it toward stale memory and past-chat search to reconstruct context. The default load is the most recent log — enough narrative to continue the work at modest context cost. When the most recent log covers structural or meta work rather than the current domain work, or when continuing the work requires earlier context the most recent log doesn't carry, the handoff points to the additional logs that need to load alongside (see step 5).
+The clock check comes early because temporal context informs how everything after it is read. Knowing whether the last logged interaction was an hour ago or three days ago changes how the handoff and session log land. The handoff gives the current state snapshot: where things stand per functional area, priorities, what to read for depth. The session log(s) give the narrative: how things got to the current state, what was tried, what was decided and why. Together they orient a fresh chat to continue the work with both the snapshot and the story. Without the log's narrative, a chat reads the handoff, knows what the current state is but not how it got there, and falls back on stale memory or past-chat search to reconstruct context. The default load is the most recent log. When it covers structural or meta work rather than current domain work, or when continuing requires earlier context, the handoff points to additional logs (see step 5). The inbox is listed last because its items may be old or new, and having the full project state loaded first enables recognition of how inbox items connect to existing work.
 
 When writing a handoff after structural or meta work (like project optimization or file reorganization), note which earlier session contains the last domain work. The startup log may be about structural changes, not the actual work. The handoff pointer lets the chat load the domain narrative.
 
@@ -139,7 +137,7 @@ For the actual deployable text of each section, see the [workflow section templa
 
 ### Section Descriptions
 
-**Session Startup Procedure** — The seven-step startup sequence: read WORKFLOW, sync config backup, check the clock and time since last logged interaction, read PROJECT_INDEX and HANDOFF, read the most recent session log plus any additional logs the handoff identifies, read task queue if present, list Inbox. Identical across all projects.
+**Session Startup Procedure** — The seven-step startup sequence: confirm Filesystem tools loaded, sync config backup, check the clock and time since last logged interaction, read PROJECT_INDEX and HANDOFF, read the most recent session log plus any additional logs the handoff identifies, read task queue if present, list Inbox. Identical across all projects.
 
 **Base Path** — The project's filesystem root. One line.
 
@@ -600,6 +598,10 @@ Start with this structure even for single-function projects. Create one sub-proj
 
 The [templates](templates/) directory contains deployable text for every WORKFLOW section and structural templates for every mandated file. Use them as your starting point.
 
+### For Claude Code
+
+Claude Code provides native filesystem access, event-driven hooks, and a project-level instruction file that loads automatically. The architecture runs in Code with a cleaner setup and additional capabilities. See [Setting Up in Claude Code](claude-code-setup.md) for fresh setup and migration from Chat, with deployable templates at [templates/claude-code/](templates/claude-code/).
+
 ### For Existing Projects
 
 The existing structure works well for its scope. Migrate when the project grows or when starting fresh is worthwhile:
@@ -617,13 +619,13 @@ The existing structure works well for its scope. Migrate when the project grows 
 
 ## Known Limitations
 
-**Filesystem required for full functionality.** Currently requires an AI application with filesystem read/write access. In the Claude ecosystem, this means the Desktop app with the Filesystem extension (macOS and Windows). Web and mobile interfaces don't have filesystem access. The workspace degrades gracefully: chats note what needs syncing when desktop access is restored.
+**Filesystem required for full functionality.** Currently requires an AI application with filesystem read/write access. In the Claude ecosystem, this means the Desktop app with the Filesystem extension (macOS and Windows) or Claude Code (which has native filesystem access and additional capabilities including event hooks and subagents). See [Setting Up in Claude Code](claude-code-setup.md) for the Code-specific setup and migration guide. Web and mobile interfaces don't have filesystem access. The workspace degrades gracefully: chats note what needs syncing when desktop access is restored.
 
 **Chat search is typically project-scoped.** Built-in chat search usually only sees conversations within the current project. It will never find anything from another project. But the filesystem spans everything. When you need cross-project context, the AI reads the other project's files directly.
 
 **Domain file design is domain-specific.** This architecture prescribes standard file roles inside sub-projects (STATUS for orientation, REFERENCE for domain knowledge) and naming conventions, but the specific content and additional domain files depend on the nature of the work.
 
-**Project memory.** This system works with your AI application's project memory turned on or off. With memory on, you may find duplication between memory and filesystem state. With memory off, you may find less long-term usefulness on mobile or web where the filesystem is unavailable. Experiment with both to see what works for your use case.
+**Project memory.** This system works with your AI application's project memory turned on or off. With memory on, you may find duplication between memory and filesystem state; with memory off, the filesystem is the sole source of continuity. Experiment with both to see what works for your use case.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*

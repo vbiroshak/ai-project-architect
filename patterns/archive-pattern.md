@@ -78,4 +78,4 @@ When remaining work from a completed sub-project becomes a new sub-project, seed
 For deployable text, see the [WORKFLOW archive section template](../templates/workflow-sections/archive.md) and the [ARCHIVE_INDEX.txt template](../templates/mandated-files/archive-index.md).
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*

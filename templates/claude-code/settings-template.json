@@ -1,0 +1,48 @@
+{
+  "permissions": {
+    "additionalDirectories": [
+      "/path/to/external/resources"
+    ],
+    "deny": [
+      "Edit(//path/to/read-only-source/**)",
+      "Write(//path/to/read-only-source/**)",
+      "MultiEdit(//path/to/read-only-source/**)",
+      "NotebookEdit(//path/to/read-only-source/**)"
+    ],
+    "allow": [
+      "Read(//path/to/your/project/**)",
+      "Edit(//path/to/your/project/**)",
+      "Write(//path/to/your/project/**)",
+      "MultiEdit(//path/to/your/project/**)",
+      "Read(//path/to/external/resources/**)",
+      "Bash(ls *)",
+      "Bash(grep *)",
+      "Bash(head *)",
+      "Bash(tail *)",
+      "Bash(wc *)",
+      "Bash(sed -n *)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR:-$PWD}/.claude/hooks/archive-transcripts.py\""
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR:-$PWD}/.claude/hooks/temporal-awareness.py\""
+          }
+        ]
+      }
+    ]
+  }
+}

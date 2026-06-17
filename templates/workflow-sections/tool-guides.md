@@ -8,18 +8,18 @@ WORKFLOW section — universal, identical across all projects.
 ---
 TOOL GUIDES
 
-Operational guides for using specific tools well. Read on demand when starting work that uses the tool.
+Required guides to read before using tools.
 
-  CHROME BROWSER: Claude in Chrome is available for live web tasks but Chrome is not normally running. When you need to access a live web page, ask the user to open Chrome. The web_fetch tool returns stale cached content for some sites. See Workflow Files/Tool Guides/chrome-devtools-guide.txt.
+  CHROME BROWSER: Before loading any Claude in Chrome tool via tool_search, read Workflow Files/Tool Guides/chrome-devtools-guide.txt. Claude in Chrome is available for live web tasks. Try the tool first; if Chrome isn't running, the tool will say so and you can ask the user to open it. The web_fetch tool returns stale cached content for some sites.
 
   FILESYSTEM TOOLS: bash_tool operates on Claude's container, not the user's filesystem, and cannot see or modify project files — do not reach for it as a default. Use Filesystem tools (prefix Filesystem:) for all file operations on project files. See Workflow Files/Tool Guides/filesystem-tools-guide.txt.
 
-  COWORK DELEGATION: Cowork is available for delegating bounded, detail-intensive tasks. See Workflow Files/Tool Guides/cowork-delegation-guide.txt for prompt structure, sub-agents, and safety patterns.
+  COWORK DELEGATION: Before delegating or writing prompts, read Workflow Files/Tool Guides/cowork-delegation-guide.txt. Cowork is available for delegating bounded, detail-intensive tasks.
 ```
 
 ## Notes
 
-Lists the tool guides available in `Workflow Files/Tool Guides/`. Each entry is a one-line operational pointer plus a guide path. Projects adopt only the guides relevant to their work; entries for unused tools can be omitted. The section reframes default tool selection at startup so the AI doesn't slip into bash-first thinking when the project lives on the user's filesystem.
+Lists the tool guides available in `Workflow Files/Tool Guides/`. Chrome and Cowork entries carry hard preconditions — the guide must be read before loading or using the tool. Projects adopt only the guides relevant to their work; entries for unused tools can be omitted.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.2*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*
