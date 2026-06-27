@@ -28,4 +28,4 @@ Each entry: name, completion date (YYYY-MM), and enough description to know cont
 Date format YYYY-MM matches the archival naming convention (e.g., "Research Project - 2026-03").
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*

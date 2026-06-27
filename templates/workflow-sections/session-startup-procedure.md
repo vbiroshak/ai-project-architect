@@ -20,4 +20,4 @@ Then present a brief orientation: where we left off, what's pending. Not educati
 ```
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*

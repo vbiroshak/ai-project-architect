@@ -52,7 +52,7 @@ The correct frame: Cowork is a peer with different tools and no shared Chat-side
 
 ## Prompt Structure
 
-A good Cowork prompt is a standalone document. It contains everything the agent needs without any other context. The structure that works, distilled from real delegations:
+A good Cowork prompt is a standalone document. It contains everything the agent needs without any other context. The structure of an effective Cowork prompt:
 
 **Background:** What the task is and why it matters. If earlier attempts failed, describe what went wrong and why. This prevents Cowork from repeating the same mistakes and gives it the full problem shape.
 
@@ -72,7 +72,7 @@ A good Cowork prompt is a standalone document. It contains everything the agent 
 
 ## Sub-Agent Architecture
 
-Cowork can dispatch parallel sub-agents, which is its primary advantage for scale tasks. Operational knowledge from real delegations:
+Cowork can dispatch parallel sub-agents, which is its primary advantage for scale tasks. Operational knowledge:
 
 **Batch sizing:** There is a reliable agent/item ratio, and it shifts as Cowork evolves. Below the current reliable ceiling, sub-agents inspect each file properly. Above it, they begin hallucinating metadata for later entries rather than actually reading files, and the failure mode is silent — the output looks plausible but is fabricated. Because the failure is silent, Cowork cannot self-assess the ceiling reliably from inside. Under-size, verify the output, and scale up only if verification holds. Asking Cowork for an estimate can give a best-guess starting point but does not replace verification. Over-sizing corrupts the output.
 
@@ -153,4 +153,4 @@ Anthropic's official documentation (capabilities may have changed since this gui
 - [Install Claude Desktop](https://support.claude.com/en/articles/10065433-install-claude-desktop)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*

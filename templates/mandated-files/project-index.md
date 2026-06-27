@@ -1,6 +1,6 @@
-# PROJECT_INDEX.txt
+# PROJECT_INDEX.txt (Chat)
 
-Project file structure index. Read at startup alongside HANDOFF.txt: what exists, where, and what it's for. Located at Workflow Files/PROJECT_INDEX.txt.
+Project file structure index for Chat projects. Read at startup alongside HANDOFF.txt: what exists, where, and what it's for. Located at Workflow Files/PROJECT_INDEX.txt. For Code projects, see the [Code PROJECT_INDEX template](../claude-code/PROJECT-INDEX-template.md).
 
 ## Structural Template
 
@@ -35,7 +35,7 @@ Project/
       PROJECT_INSTRUCTIONS.txt
     Lessons/                operational knowledge (indexed)
     Session Logs/
-      Session_XXX.txt
+      Session_XXXX.txt
 ```
 
 ## Notes
@@ -45,4 +45,4 @@ PROJECT_INDEX.txt is a pure structural index. It contains the project's director
 PROJECT_INDEX.txt must stay current when directory structure changes (see STRUCTURE CHANGES in the [session logs template](../workflow-sections/session-logs.md)).
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*

@@ -1,6 +1,6 @@
-# Project Instructions
+# Project Instructions (Chat)
 
-The project instructions field in your AI application's project settings. Two blocks separated by a blank line. The only variable is the filesystem path in block one.
+The project instructions field in Claude Desktop's project settings. Two blocks separated by a blank line. The only variable is the filesystem path in block one. Code projects use CLAUDE.md instead — see the [Code CLAUDE.md template](../claude-code/CLAUDE-template.md).
 
 ## Template Text
 
@@ -11,4 +11,4 @@ When Filesystem tools are not available, let the user know and explain that the 
 ```
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*

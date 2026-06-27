@@ -1,6 +1,6 @@
 # Lessons Index
 
-Per project, optional. Routing index for project-level operational knowledge. Located at Workflow Files/Lessons/LESSONS_INDEX.txt.
+Per project, optional. Routing index for project-level operational knowledge. Located in the project's Lessons/ directory.
 
 Carries freshness lines. Updated when a lesson file is added or its scope changes.
 
@@ -25,4 +25,4 @@ Each entry names a topic, points to its file, and describes scope enough to rout
 Lesson files capture distilled operational knowledge — patterns, edge cases, mitigations — not chronological events.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*

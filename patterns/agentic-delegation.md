@@ -101,4 +101,4 @@ The delegate handles work that is bounded and describable without project contex
 The division: the delegate reads, processes, sorts, audits, and documents. The conversational AI judges, writes, connects, and integrates.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*

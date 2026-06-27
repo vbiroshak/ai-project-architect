@@ -16,7 +16,9 @@ Tool guides are distinct from patterns. A pattern describes a type of thing in t
 
 ## Adoption
 
-Copy the guides you need into your project's `Workflow Files/Tool Guides/` directory. List them in your WORKFLOW.txt's TOOL GUIDES section so the AI knows which are available and reads them on demand when relevant work begins.
+Copy the guides you need into your project's Tool Guides/ directory (`Workflow Files/Tool Guides/` in Chat, `Project/Tool Guides/` in Code). Save them with a `.txt` extension — the repo uses `.md` for GitHub rendering, but deployed project files use `.txt`. List them in your governing document's TOOL GUIDES section so the AI reads them on demand when relevant work begins.
+
+The Filesystem Tools and Cowork Delegation guides apply to Chat projects only. The Chrome guide applies to both platforms.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*

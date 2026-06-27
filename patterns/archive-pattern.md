@@ -14,15 +14,15 @@ Deleting is wrong (the historical record has value). Leaving in place is wrong (
 
 ### Structure
 
+Archive/ lives at the project root, alongside active sub-projects. The root always shows only what is live plus one archive folder.
+
 ```
 Project/
-  WORKFLOW.txt
+  [governing document]
   Inbox/
-  Workflow Files/
+  [project infrastructure]/
     HANDOFF.txt
     Session Logs/          ← stay at project level, never archived
-    Clock/
-    Config/
   Archive/
     ARCHIVE_INDEX.txt      ← archive inventory
     Completed Project - YYYY-MM/   ← frozen
@@ -43,11 +43,11 @@ Two layers ensure past work is findable:
 
 1. **ARCHIVE_INDEX.txt** inside the Archive/ directory carries a brief inventory of archived sub-projects. A few lines per entry: what the project covered, when it completed, where it lives in Archive/, and key files inside it. This is the index. Future sessions check here when past work is referenced.
 
-2. **WORKFLOW.txt** gets an Archive section that tells future sessions where completed sub-projects live and to consult ARCHIVE_INDEX.txt for the inventory. This is the pointer. It ensures the archive is reachable from the standard startup path without adding to startup reads.
+2. **The governing document** carries the archive convention in its sub-project activation section: completed work moves to Archive/, and ARCHIVE_INDEX.txt holds the inventory. This is the pointer. It ensures the archive is reachable from the standard startup path without adding to startup reads.
 
 ### Session Logs
 
-Session logs stay at the project level in Workflow Files/Session Logs/. They span all sub-projects (past and present) and are shared infrastructure. They do not move into the archive with the sub-project they covered.
+Session logs stay at the project level. They span all sub-projects (past and present) and are shared infrastructure. They do not move into the archive with the sub-project they covered.
 
 ### Seeding a Successor
 
@@ -67,15 +67,15 @@ When remaining work from a completed sub-project becomes a new sub-project, seed
 
 ## Known Issues
 
-**Activation sequence maintenance:** When a sub-project is archived and a new one created, WORKFLOW.txt's sub-project activation section must be rewritten to point at the new sub-project. The old activation sequence should be removed entirely since archived sub-projects are read directly, not activated through the workflow.
+**Activation sequence maintenance:** When a sub-project is archived and a new one created, the governing document's sub-project activation section must be updated to point at the new sub-project. The old activation entry should be removed since archived sub-projects are read directly, not activated through the startup path.
 
-**Archive size over time:** Projects with many completed sub-projects will accumulate large Archive/ directories. Not a practical concern yet. If it becomes one, ARCHIVE_INDEX.txt provides the index layer so Archive/ itself rarely needs to be listed.
-
----
-
-## Templates
-
-For deployable text, see the [WORKFLOW archive section template](../templates/workflow-sections/archive.md) and the [ARCHIVE_INDEX.txt template](../templates/mandated-files/archive-index.md).
+**Archive size over time:** Projects with many completed sub-projects will accumulate large Archive/ directories. Not a practical concern at typical project scales. If it becomes one, ARCHIVE_INDEX.txt provides the index layer so Archive/ itself rarely needs to be listed.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*
+
+## Implementation
+
+The archive convention is carried in the governing document's sub-project activation section: see the [Chat template](../templates/workflow-sections/sub-project-activation.md) or the [Code template](../templates/claude-code/PROJECT-CONTEXT-template.md). For the ARCHIVE_INDEX.txt format, see the [archive index template](../templates/mandated-files/archive-index.md).
+
+---
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*

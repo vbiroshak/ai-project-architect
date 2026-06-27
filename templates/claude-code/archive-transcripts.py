@@ -7,7 +7,7 @@ UUID. This hook makes a permanent, human-readable copy in the project's Sessions
 directory every time a new session starts.
 
 It copies every completed transcript (every .jsonl that is NOT the current session)
-into your project's Workflow Files/Sessions/ folder. Opening a new session means
+into your project's Project/Sessions/ folder. Opening a new session means
 the previous one is finished, so the copy is always complete.
 
 Naming: the hook looks for a declaration line in the opening human message, like
@@ -31,7 +31,7 @@ import glob
 # The name used in your session declarations (e.g., "This is MyProject 15").
 PROJECT_NAME = "Project"
 # Where transcripts are saved, relative to the project root.
-SESSIONS_SUBDIR = os.path.join("Workflow Files", "Sessions")
+SESSIONS_SUBDIR = os.path.join("Project", "Sessions")
 # --- END CONFIGURATION ---
 
 # Patterns to extract the session number from the opening human message.
@@ -112,6 +112,8 @@ def main():
         if base == current_base:
             continue  # skip the current session (still being written)
         num = session_num(src)
+        if num and num.isdigit():
+            num = "%04d" % int(num)
         uuid_dst = os.path.join(sessions_dir, base)
         try:
             ssize = os.path.getsize(src)
@@ -135,10 +137,10 @@ def main():
         except Exception:
             pass
 
-    # Render readable Markdown versions if transcript-to-md.py is available.
+    # Render readable Markdown versions if transcript_to_md.py is available.
     try:
         import importlib.util
-        conv = os.path.join(os.path.dirname(os.path.realpath(__file__)), "transcript-to-md.py")
+        conv = os.path.join(os.path.dirname(os.path.realpath(__file__)), "transcript_to_md.py")
         if os.path.exists(conv):
             spec = importlib.util.spec_from_file_location("transcript_to_md", conv)
             mod = importlib.util.module_from_spec(spec)

@@ -1,6 +1,6 @@
-# WORKFLOW.txt
+# WORKFLOW.txt (Chat)
 
-Not a standalone template. WORKFLOW.txt is built by combining the [workflow section templates](../workflow-sections/) in prescribed order.
+Not a standalone template. WORKFLOW.txt is the governing document for Chat projects, built by combining the [workflow section templates](../workflow-sections/) in prescribed order. Code projects use PROJECT_CONTEXT.md instead — see the [Code PROJECT_CONTEXT template](../claude-code/PROJECT-CONTEXT-template.md).
 
 ## Assembly
 
@@ -23,14 +23,13 @@ Sections follow in order, each with a `---` separator and ALL CAPS heading:
 | 5 | Sub-Project Activation | always |
 | 6 | Task Queue | only if the project uses one |
 | 7 | Session Logs | always |
-| 8 | Temporal Awareness | always |
-| 9 | Inbox | always |
-| 10 | Shared Knowledge Base | always (if running multiple projects) |
-| 11 | Project Context | always |
+| 8 | Handoff | always |
+| 9 | Temporal Awareness | always |
+| 10 | Inbox | always |
+| 11 | Shared Knowledge Base | always (if running multiple projects) |
+| 12 | Project Context | always |
 
-Additional sections prescribed by patterns sit outside the numbered registry. The Archive section (prescribed by the [archive pattern](../../patterns/archive-pattern.md)) is added after Sub-Project Activation when the project archives its first sub-project.
-
-Project-specific sections (2, 3, 4 file pointers, 10 entries) get filled with project content. All others use the template text verbatim.
+Project-specific sections (2, 4 file pointers, 5 pointers, 12 entries) get filled with project content. All others use the template text verbatim.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.3*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*

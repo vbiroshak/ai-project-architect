@@ -10,7 +10,7 @@ as single summary lines (inputs and results are NOT expanded — they live in th
 Used by the archive-transcripts hook to generate .md files alongside each archived
 .jsonl. Can also be run standalone:
 
-    python3 transcript-to-md.py input.jsonl output.md [title]
+    python3 transcript_to_md.py input.jsonl output.md [title]
 
 The output is readable in any text editor, QuickLook, or rendered Markdown viewer.
 """
@@ -141,6 +141,6 @@ def render(jsonl_path, md_path, title=None):
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        sys.stderr.write("usage: transcript-to-md.py <input.jsonl> <output.md> [title]\n")
+        sys.stderr.write("usage: transcript_to_md.py <input.jsonl> <output.md> [title]\n")
         sys.exit(1)
     render(sys.argv[1], sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else None)

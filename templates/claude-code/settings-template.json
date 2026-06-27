@@ -1,8 +1,9 @@
 {
+  "autoMemoryDirectory": "/absolute/path/to/your/project/Project/Claude Memory",
+  "additionalDirectories": [
+    "/path/to/external/resources"
+  ],
   "permissions": {
-    "additionalDirectories": [
-      "/path/to/external/resources"
-    ],
     "deny": [
       "Edit(//path/to/read-only-source/**)",
       "Write(//path/to/read-only-source/**)",
@@ -15,12 +16,8 @@
       "Write(//path/to/your/project/**)",
       "MultiEdit(//path/to/your/project/**)",
       "Read(//path/to/external/resources/**)",
-      "Bash(ls *)",
       "Bash(grep *)",
-      "Bash(head *)",
-      "Bash(tail *)",
-      "Bash(wc *)",
-      "Bash(sed -n *)"
+      "Bash(find *)"
     ]
   },
   "hooks": {
