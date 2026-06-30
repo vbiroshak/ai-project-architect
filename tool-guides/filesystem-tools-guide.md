@@ -66,7 +66,7 @@ The arenas do not overlap. Stop and ask "which arena holds the thing I'm looking
 **edit_file** — Line-based edits to an existing file. Takes an array of `{oldText, newText}` pairs and applies them in one call. Returns a git-style diff. Behavior worth knowing:
 - Multiple edits in one call are applied together. Use this for related changes to the same file.
 - `oldText` must match content actually in the file. If it doesn't match, the call fails loudly with a clear error rather than silently doing nothing.
-- Whitespace matching is asymmetric. Leading whitespace is tolerant (tabs and spaces at the start of a line are treated equivalently, and the file's original indentation is preserved on replacement). Trailing whitespace must match exactly — a trailing space you can't see will cause the match to fail. If an edit fails on a line that looks right, re-read the file and copy the exact text rather than retyping, since invisible trailing characters are the most common cause.
+- Whitespace matching is asymmetric. Leading whitespace is tolerant (tabs and spaces at the start of a line are treated equivalently, and the file's original indentation is preserved on replacement). Trailing whitespace must match exactly — a trailing space you can't see will cause the match to fail. If an edit fails on a line that looks right, re-read the file and copy the exact text rather than retyping, since invisible trailing characters are a common cause.
 - The returned diff shows only the changed region with surrounding context lines, not the full file. Re-read the file after editing if whole-file integrity matters.
 - To append, anchor the edit to existing trailing content (e.g., the last line) and put the new content after it in newText.
 
@@ -150,4 +150,4 @@ Anthropic's official documentation (capabilities may have changed since this gui
 - [Desktop extensions collection](https://support.claude.com/en/collections/17879657-desktop-extensions)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*

@@ -20,4 +20,4 @@ The path is hardcoded since all projects share the same location. If the shared 
 The template uses "SHARED KNOWLEDGE BASE" as the generic heading. Deployed projects may use whatever heading matches their actual directory name (e.g., "THE COMMONS").
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*

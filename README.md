@@ -2,6 +2,8 @@
 
 A workspace architecture that gives AI assistants persistent, structured project knowledge on your local filesystem.
 
+[Download the repo.](https://github.com/vbiroshak/ai-project-architect/tags)
+
 ## How to set it up
 
 Follow the guide for your platform to get started, and you can read [workspace-architecture.md](workspace-architecture.md) for a full explanation of how the system works:
@@ -10,9 +12,9 @@ Follow the guide for your platform to get started, and you can read [workspace-a
 
 **[Set up a new project in Code](claude-code-setup.md)** — for Claude Code in the Desktop app or CLI.
 
-**[Migrate a project from Chat to Code](chat-to-code-migration.md)** — structural transformation, transcript processing, and verification.
+**[Migrate a project](chat-to-code-migration.md)** — move your projects from Chat to Code.
 
-**Other tools:** [download the repo](https://github.com/vbiroshak/ai-project-architect/tags) and provide the files to any AI assistant with filesystem access. The architecture is platform-agnostic.
+**Other tools:** [download the repo](https://github.com/vbiroshak/ai-project-architect/tags) and provide the files to any AI. The architecture design is broadly platform-agnostic and can be adapted to any AI with filesystem access.
 
 ## What's in this repo
 
@@ -28,11 +30,23 @@ Follow the guide for your platform to get started, and you can read [workspace-a
 
 ## How it works
 
-AI project features don't carry knowledge well across sessions. Memory is unreliable, there's no awareness of time, no way to build and maintain reference materials, no task tracking. This architecture solves that by giving the AI a living directory on your local drive that it reads, writes, and maintains directly. No external tools, no code to install, no API integrations.
+Most built-in AI project features don't carry knowledge well across sessions. Memory is unreliable, there's no awareness of time, no way to build and maintain reference materials, no task tracking. This architecture solves that by giving the AI a directory on your local drive that it reads, writes, and maintains directly — using only the native tools your AI application already has.
 
-The AI picks up where you left off in every new session. It logs its own work, knows what time it is and how long you've been away, and keeps startup reads lean so conversations stay responsive. Drop files in an inbox and the project notices them, relates items to ongoing work, and won't let them fall through the cracks. The AI organizes what it learns into files it maintains and indexes, reading only what's relevant instead of loading everything into context. The whole project lives on the filesystem, portable to a new device or account.
+The AI picks up where you left off in every new session. It logs its own work, knows what time it is and how long you've been away, and lets you make your startup reads as lean or as rich as your work demands. Drop files in an inbox and the project notices them, relates items to ongoing work, and won't let them fall through the cracks. The AI organizes what it learns into files it maintains and indexes, reading, creating, and editing relevant project files on demand. The whole project lives on your filesystem, not on the cloud, making it portable to any device, account, or service.
 
-Works for a single project or many. Multiple projects can share a knowledge base and coordinate through a dedicated coordinator project.
+Works for a single project or many. Multiple projects can share a common knowledge base folder and you can manage them all through a dedicated coordinator project.
+
+## Setting up a new project
+
+At minimum, walk through these steps with the user before building anything:
+
+1. Platform — Chat, Code, or migrating an existing Chat project to Code?
+2. Location — install in this directory or elsewhere?
+3. Name — what to call the project
+4. Description — what the project does
+5. Optional components — which to include (task queue, lessons, tool guides, etc.)
+6. Software engineering instructions — keep or remove from the output style
+7. Cleanup — keep or remove the downloaded repo files after setup
 
 ## Contributing
 
@@ -51,4 +65,4 @@ Active development. Tested across multiple projects in different domains, contin
 [MIT](LICENSE)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*

@@ -1,66 +1,98 @@
-#!/usr/bin/env python3
-"""SessionStart hook — archives completed session transcripts into the project.
+"""SessionStart hook: archive and render session transcripts.
 
-Claude Code stores raw transcripts as .jsonl files in ~/.claude/projects/<slug>/,
-but that folder is ephemeral (cleaned up periodically) and the files are named by
-UUID. This hook makes a permanent, human-readable copy in the project's Sessions/
-directory every time a new session starts.
+Copies completed session transcripts from Claude Code's internal storage to the
+project's transcript directory, then renders each .jsonl to a readable .md file.
 
-It copies every completed transcript (every .jsonl that is NOT the current session)
-into your project's Project/Sessions/ folder. Opening a new session means
-the previous one is finished, so the copy is always complete.
+Runs at the start of every session and copies every COMPLETED transcript (everything
+except the current session). Opening a new session means the previous one is finished,
+so the copy is always complete.
 
-Naming: the hook looks for a declaration line in the opening human message, like
-"This is [Project] 42" or "[Project] Session 42". If found, the file is saved as
-[Project]_42.jsonl. If not found, the UUID filename is kept (nothing is lost).
+Naming priority: numbered custom-title (/rename) → numbered text pattern ("This is X N")
+→ free-form custom-title → UUID. Sanitizes titles for filesystem safety.
 
-Register in .claude/settings.json under hooks > SessionStart.
-
-CUSTOMIZE: Change PROJECT_NAME below to match your project, and adjust the regex
-patterns in NUM_PATTERNS if your sessions use a different declaration format.
-Adjust SESSIONS_SUBDIR if your project keeps transcripts elsewhere.
+Copies only; never deletes a source transcript.
 """
-import json
-import sys
-import os
-import re
-import shutil
-import glob
 
-# --- CONFIGURATION ---
-# The name used in your session declarations (e.g., "This is MyProject 15").
-PROJECT_NAME = "Project"
-# Where transcripts are saved, relative to the project root.
-SESSIONS_SUBDIR = os.path.join("Project", "Sessions")
-# --- END CONFIGURATION ---
+import json, sys, os, re, shutil, glob
 
-# Patterns to extract the session number from the opening human message.
-# Matches "This is Project 42" or "Project 42" (case-insensitive for "this is").
-NUM_PATTERNS = [
-    re.compile(r"[Tt]his is %s\s+(\d+(?:\.\d+)?)" % re.escape(PROJECT_NAME)),
-    re.compile(r"\b%s\s+(\d+(?:\.\d+)?)\b" % re.escape(PROJECT_NAME)),
-]
+PROJECT_NAME = ""
+
+NAME_NUM_RE = re.compile(r"^([\w-]+)\s+(\d+(?:\.\d+)?)$")
+TEXT_PATTERN_RE = re.compile(r"^[Tt]his is ([\w-]+)\s+(\d+(?:\.\d+)?)")
 
 
-def session_num(path):
-    """Extract the session number from the transcript's opening human message."""
+def load_config(config_path):
+    try:
+        with open(config_path) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def sanitize_filename(name):
+    name = re.sub(r'[<>:"/\\|?*]', '', name)
+    name = name.strip('. ')
+    if not name:
+        return None
+    if len(name) > 200:
+        name = name[:200]
+    return name
+
+
+def format_numbered(name, num_str, project_name, project_name_tier):
+    """Format a name+number into ProjectName_NNNN, applying casing normalization."""
+    if project_name:
+        if name.lower() == project_name.lower():
+            name = project_name
+    if num_str.isdigit():
+        num_str = "%04d" % int(num_str)
+    return "%s_%s" % (name, num_str)
+
+
+def custom_title_from_transcript(path):
+    """Extract the last custom-title from a transcript. Returns (name, number) tuple for numbered titles, plain string for free-form, or None."""
+    last_title = None
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            for line in f:
+                line = line.strip()
+                if not line or "custom-title" not in line:
+                    continue
+                try:
+                    o = json.loads(line)
+                except Exception:
+                    continue
+                if o.get("type") == "custom-title":
+                    title = o.get("customTitle", "").strip()
+                    if title:
+                        last_title = title
+    except Exception:
+        pass
+    if not last_title:
+        return None
+    m = NAME_NUM_RE.match(last_title)
+    if m:
+        return (m.group(1), m.group(2))
+    safe = sanitize_filename(last_title)
+    return safe if safe else None
+
+
+def text_pattern_from_transcript(path):
+    """Scan the first user message for 'This is ProjectName N'. Returns (name, number) tuple or None."""
     try:
         with open(path, encoding="utf-8", errors="replace") as f:
             for i, line in enumerate(f):
                 if i > 60:
                     break
                 try:
-                    o = json.loads(line)
+                    o = json.loads(line.strip())
                 except Exception:
                     continue
                 if o.get("type") != "user":
                     continue
                 c = o.get("message", {}).get("content")
                 if isinstance(c, list):
-                    txt = " ".join(
-                        b.get("text", "") for b in c
-                        if isinstance(b, dict) and b.get("type") == "text"
-                    )
+                    txt = " ".join(b.get("text", "") for b in c if isinstance(b, dict) and b.get("type") == "text")
                 elif isinstance(c, str):
                     txt = c
                 else:
@@ -68,12 +100,56 @@ def session_num(path):
                 txt = txt.strip()
                 if not txt or txt.startswith("<"):
                     continue
-                for rx in NUM_PATTERNS:
-                    m = rx.search(txt)
-                    if m:
-                        return m.group(1)
+                m = TEXT_PATTERN_RE.search(txt)
+                if m:
+                    return (m.group(1), m.group(2))
     except Exception:
-        return None
+        pass
+    return None
+
+
+def resolve_project_name(config, project_dir):
+    """Resolve project name and its authority tier. Returns (name, tier) where tier 1-2 are authoritative, tier 3 is inferred."""
+    name = config.get("project_name", "")
+    if name:
+        return (name, 1)
+    if PROJECT_NAME:
+        return (PROJECT_NAME, 2)
+    basename = os.path.basename(project_dir)
+    if basename:
+        return (basename, 3)
+    return ("", 4)
+
+
+def resolve_filename(src, project_name, project_name_tier):
+    """Determine the archive filename for a transcript. Returns the filename stem (without .jsonl) or None for UUID."""
+    ct = custom_title_from_transcript(src)
+    tp = text_pattern_from_transcript(src)
+
+    # Tier 1: numbered custom-title
+    if isinstance(ct, tuple):
+        name, num = ct
+        return format_numbered(name, num, project_name, project_name_tier)
+
+    # Tier 2: numbered text-pattern
+    if isinstance(tp, tuple):
+        cap_name, num = tp
+        if project_name_tier in (1, 2):
+            if cap_name.lower() != project_name.lower():
+                tp = None
+            else:
+                cap_name = project_name
+        elif project_name_tier == 3:
+            if cap_name.lower() == project_name.lower():
+                cap_name = project_name
+        if tp is not None:
+            return format_numbered(cap_name, num, project_name, project_name_tier)
+
+    # Tier 3: free-form custom-title
+    if isinstance(ct, str):
+        return ct
+
+    # Tier 4: UUID
     return None
 
 
@@ -82,25 +158,34 @@ def main():
         data = json.load(sys.stdin)
     except Exception:
         data = {}
+
+    project_dir = data.get("cwd") or os.getcwd()
+    config = load_config(os.path.join(project_dir, "recall", "config.json"))
+
+    # Resolve transcript directory
+    if config.get("transcripts_dir"):
+        transcripts_dir_rel = config["transcripts_dir"]
+    elif os.path.isdir(os.path.join(project_dir, "Project", "Sessions")):
+        transcripts_dir_rel = "Project/Sessions"
+    elif os.path.isdir(os.path.join(project_dir, "Sessions")):
+        transcripts_dir_rel = "Sessions"
+    else:
+        transcripts_dir_rel = "recall/sessions"
+
+    project_name, project_name_tier = resolve_project_name(config, project_dir)
+
     transcript_path = data.get("transcript_path", "")
     session_id = data.get("session_id", "")
-    cwd = data.get("cwd") or os.getcwd()
 
-    # Locate the source transcript directory.
     if transcript_path:
         src_dir = os.path.dirname(os.path.realpath(transcript_path))
         current_base = os.path.basename(transcript_path)
     else:
-        slug = re.sub(r"[^A-Za-z0-9]", "-", cwd)
+        slug = re.sub(r"[^A-Za-z0-9]", "-", project_dir)
         src_dir = os.path.expanduser(os.path.join("~/.claude/projects", slug))
         current_base = (session_id + ".jsonl") if session_id else ""
 
-    # Destination directory (relative to the project root).
-    # This script lives at .claude/hooks/, so project root is two levels up.
-    code_root = os.path.realpath(
-        os.path.join(os.path.dirname(os.path.realpath(__file__)), "..", "..")
-    )
-    sessions_dir = os.path.join(code_root, SESSIONS_SUBDIR)
+    sessions_dir = os.path.join(project_dir, transcripts_dir_rel)
     os.makedirs(sessions_dir, exist_ok=True)
 
     if not os.path.isdir(src_dir):
@@ -110,15 +195,15 @@ def main():
     for src in sorted(glob.glob(os.path.join(src_dir, "*.jsonl"))):
         base = os.path.basename(src)
         if base == current_base:
-            continue  # skip the current session (still being written)
-        num = session_num(src)
-        if num and num.isdigit():
-            num = "%04d" % int(num)
+            continue
+
+        stem = resolve_filename(src, project_name, project_name_tier)
         uuid_dst = os.path.join(sessions_dir, base)
+
         try:
             ssize = os.path.getsize(src)
-            if num:
-                fname = "%s_%s.jsonl" % (PROJECT_NAME, num)
+            if stem:
+                fname = stem + ".jsonl"
                 friendly = os.path.join(sessions_dir, fname)
                 if os.path.exists(friendly) and os.path.getsize(friendly) >= ssize:
                     continue
@@ -137,28 +222,29 @@ def main():
         except Exception:
             pass
 
-    # Render readable Markdown versions if transcript_to_md.py is available.
+    # Render readable .md beside each archived .jsonl
     try:
         import importlib.util
-        conv = os.path.join(os.path.dirname(os.path.realpath(__file__)), "transcript_to_md.py")
-        if os.path.exists(conv):
-            spec = importlib.util.spec_from_file_location("transcript_to_md", conv)
-            mod = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(mod)
-            for jp in glob.glob(os.path.join(sessions_dir, "*.jsonl")):
-                mp = jp[:-6] + ".md"
-                if (not os.path.exists(mp)) or os.path.getmtime(jp) > os.path.getmtime(mp):
-                    mod.render(jp, mp)
+        conv = os.path.join(os.path.dirname(os.path.abspath(__file__)), "transcript_to_md.py")
+        spec = importlib.util.spec_from_file_location("transcript_to_md", conv)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        for jp in glob.glob(os.path.join(sessions_dir, "*.jsonl")):
+            mp = jp[:-6] + ".md"
+            if (not os.path.exists(mp)) or os.path.getmtime(jp) > os.path.getmtime(mp):
+                mod.render(jp, mp)
     except Exception:
         pass
 
     if copied:
         print(json.dumps({"hookSpecificOutput": {
             "hookEventName": "SessionStart",
-            "additionalContext": "Archived transcript(s) to Sessions/: " + ", ".join(copied),
+            "additionalContext": "Archived transcript(s): " + ", ".join(copied),
         }}))
     sys.exit(0)
 
 
 if __name__ == "__main__":
     main()
+
+# Version 4.5

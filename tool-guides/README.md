@@ -21,4 +21,4 @@ Copy the guides you need into your project's Tool Guides/ directory (`Workflow F
 The Filesystem Tools and Cowork Delegation guides apply to Chat projects only. The Chrome guide applies to both platforms.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*

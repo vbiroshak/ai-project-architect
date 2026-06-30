@@ -146,4 +146,4 @@ Sections marked "[Include this section only if...]" are optional. Remove them if
 The PROJECT CONTEXT section at the end is where project-specific corrections and behavioral entries accumulate through use. FACTUAL GROUNDING is the seed entry — replace the bracketed domain examples with examples relevant to your project.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*

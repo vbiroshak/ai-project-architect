@@ -87,7 +87,7 @@ Activation: read the status file, read everything the handoff identifies for tha
 
 When a sub-project completes, move it to Archive/ at the project root with a completion-date name (e.g., "Project Name - 2026-03"). Add a closing note to the status file before archiving. ARCHIVE_INDEX.txt inside Archive/ tracks inventory.
 
-For sub-projects whose complexity outgrows a handoff summary, see [Sub-Project Complexity Tiers](workspace-architecture.md#sub-project-complexity-tiers) in the architecture doc — the Extended tier provides richer orientation with its own status file and activation sequence.
+For sub-projects whose complexity outgrows a handoff summary, see [Project Complexity Tiers](workspace-architecture.md#project-complexity-tiers) in the architecture doc — you can give them their own orientation files with richer state and activation sequences.
 
 ### Operating Principles
 
@@ -209,13 +209,13 @@ Create `.claude/hooks/` in the project directory and register them in `.claude/s
 
 **Temporal awareness** (UserPromptSubmit): Injects the current local time into every turn. The AI receives the time automatically before processing each message.
 
-**Transcript archiving** (SessionStart): Copies the previous session's transcript into the project's Sessions/ directory with a readable name derived from the session content. To get readable filenames (e.g., `MyProject_0042.jsonl` rather than a UUID), open each session with a declaration line like "This is MyProject 42." The archiver extracts the name and number from this line.
+**Transcript archiving** (SessionStart): Copies the previous session's transcript into the project's Sessions/ directory with a readable name. Naming uses three tiers: `/rename` with a name and number (e.g. "MyProject 42") is checked first, then a "This is MyProject 42" declaration in the opening message, then UUID as fallback. Named sessions are formatted as `MyProject_0042.jsonl` (zero-padded). A `PROJECT_NAME` constant at the top of the script normalizes casing and prevents false matches.
 
 **Transcript renderer** (companion script): Renders each archived transcript as a readable Markdown file (collapsed view: messages in full, tool calls as one-line summaries). The archiver imports the renderer automatically when it's alongside it.
 
 Hooks communicate context back to the session by printing a JSON object to stdout with an `additionalContext` field inside `hookSpecificOutput`. This context appears as a system reminder attached to the user's message. The temporal-awareness hook uses this to inject the formatted local time so the AI receives it automatically before processing each turn.
 
-All three scripts go into `.claude/hooks/`. See [templates/claude-code/](templates/claude-code/) for deployable versions. If you have a working project, copy its hooks and surgically edit the project name — don't rewrite from scratch, which risks introducing accidental differences.
+All three scripts go into `.claude/hooks/`. See [templates/claude-code/](templates/claude-code/) for deployable versions. Set the `PROJECT_NAME` constant at the top of the archiver to your project's name.
 
 When a hook produces derived data that the session will query (e.g., a regenerated index or extracted text), use a blocking hook at SessionStart rather than async. The cost is paid once per session; async creates a race condition where the session queries stale data.
 
@@ -368,4 +368,4 @@ These are optional extensions that develop as the project matures.
 **[Rules](https://code.claude.com/docs/en/memory#organize-rules-with-claude/rules/)** are instruction files in `.claude/rules/`. Rules without `paths:` frontmatter load at session start and are re-injected from disk after compaction, same as CLAUDE.md. Rules with `paths:` frontmatter load only when Claude works with matching files, and are lost on compaction until a matching file is read again. If you prefer splitting your operating instructions across multiple files rather than maintaining one large PROJECT_CONTEXT.md, rules are the mechanism for that.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*

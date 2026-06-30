@@ -1,8 +1,8 @@
 # Workspace Architecture for Sustained Knowledge Work with AI
 
-Version 4.4
+Version 4.5
 
-A workspace architecture optimized for context cost and continuity.
+A workspace architecture designed for continuity across sessions.
 
 Developed through iterative design and daily use across multiple projects spanning different domains. Applicable to any project where an AI assistant serves one or more areas of ongoing work.
 
@@ -12,7 +12,7 @@ Developed through iterative design and daily use across multiple projects spanni
 
 Default AI project tools aren't designed for sustained knowledge work. Project knowledge files are static uploads. There is no session continuity: each conversation starts blank. There is no mechanism for the AI to maintain its own documentation, log sessions, or orient itself in ongoing work.
 
-The workspace pattern solves this by moving project knowledge to a living filesystem that the AI reads, writes, and maintains directly. But the workspace itself must be designed to work within context window constraints. Every file read at startup stays in context for the entire conversation and is retokenized every turn. A 50 KB startup across 20 turns means the startup content is processed roughly 20 times.
+The workspace pattern solves this by moving project knowledge to files on your filesystem that the AI reads, writes, and maintains directly.
 
 This document describes the architecture: the principles, patterns, and file roles that make the system work. It is platform-agnostic. For setup instructions specific to your platform:
 
@@ -26,7 +26,7 @@ This document describes the architecture: the principles, patterns, and file rol
 
 Inbox/ at the project root is the asynchronous interface between the user and the project, in both directions.
 
-The user drops files here between sessions: emails saved as text, documents to process, screenshots, reference material, delegation briefs, anything that a project needs to see. The project notices them at startup and asks about them.
+The user drops files here between sessions: emails saved as text, documents to process, screenshots, reference material, delegation briefs, anything that a project needs to see. The AI checks the inbox at every startup, lists the files, and offers to process them.
 
 The AI writes to the Inbox when it has something for the user: drafts for review, items flagged for deletion, cross-project delegation notes, or anything that needs the user's attention outside the current conversation.
 
@@ -34,7 +34,7 @@ This is a foundational workflow in both directions. The user encounters somethin
 
 Inbox items are listed (filenames only) at startup but not read. The listing surfaces what's waiting, and the session processes items when directed or when relevant to the work.
 
-Inbox contents can change at any time between messages. See Inbox: Verify and Check Before Referencing in Key Principles for the verification procedure.
+Inbox contents can change at any time between messages.
 
 Inbox items may represent undocumented task entries, work that has arrived but hasn't been triaged into the project's task list or session log. If you use a coordinator project (see Knowledge Architecture below), its task review should include inbox listings for this reason.
 
@@ -130,11 +130,9 @@ AI assistants tend to fill information gaps with plausible-sounding content rath
 
 3. **Verify and cite.** When making factual claims, search to verify and cite the source. When a claim cannot be supported, say so rather than presenting it as fact.
 
-Techniques 1 and 2 apply broadly with minimal tradeoff. Technique 3 improves accuracy for work involving verifiable facts but constrains work that is creative, subjective, or advisory.
+Techniques 1 and 2 are general behavioral guidance — they apply broadly but are not installed by this architecture. Place them in account-wide user preferences, an output style, or project-level instructions, wherever your setup places behavioral rules.
 
-Techniques 1 and 2 apply to every interaction regardless of project. They can live in account-wide user preferences, an output style, or project-level instructions — wherever the user's setup places behavioral rules.
-
-Technique 3 is project-specific. Project context entries scope it to the project's domain. Template:
+Technique 3 is installed per-project via the project context template. It scopes verification to the project's domain:
 
 ```
 FACTUAL GROUNDING: For verifiable claims in this
@@ -193,7 +191,7 @@ Session logs do not carry freshness lines (they are append-only historical recor
 
 Archived files retain whatever freshness lines they had at the time of archiving. Do not maintain freshness lines on files after they are archived. During the archiving process itself, refresh both freshness lines as part of the closing write (the closing note changes content and confirms final state).
 
-Shared knowledge base documents that carry version numbers (Version X.X — Month YYYY) keep them instead of freshness lines. Version numbers serve a different purpose: they identify which version of a pattern has been adopted. All other shared files (README, INDEX files, templates, examples) use standard freshness lines.
+Documents in a shared knowledge base folder that carry version numbers (Version X.X — Month YYYY) keep them instead of freshness lines. Version numbers serve a different purpose: they identify which version of a pattern has been adopted. All other shared files (README, INDEX files, templates, examples) use standard freshness lines.
 
 ### New Files
 
@@ -240,7 +238,7 @@ newly created, both lines carry the same date and session.
 
 A general strategy for any content that accumulates and is consulted selectively: an index file that describes what's available, plus a collection of small files each covering one item or topic.
 
-Monolithic files are a context cost time bomb. A single lessons file or reference document is fine when it has five entries. At fifty entries it costs thousands of tokens every time it's read, and every read stays in context for the entire conversation. Files that grow by accretion will eventually consume a meaningful share of the context window just to look up one item.
+A single file that keeps growing means the AI reads everything just to find one item. A lessons file or reference document is fine when it has five entries. At fifty entries it costs thousands of tokens every time it's read. Files that grow by accretion will eventually consume a meaningful share of the context window just to look up one item.
 
 The indexed pattern avoids this. Like a card catalog in a library, read the index to know what's available, then pull only the file you need. Cost is ~1 KB for the index read plus the one file you actually need, regardless of how large the collection grows. Adding a new entry costs ~1.5 KB of context (read index, read one topic file, write the update). Compare to reading and rewriting a monolithic file that grows without bound.
 
@@ -270,15 +268,17 @@ Naming follows the domain. A case folder has Resources/ with INDEX.txt. Project-
 
 Knowledge flows upward through three levels:
 
-**Sub-project reference files:** Domain-specific knowledge managed by each sub-project in whatever form serves the work. A client management sub-project has case files and communication logs. A research sub-project has analytical frameworks and source annotations. A media sub-project has taste profiles and tracking lists. These are living documents that capture the current state of the sub-project's thinking.
+**Sub-project reference files:** Domain-specific knowledge managed by each sub-project in whatever form serves the work. A client management sub-project has case files and communication logs. A research sub-project has analytical frameworks and source annotations. A media sub-project has taste profiles and tracking lists. Reference files are kept updated to reflect the current state of the sub-project.
 
 Domain knowledge always lives in sub-project files, not in the project-level PROJECT_INDEX.txt. When a sub-project accumulates context, write that content into a file inside the sub-project directory. The project-level PROJECT_INDEX.txt carries a pointer to the sub-project file and a one-line scope description — never a summary or duplication of the content itself.
 
-**Project operational lessons:** Cross-cutting knowledge that any sub-project might need. Tool quirks, workarounds, migration procedures, context cost behavior. Centralized in a Lessons/ directory with an index routing to topical files. When a sub-project discovers something operationally useful, it surfaces here.
+**Project operational lessons:** Cross-cutting knowledge that any sub-project might need. What worked, what didn't, patterns observed across cases, tool workarounds, and procedures that apply across areas. Centralized in a Lessons/ directory with an index routing to topical files. When a sub-project discovers something operationally useful, it surfaces here.
 
-**Shared knowledge base (optional):** Cross-project knowledge published as standalone entries. One project discovers a technique, documents it portably, publishes it. Other projects encounter it and adopt, adapt, or ignore it. This is how projects teach each other. Only relevant if you're running multiple projects.
+**Shared knowledge base (optional):** A folder, separate from your project directories, that all your projects have access to. Cross-project knowledge published as standalone entries. One project discovers a technique, documents it portably, publishes it. Other projects encounter it and adopt, adapt, or ignore it. This is how projects teach each other. Only relevant if you're running multiple projects.
 
 The direction is always upward: sub-project reference files → project Lessons/ → shared knowledge base. Each level is a different formalization with a broader audience.
+
+Session search is typically project-scoped — built-in session search usually only sees conversations within the current project. But the filesystem spans everything. When you need cross-project context, the AI reads the other project's files directly.
 
 ### Cross-Project Routing via Coordinator Inbox
 
@@ -292,7 +292,7 @@ The note should include: the observation itself, the source (which project and s
 
 When you run multiple projects, you can create one project as a meta-project coordinator to develop and maintain the system they all share. It uses the same workspace architecture as every other project. Its domain work is the architecture itself.
 
-The coordinator is where you do design work on the workspace system, maintain the shared knowledge base, propagate structural changes, audit projects for consistency, and manage cross-project delegations. It also serves as a gateway for cross-project visibility: summarizing task queues across all projects, helping prioritize between competing demands in different projects, and giving you a single place to ask "what's pending across everything?" Every project can read every other project's files. The coordinator uses this to read handoffs, task queues, and inboxes across all projects, write delegation notes, and verify that changes have been applied.
+The coordinator is where you can do design work on the workspace system, maintain the shared knowledge base, propagate structural changes, audit projects for consistency, test improvements, and manage cross-project delegations. It can also serve as a gateway for cross-project visibility: summarizing task queues across all projects, helping prioritize between competing demands in different projects, and giving you a single place to ask "what's pending across everything?" Every project can read every other project's files. The coordinator uses this to read handoffs, task queues, and inboxes across all projects, write delegation notes, and verify that changes have been applied.
 
 A coordinator project is not required. A single project or a few projects work fine without one. The coordinator becomes valuable when you have enough projects that cross-cutting concerns emerge: shared patterns that need to stay consistent, design changes that affect multiple projects, observations from one project that would benefit others.
 
@@ -304,7 +304,7 @@ Building a coordinator:
 - It maintains the shared knowledge base (a directory of standalone documents covering patterns and techniques that any project can consult).
 - It uses the inbox mechanism in both directions: domain projects route cross-cutting observations to the coordinator's inbox, and the coordinator writes delegation notes to domain project inboxes.
 
-The coordinator's relationship to domain projects is consultative, not controlling. Domain projects are self-sufficient. They read the shared knowledge base, apply the architecture's principles, and use their own judgment. The coordinator improves the design and makes it available. It does not babysit individual projects.
+The coordinator's relationship to domain projects is consultative, not controlling. Domain projects are self-sufficient. They read the shared knowledge base, apply the architecture's principles, and use their own judgment. A coordinator project allows you to work on the other projects without distracting them from their domain work.
 
 ---
 
@@ -329,7 +329,7 @@ Standard file roles:
 
 **Development trajectory:** A new sub-project starts with a status file and possibly a reference file. As work accumulates, named domain files and folders emerge. As domain files grow, the indexed collection pattern applies. The AI should recognize when infrastructure needs to develop and build it, following the patterns in this document and looking at how peer sub-projects have organized their work.
 
-Standing rule: when a sub-project directory is created, seed it with at least a status file immediately. An empty sub-project directory has no gravity — domain knowledge will flow to the project-level PROJECT_INDEX.txt instead, because that file already exists and has structure. A seeded file reverses that pull.
+Standing rule: when a sub-project directory is created, seed it with at least a status file immediately. An empty sub-project directory gets skipped — the AI will write domain content into PROJECT_INDEX.txt instead, because that file already exists and has structure. A seeded status file gives the AI somewhere to put sub-project content from the start.
 
 Sub-project structure depends on the shape of the work:
 
@@ -351,27 +351,25 @@ When a sub-project completes, it moves to Archive/ at the project root with a co
 
 See the companion pattern: [Sub-Project Archive Pattern](patterns/archive-pattern.md).
 
-### Sub-Project Complexity Tiers
+---
 
-Sub-projects operate at one of two context tiers:
+## Project Complexity Tiers
 
-**Standard:** The default. The sub-project's state is summarized in the project-level HANDOFF.txt. Its reference files load on demand when work begins. No additional orientation file needed.
+The default setup gives you a baseline: state summarized in HANDOFF.txt, reference files loaded on demand, a lean startup procedure. As a project or sub-project grows in complexity, you can expand this baseline to give it more context at startup.
 
-**Extended:** For sub-projects whose domain complexity requires richer orientation than a handoff summary can provide. The sub-project maintains its own orientation file (named distinctively, never HANDOFF.txt) with detailed state, open questions at their current stage of thinking, and reading pointers to its own reference materials.
+At the project level, this means adding more files to the startup procedure, reading more session logs by default, or growing the governing document to cover more operational detail. At the sub-project level, you can give a sub-project its own orientation file (named to clearly identify the area it covers) with detailed state, open questions at their current stage of thinking, and reading pointers to its own reference materials.
 
-A sub-project starts at Standard by default. It can be designated Extended at creation if the scope is known, or promoted later when complexity emerges.
+This is just a matter of degree — adding more reads, longer documents, richer orientation. Concise logging, indexed collections, and on-demand loading can all still apply.
 
-Extended tier means permission for: longer orientation files, bigger session log entries for that area, more reference material. It does not mean abandoning the optimization principles. Concise logging, indexed collections, and on-demand loading all still apply. The ceiling is raised, not removed.
+### Separating Startup and Activation
 
-### Loading Sequence for Extended Sub-Projects
+For sub-projects with their own orientation files, you can separate startup and activation into distinct loading steps:
 
-Startup and activation are separate loading steps.
+**Startup** (at session open): Follow the standard startup sequence. HANDOFF.txt carries the project's current state and pointers to orientation files for sub-projects that have them.
 
-**Startup** (at session open): Follow the standard startup sequence. The project-level HANDOFF.txt carries a brief summary of each sub-project's state and a pointer to its orientation file.
+**Activation** (when work begins on a sub-project): Read the sub-project's orientation file. Read the session log referenced in its "last active" pointer, if different from the session log already loaded at startup. Report sub-project state to the user and wait for direction.
 
-**Activation** (when user directs work to the sub-project): Read the sub-project's orientation file. Read the session log referenced in its "last active" pointer, if different from the session log already loaded at startup. Report sub-project state to the user and wait for direction.
-
-The governing document must include an explicit activation sequence for each Extended sub-project, specifying the files to read and their order. This keeps startup lean while giving Extended sub-projects the full context load they need when activated. The orientation file must have a distinctive name that cannot be confused with the project-level HANDOFF.txt.
+To set this up, include an explicit activation sequence for each sub-project in the governing document, specifying the files to read and their order. This keeps startup lean while giving complex sub-projects the full context load they need when activated.
 
 ---
 
@@ -391,8 +389,6 @@ Complex projects may need multiple task queues split by function or sub-project.
 
 Tool guides are operational reference for using a specific capability well. They answer "how do I use this tool efficiently and correctly?" — front-loading the working approach so the AI doesn't have to rediscover it mid-session.
 
-Tool guides are distinct from patterns. A pattern describes a type of thing in the workspace, a technique that shapes how work is done, or a design that solves a structural problem. A tool guide describes how to operate a specific tool well. Patterns answer "what is this and why does it exist?" Tool guides answer "how do I use this proficiently?"
-
 Tool guides live per-project in a Tool Guides/ directory, loaded on demand when work that uses the tool begins. They are not loaded at startup. Each guide is self-contained operational reference for one tool.
 
 The repo carries tool guides as a collection ([tool-guides/](tool-guides/)) from which projects adopt what they need. A project that doesn't use Chrome doesn't need the Chrome guide.
@@ -405,11 +401,7 @@ Scope: tool guides cover universal tool behavior. Task-specific operational deta
 
 **Filesystem required for full functionality.** Requires an AI application with filesystem read/write access. Web and mobile interfaces don't have filesystem access. When accessing a project without filesystem access, the AI will note what needs syncing when filesystem access is next available.
 
-**Session search is typically project-scoped.** Built-in session search usually only sees conversations within the current project. It will never find anything from another project. But the filesystem spans everything. When you need cross-project context, the AI reads the other project's files directly.
-
-**Domain file design is domain-specific.** This architecture prescribes standard file roles inside sub-projects (STATUS for orientation, REFERENCE for domain knowledge) and naming conventions, but the specific content and additional domain files depend on the nature of the work.
-
 **Project memory.** This system works with your AI application's project memory turned on or off. With memory on, you may find duplication between memory and filesystem state; with memory off, the filesystem is the sole source of continuity. Experiment with both to see what works for your use case.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*

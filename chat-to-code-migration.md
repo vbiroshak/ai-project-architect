@@ -89,7 +89,7 @@ The naming conventions:
 
 Create Project/Sessions/ (or Workflow Files/Sessions/ if placing before the directory rename). Copy both the `.json` and `.md` files. The `.json` is the canonical record; the `.md` is the readable companion.
 
-Going forward in Code, the archive hook names transcripts from the "This is ProjectName NNN" session opener. The first Code session number = last log number + 1.
+Going forward in Code, the archive hook names transcripts from `/rename` (checked first) or the "This is ProjectName NNN" session opener (fallback). Named sessions are formatted as `ProjectName_NNNN.jsonl`. The first Code session number = last log number + 1.
 
 ---
 
@@ -130,7 +130,7 @@ All internal references update in the same pass.
 
 See the [Fresh Setup](claude-code-setup.md#5-configure-permissions) section for the settings.json structure.
 
-- Copy hooks from a working Code project and surgically edit the project name. If this is your first Code project, use the hook scripts in [templates/claude-code/](templates/claude-code/) (see its [README](templates/claude-code/README.md) for setup). Register them in settings.json.
+- Copy hooks from [templates/claude-code/](templates/claude-code/) (see its [README](templates/claude-code/README.md) for setup). Set the `PROJECT_NAME` constant at the top of the archiver to your project's name. Register them in settings.json.
 - Create the output style file in `.claude/output-styles/` and select it in `.claude/settings.local.json`. See [output style setup](claude-code-setup.md#6-set-up-output-style-and-preferences) for the file format and frontmatter.
 - Create Project/Claude Memory/ if redirecting auto memory.
 
@@ -201,4 +201,4 @@ The architecture's core is unchanged in Code:
 - All domain content and working files
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*

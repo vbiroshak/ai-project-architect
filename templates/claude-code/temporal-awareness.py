@@ -23,3 +23,5 @@ print(json.dumps({"hookSpecificOutput": {
     "additionalContext": context,
 }}))
 sys.exit(0)
+
+# Version 4.5

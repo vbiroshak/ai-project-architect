@@ -212,4 +212,4 @@ If you have an existing unstructured project to migrate into this architecture:
 **File deletion.** The AI cannot delete files in Chat. It moves items to Inbox/ with "DELETE ME" at the front. The user handles the actual deletion.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*

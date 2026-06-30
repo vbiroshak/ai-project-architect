@@ -42,4 +42,4 @@ For files overwritten wholesale (HANDOFF, STATUS) or newly created, both lines c
 ```
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*

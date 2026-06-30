@@ -9,7 +9,7 @@ Resources for setting up or migrating to Claude Code. See [claude-code-setup.md]
 | File | What it is |
 |------|-----------|
 | temporal-awareness.py | Hook script (UserPromptSubmit): injects the current local time into every turn. Replaces the Clock file mechanism. Drop into `.claude/hooks/` and register in settings.json. |
-| archive-transcripts.py | Hook script (SessionStart): copies completed session transcripts into the project's Sessions/ folder with human-readable names. Customize `PROJECT_NAME` and the naming regex for your project. |
+| archive-transcripts.py | Hook script (SessionStart): copies completed session transcripts into the project's Sessions/ folder with human-readable names. Set `PROJECT_NAME` at the top of the script to your project's name. |
 | transcript_to_md.py | Renderer: converts .jsonl transcripts into readable collapsed-view Markdown. Called automatically by the archiver if present alongside it in `.claude/hooks/`. Also usable standalone. |
 
 ### Project templates
@@ -36,7 +36,7 @@ Resources for setting up or migrating to Claude Code. See [claude-code-setup.md]
 ## Setup
 
 1. Copy all three scripts (temporal-awareness.py, archive-transcripts.py, and transcript_to_md.py) into your project's `.claude/hooks/` directory. The archiver imports the renderer from the same directory; if it's missing, archiving works but without the Markdown companion files.
-2. Edit `archive-transcripts.py`: set `PROJECT_NAME` to your project's name and adjust `NUM_PATTERNS` if your session declarations use a different format. To get readable filenames, open each session with a line like "This is [Project] 42" — the archiver extracts the name and number from this declaration. Without it, transcripts keep their UUID names.
+2. Edit `archive-transcripts.py`: set `PROJECT_NAME` at the top to your project's name. The archiver names transcripts using three tiers: `/rename` with a name and number (e.g. "MyProject 42") is checked first, then a "This is MyProject 42" declaration in the opening message, then UUID as fallback. Named sessions are formatted as `MyProject_0042.jsonl`.
 3. Copy `settings-template.json` to `.claude/settings.json` and replace the placeholder paths with your actual project and resource paths.
 4. The temporal-awareness hook works without modification.
 
@@ -49,4 +49,4 @@ Resources for setting up or migrating to Claude Code. See [claude-code-setup.md]
 - Bash allow rules match by prefix. `Bash(grep *)` allows any grep command without prompting. Keep destructive commands (rm, mv, etc.) behind prompts.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*

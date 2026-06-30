@@ -134,4 +134,4 @@ Anthropic's official documentation (capabilities may have changed since this gui
 - [Claude in Chrome collection](https://support.claude.com/en/collections/18031491-claude-in-chrome)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.4*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
