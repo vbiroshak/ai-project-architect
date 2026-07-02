@@ -128,7 +128,7 @@ A baseline registry with 12 sections in fixed order:
 | 8 | Handoff | Universal |
 | 9 | Temporal Awareness | Universal |
 | 10 | Inbox | Universal |
-| 11 | Shared Knowledge Base | Universal |
+| 11 | Shared Knowledge Base | Universal (if running multiple projects) |
 | 12 | Project Context | Project-specific |
 
 Universal sections carry identical mechanical text across all projects. Project-specific sections use the same heading and position but carry project-specific content. Optional sections are included only when needed. If you are an AI building this for a user, ask the user about each optional and project-specific section and explain what it does so they can make an informed decision.
@@ -140,6 +140,8 @@ For the actual deployable text of each section, see the [workflow section templa
 **Session Startup Procedure** — The seven-step startup sequence: confirm Filesystem tools loaded, sync config backup, check the clock and time since last logged interaction, read PROJECT_INDEX and HANDOFF, read the most recent session log plus any additional logs the handoff identifies, read task queue if present, list Inbox. Identical across all projects.
 
 **Base Path** — The project's filesystem root. One line.
+
+**Tool Guides** — Required guides to read before using specific tools, listed with hard preconditions (read the guide before loading or using the tool). Standard entries: Chrome browser, Filesystem tools, Cowork delegation. Projects adopt only the guides relevant to their work; entries for unused tools are omitted.
 
 **What This Project Does** — Brief project description and current sub-project list with one-line descriptions. Updated when sub-projects are added or archived.
 
@@ -155,7 +157,7 @@ For the actual deployable text of each section, see the [workflow section templa
 
 **Inbox** — Asynchronous interface between the user and the project, both directions. The user drops files for processing; the AI writes drafts, deletion flags, delegation notes, or anything needing the user's attention. Processing guidance: list the directory before any reference to inbox contents (startup, mid-session, handoff writing), read on demand, check existing project structure before assessing items. Identical across all projects.
 
-**Shared Knowledge Base** — Path and one-line description. Identical across all projects.
+**Shared Knowledge Base** — Path and one-line description. Identical across all projects. Include only when running multiple projects that share patterns and knowledge; a single-project setup omits this section.
 
 **Project Context** — Project-specific material earning its place in every context window but not covered by account-wide user preferences. Domain context, operational conventions. Accumulates through use. A file deletion convention is always present as a seed entry (the AI cannot delete files in Chat — it moves items to Inbox/ with "DELETE ME" at the front). Content already in account-wide preferences should not be duplicated here. File structure documentation belongs in PROJECT_INDEX.txt, not here.
 
@@ -212,4 +214,4 @@ If you have an existing unstructured project to migrate into this architecture:
 **File deletion.** The AI cannot delete files in Chat. It moves items to Inbox/ with "DELETE ME" at the front. The user handles the actual deletion.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*

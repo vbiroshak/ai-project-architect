@@ -11,4 +11,4 @@ When Filesystem tools are not available, let the user know and explain that the 
 ```
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*

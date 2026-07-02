@@ -103,7 +103,8 @@ def generated_header(d):
 def existing_header(md_path):
     if not os.path.exists(md_path):
         return None
-    lines = open(md_path).read().split("\n")
+    with open(md_path, encoding="utf-8") as f:
+        lines = f.read().split("\n")
     for i, l in enumerate(lines):
         if l.startswith("## "):
             return "\n".join(lines[:i])
@@ -111,13 +112,15 @@ def existing_header(md_path):
 
 
 def convert_file(json_path):
-    d = json.load(open(json_path))
+    with open(json_path, encoding="utf-8") as f:
+        d = json.load(f)
     md_path = json_path[:-5] + ".md" if json_path.endswith(".json") else json_path + ".md"
     header = existing_header(md_path)
     if header is None:
         header = generated_header(d)
     out = header + "\n" + render_body(d) + "\n"
-    open(md_path, "w").write(out)
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write(out)
     return md_path
 
 
@@ -130,6 +133,9 @@ def main(argv):
     args = [a for a in argv]
     if "--glob" in args:
         i = args.index("--glob")
+        if i + 1 >= len(args):
+            print("--glob requires a pattern argument")
+            return 1
         pattern = args[i + 1]
         del args[i:i + 2]
     for a in args:
@@ -150,4 +156,4 @@ def main(argv):
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
 
-# Version 4.5
+# Version 4.6

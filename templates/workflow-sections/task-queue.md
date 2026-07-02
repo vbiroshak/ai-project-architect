@@ -18,4 +18,4 @@ Add new items as they come up. On completion, remove from TASKS.txt and note in 
 The step number reference (currently "step 6") must match the actual startup procedure numbering. Include this section only in projects that use a task queue file.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*

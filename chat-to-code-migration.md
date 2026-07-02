@@ -46,9 +46,11 @@ Some conversations that were deleted in the Chat UI may still appear in the expo
 
 `split_export.py` (in [templates/claude-code/](templates/claude-code/)) reads `conversations.json`, identifies each conversation's project from its `name` field (pattern: "ProjectName N"), and writes individual `.json` files named with the 4-digit convention (`ProjectName_0042.json`) into a staging directory organized by project. It reports per-project counts, gaps, and duplicates.
 
+Before running, edit the `KNOWN_PROJECTS` list at the top of the script with your project names — the script matches conversation names only against that list, so run as shipped it matches nothing.
+
 Usage: `python3 split_export.py <batch-dir> <output-dir> [--project ProjectName] [--dry-run]`
 
-The script matches only integer-named conversations (e.g., "Tech 42"). Unnamed conversations are counted but not written unless `--include-unnamed` is passed.
+The script matches only integer-named conversations (e.g., "MyProject 42"). Unnamed conversations are counted but not written unless `--include-unnamed` is passed. Conversations whose number collides with one already written are quarantined into `_duplicates/` for manual resolution.
 
 ### Converting to readable Markdown
 
@@ -89,7 +91,7 @@ The naming conventions:
 
 Create Project/Sessions/ (or Workflow Files/Sessions/ if placing before the directory rename). Copy both the `.json` and `.md` files. The `.json` is the canonical record; the `.md` is the readable companion.
 
-Going forward in Code, the archive hook names transcripts from `/rename` (checked first) or the "This is ProjectName NNN" session opener (fallback). Named sessions are formatted as `ProjectName_NNNN.jsonl`. The first Code session number = last log number + 1.
+Going forward in Code, the archive hook names transcripts from `/rename` (checked first) or the "This is ProjectName NNN" session opener (fallback). Number-named sessions are formatted as `ProjectName_NNNN.jsonl`. The first Code session number = last log number + 1.
 
 ---
 
@@ -201,4 +203,4 @@ The architecture's core is unchanged in Code:
 - All domain content and working files
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*

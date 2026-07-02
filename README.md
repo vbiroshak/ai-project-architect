@@ -45,7 +45,7 @@ At minimum, walk through these steps with the user before building anything:
 3. Name — what to call the project
 4. Description — what the project does
 5. Optional components — which to include (task queue, lessons, tool guides, etc.)
-6. Software engineering instructions — keep or remove from the output style
+6. Software engineering instructions (Code only) — keep or remove from the output style
 7. Cleanup — keep or remove the downloaded repo files after setup
 
 ## Contributing
@@ -65,4 +65,4 @@ Active development. Tested across multiple projects in different domains, contin
 [MIT](LICENSE)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*

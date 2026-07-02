@@ -47,7 +47,7 @@ CLAUDE.md at the project root is the entry point (auto-loaded every session). PR
     Tool Guides/              (optional — project-specific guides only)
     Session Logs/
       Session_XXXX.txt        4-digit, one per session
-    Sessions/                 (created by archive hook if set up)
+    Sessions/                 (archive hook destination if set up)
   [Sub-Project A]/
   Archive/
 ```
@@ -60,7 +60,7 @@ The core that every Code project needs: CLAUDE.md, PROJECT_CONTEXT.md (or equiva
 - **Claude Memory/** — Code's [auto memory](https://code.claude.com/docs/en/memory#auto-memory) works fine in its default location (`~/.claude/projects/`). Redirecting it into the project via `autoMemoryDirectory` in settings.json puts the memory files where the project can see and manage them, but it's a preference, not a requirement.
 - **Lessons/** — auto memory captures behavioral lessons automatically. A separate Lessons/ directory with an index is more structured and portable, but for many projects auto memory covers it.
 - **Tool Guides/** — Code has built-in knowledge of its own tools. Project-specific tool guides (like Chrome usage patterns for a project that uses the Chrome extension) still add value.
-- **Sessions/** — created automatically by the transcript archiving hook (see Hooks below). Not needed if you don't set up the hook.
+- **Sessions/** — the destination for the transcript archiving hook (see Hooks below). Create it with the project structure; the hook archives into Project/Sessions/ when it exists. Not needed if you don't set up the hook.
 - **CHANGELOG.txt** — useful for projects with infrastructure changes to track; optional for simpler projects.
 
 ---
@@ -144,9 +144,11 @@ To build a new project in Code using this architecture:
 
 Create the project directory with this structure:
 - CLAUDE.md at the root (step 2)
-- Project/ containing HANDOFF.txt, PROJECT_INDEX.txt, and Session Logs/
+- Project/ containing HANDOFF.txt, PROJECT_INDEX.txt, Session Logs/, and Sessions/
 - Inbox/ for asynchronous items between you and the AI
 - At least one sub-project folder for the project's domain work
+
+Create Project/Sessions/ even though it starts empty — the archive hook (step 4) archives into it only when it already exists. Without it, the hook falls back to creating a `recall/sessions/` directory at the project root.
 
 The following components are optional. If you are an AI building this for a user, ask the user about each one and explain what it does so they can make an informed decision:
 
@@ -209,13 +211,13 @@ Create `.claude/hooks/` in the project directory and register them in `.claude/s
 
 **Temporal awareness** (UserPromptSubmit): Injects the current local time into every turn. The AI receives the time automatically before processing each message.
 
-**Transcript archiving** (SessionStart): Copies the previous session's transcript into the project's Sessions/ directory with a readable name. Naming uses three tiers: `/rename` with a name and number (e.g. "MyProject 42") is checked first, then a "This is MyProject 42" declaration in the opening message, then UUID as fallback. Named sessions are formatted as `MyProject_0042.jsonl` (zero-padded). A `PROJECT_NAME` constant at the top of the script normalizes casing and prevents false matches.
+**Transcript archiving** (SessionStart): Copies the previous session's transcript into the project's Sessions/ directory with a readable name. Naming uses four tiers: `/rename` with a name and number (e.g. "MyProject 42") is checked first, then a "This is MyProject 42" declaration in the opening message, then a free-form `/rename` title (used as the filename as-is), then UUID as fallback. Number-named sessions are formatted as `MyProject_0042.jsonl` (zero-padded). A `PROJECT_NAME` constant at the top of the script normalizes casing and prevents false matches. The hook archives into Project/Sessions/ when it exists (create it in step 1), then a root-level Sessions/, and otherwise creates `recall/sessions/`.
 
 **Transcript renderer** (companion script): Renders each archived transcript as a readable Markdown file (collapsed view: messages in full, tool calls as one-line summaries). The archiver imports the renderer automatically when it's alongside it.
 
 Hooks communicate context back to the session by printing a JSON object to stdout with an `additionalContext` field inside `hookSpecificOutput`. This context appears as a system reminder attached to the user's message. The temporal-awareness hook uses this to inject the formatted local time so the AI receives it automatically before processing each turn.
 
-All three scripts go into `.claude/hooks/`. See [templates/claude-code/](templates/claude-code/) for deployable versions. Set the `PROJECT_NAME` constant at the top of the archiver to your project's name.
+All three scripts go into `.claude/hooks/`. See [templates/claude-code/](templates/claude-code/) for deployable versions. Copy the files exactly (e.g., with `cp`) rather than retyping or regenerating their contents — a rewritten copy can silently diverge from the tested source. Set the `PROJECT_NAME` constant at the top of the archiver to your project's name.
 
 When a hook produces derived data that the session will query (e.g., a regenerated index or extracted text), use a blocking hook at SessionStart rather than async. The cost is paid once per session; async creates a race condition where the session queries stale data.
 
@@ -343,7 +345,7 @@ Code has a built-in [auto memory](https://code.claude.com/docs/en/memory#auto-me
 
 Two reasonable approaches:
 
-**Redirect auto memory into the project.** Add `"autoMemoryDirectory": "Project/Claude Memory"` to settings.json. This puts the memory files inside the project's infrastructure where they're visible and manageable. The project files govern; a note that contradicts them is stale and deleted on contact.
+**Redirect auto memory into the project.** Add `"autoMemoryDirectory": "/absolute/path/to/your/project/Project/Claude Memory"` to settings.json (the setting requires an absolute or `~/`-prefixed path). This puts the memory files inside the project's infrastructure where they're visible and manageable. The project files govern; a note that contradicts them is stale and deleted on contact.
 
 **Use both layers as-is.** Let auto memory handle what it's designed for (behavioral preferences, tool quirks, correction patterns) in its default location while the project architecture handles what it's designed for (work state, decisions, orientation). These are complementary: auto memory is a small notebook about how to work; the project files are the record of what work was done.
 
@@ -368,4 +370,4 @@ These are optional extensions that develop as the project matures.
 **[Rules](https://code.claude.com/docs/en/memory#organize-rules-with-claude/rules/)** are instruction files in `.claude/rules/`. Rules without `paths:` frontmatter load at session start and are re-injected from disk after compaction, same as CLAUDE.md. Rules with `paths:` frontmatter load only when Claude works with matching files, and are lost on compaction until a matching file is read again. If you prefer splitting your operating instructions across multiple files rather than maintaining one large PROJECT_CONTEXT.md, rules are the mechanism for that.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*

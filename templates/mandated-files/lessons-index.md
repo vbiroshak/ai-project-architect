@@ -25,4 +25,4 @@ Each entry names a topic, points to its file, and describes scope enough to rout
 Lesson files capture distilled operational knowledge — patterns, edge cases, mitigations — not chronological events.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*

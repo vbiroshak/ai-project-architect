@@ -100,12 +100,42 @@ def text_pattern_from_transcript(path):
                 txt = txt.strip()
                 if not txt or txt.startswith("<"):
                     continue
+                # Only the first real user message counts as the opener.
                 m = TEXT_PATTERN_RE.search(txt)
-                if m:
-                    return (m.group(1), m.group(2))
+                return (m.group(1), m.group(2)) if m else None
     except Exception:
         pass
     return None
+
+
+def transcript_session_id(path):
+    """Read the sessionId from the first records of a transcript. Returns the id string or None."""
+    try:
+        with open(path, encoding="utf-8", errors="replace") as f:
+            for i, line in enumerate(f):
+                if i > 20:
+                    break
+                try:
+                    o = json.loads(line.strip())
+                except Exception:
+                    continue
+                sid = o.get("sessionId")
+                if sid:
+                    return sid
+    except Exception:
+        pass
+    return None
+
+
+def resolve_transcripts_dir(config, project_dir):
+    """Resolve the transcript directory, relative to project_dir."""
+    if config.get("transcripts_dir"):
+        return config["transcripts_dir"]
+    if os.path.isdir(os.path.join(project_dir, "Project", "Sessions")):
+        return "Project/Sessions"
+    if os.path.isdir(os.path.join(project_dir, "Sessions")):
+        return "Sessions"
+    return "recall/sessions"
 
 
 def resolve_project_name(config, project_dir):
@@ -161,17 +191,7 @@ def main():
 
     project_dir = data.get("cwd") or os.getcwd()
     config = load_config(os.path.join(project_dir, "recall", "config.json"))
-
-    # Resolve transcript directory
-    if config.get("transcripts_dir"):
-        transcripts_dir_rel = config["transcripts_dir"]
-    elif os.path.isdir(os.path.join(project_dir, "Project", "Sessions")):
-        transcripts_dir_rel = "Project/Sessions"
-    elif os.path.isdir(os.path.join(project_dir, "Sessions")):
-        transcripts_dir_rel = "Sessions"
-    else:
-        transcripts_dir_rel = "recall/sessions"
-
+    transcripts_dir_rel = resolve_transcripts_dir(config, project_dir)
     project_name, project_name_tier = resolve_project_name(config, project_dir)
 
     transcript_path = data.get("transcript_path", "")
@@ -191,8 +211,15 @@ def main():
     if not os.path.isdir(src_dir):
         sys.exit(0)
 
+    sources = sorted(glob.glob(os.path.join(src_dir, "*.jsonl")))
+
+    if not current_base and sources:
+        # No session identity from stdin — guard against copying the live transcript.
+        current_base = os.path.basename(max(sources, key=os.path.getmtime))
+
     copied = []
-    for src in sorted(glob.glob(os.path.join(src_dir, "*.jsonl"))):
+    conflicts = []
+    for src in sources:
         base = os.path.basename(src)
         if base == current_base:
             continue
@@ -205,10 +232,21 @@ def main():
             if stem:
                 fname = stem + ".jsonl"
                 friendly = os.path.join(sessions_dir, fname)
-                if os.path.exists(friendly) and os.path.getsize(friendly) >= ssize:
-                    continue
+                if os.path.exists(friendly):
+                    # A different session already archived under this name is a
+                    # naming conflict — preserve the existing archive and report.
+                    src_sid = transcript_session_id(src)
+                    dst_sid = transcript_session_id(friendly)
+                    if src_sid and dst_sid and src_sid != dst_sid:
+                        conflicts.append(fname)
+                        continue
+                    if os.path.getsize(friendly) >= ssize:
+                        continue
                 if os.path.exists(uuid_dst):
                     os.replace(uuid_dst, friendly)
+                    uuid_md = uuid_dst[:-6] + ".md"
+                    if os.path.exists(uuid_md):
+                        os.replace(uuid_md, friendly[:-6] + ".md")
                     if os.path.getsize(friendly) >= ssize:
                         copied.append(fname + " (named)")
                         continue
@@ -236,10 +274,19 @@ def main():
     except Exception:
         pass
 
+    notes = []
     if copied:
+        notes.append("Archived transcript(s): " + ", ".join(copied))
+    if conflicts:
+        notes.append(
+            "NAMING CONFLICT — not archived (a different session is already archived under this name; "
+            "renumber one of them with /rename, it will archive at the next session start): "
+            + ", ".join(conflicts)
+        )
+    if notes:
         print(json.dumps({"hookSpecificOutput": {
             "hookEventName": "SessionStart",
-            "additionalContext": "Archived transcript(s): " + ", ".join(copied),
+            "additionalContext": " ".join(notes),
         }}))
     sys.exit(0)
 
@@ -247,4 +294,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-# Version 4.5
+# Version 4.6

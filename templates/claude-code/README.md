@@ -35,8 +35,8 @@ Resources for setting up or migrating to Claude Code. See [claude-code-setup.md]
 
 ## Setup
 
-1. Copy all three scripts (temporal-awareness.py, archive-transcripts.py, and transcript_to_md.py) into your project's `.claude/hooks/` directory. The archiver imports the renderer from the same directory; if it's missing, archiving works but without the Markdown companion files.
-2. Edit `archive-transcripts.py`: set `PROJECT_NAME` at the top to your project's name. The archiver names transcripts using three tiers: `/rename` with a name and number (e.g. "MyProject 42") is checked first, then a "This is MyProject 42" declaration in the opening message, then UUID as fallback. Named sessions are formatted as `MyProject_0042.jsonl`.
+1. Copy all three scripts (temporal-awareness.py, archive-transcripts.py, and transcript_to_md.py) into your project's `.claude/hooks/` directory. Copy the files exactly (e.g., with `cp`) rather than retyping or regenerating their contents — a rewritten copy can silently diverge from the tested source. The archiver imports the renderer from the same directory; if it's missing, archiving works but without the Markdown companion files.
+2. Edit `archive-transcripts.py`: set `PROJECT_NAME` at the top to your project's name. The archiver names transcripts using four tiers: `/rename` with a name and number (e.g. "MyProject 42") is checked first, then a "This is MyProject 42" declaration in the opening message, then a free-form `/rename` title (used as the filename as-is), then UUID as fallback. Number-named sessions are formatted as `MyProject_0042.jsonl`.
 3. Copy `settings-template.json` to `.claude/settings.json` and replace the placeholder paths with your actual project and resource paths.
 4. The temporal-awareness hook works without modification.
 
@@ -49,4 +49,4 @@ Resources for setting up or migrating to Claude Code. See [claude-code-setup.md]
 - Bash allow rules match by prefix. `Bash(grep *)` allows any grep command without prompting. Keep destructive commands (rm, mv, etc.) behind prompts.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*

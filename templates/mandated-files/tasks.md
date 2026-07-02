@@ -33,4 +33,4 @@ Keep lean. A growing queue signals items need completing or moving to status fil
 Checkbox format ([ ]) is convention for scanability. Items are removed on completion, not checked off.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*

@@ -1,3 +1,4 @@
 .DS_Store
 
-# Version 4.5
+# Version 4.6
+__pycache__/

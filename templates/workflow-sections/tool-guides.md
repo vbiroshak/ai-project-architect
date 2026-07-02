@@ -22,4 +22,4 @@ Required guides to read before using tools.
 Lists the tool guides available in `Workflow Files/Tool Guides/`. Chrome and Cowork entries carry hard preconditions — the guide must be read before loading or using the tool. Projects adopt only the guides relevant to their work; entries for unused tools can be omitted.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*

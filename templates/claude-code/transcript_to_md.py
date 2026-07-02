@@ -1,8 +1,8 @@
 # Render a Claude Code transcript (.jsonl) as a human- and Claude-readable Markdown file.
 #
 # The .jsonl stays the canonical, complete record; this .md is the readable companion (open in
-# QuickLook / TextEdit). It mirrors the chat UI's COLLAPSED view: your messages and mine in full,
-# my reasoning shown, and each tool call as a single summary line — the tool's inputs and results
+# QuickLook / TextEdit). It mirrors the chat UI's COLLAPSED view: User and AI messages in full,
+# AI reasoning shown, and each tool call as a single summary line — the tool's inputs and results
 # are NOT expanded here (they live complete in the .jsonl). That keeps the readable view legible.
 import json, sys, os, re
 from datetime import datetime, timezone
@@ -167,4 +167,4 @@ if __name__ == "__main__":
         sys.exit(1)
     render(sys.argv[1], sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else None)
 
-# Version 4.5
+# Version 4.6

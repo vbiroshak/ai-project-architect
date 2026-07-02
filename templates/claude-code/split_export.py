@@ -16,7 +16,7 @@ Reads conversations.json from a data-export batch directory. For each
 conversation, identifies its project from the `name` field (pattern:
 "ProjectName N"). Writes each conversation as an individual .json file
 into a staging directory organized by project, named with the 4-digit
-convention (e.g., Tech_0042.json).
+convention (e.g., MyProject_0042.json).
 
 The individual .json files have the same structure as one conversation
 from the bulk export (uuid, name, summary, created_at, updated_at,
@@ -24,17 +24,17 @@ account, chat_messages). chat_export_to_md.py can then convert each
 to a readable .md.
 
 NAMING
-The conversation name "Tech 42" becomes Tech_0042.json. The number is
+The conversation name "MyProject 42" becomes MyProject_0042.json. The number is
 extracted from the name. Conversations with decimal-style names
 (e.g., "MyProject 1.0") are reported as warnings and skipped.
 
 SETUP
 Edit the KNOWN_PROJECTS list below with YOUR project names. The script
 matches conversations whose name field follows the pattern
-"ProjectName N" (e.g., "Tech 42", "Portfolio 1").
+"ProjectName N" (e.g., "MyProject 42", "OtherProject 1").
 
 USAGE
-  python3 split_export.py <batch-dir> <output-dir> [--project Tech] [--dry-run]
+  python3 split_export.py <batch-dir> <output-dir> [--project MyProject] [--dry-run]
 
   <batch-dir>   the data-export batch directory containing conversations.json
   <output-dir>  where to write the per-project directories
@@ -45,16 +45,18 @@ USAGE
 
 OUTPUT STRUCTURE
   <output-dir>/
-    Tech/
-      Tech_0001.json
-      Tech_0002.json
+    MyProject/
+      MyProject_0001.json
+      MyProject_0002.json
       ...
-    Portfolio/
-      Portfolio_0001.json
+    OtherProject/
+      OtherProject_0001.json
       ...
     _unmatched/         (only with --include-unnamed)
       unmatched_001.json
       ...
+    _duplicates/        (conversations whose number collides with one already
+      ...                written — quarantined for manual resolution)
     manifest.txt        summary of what was written
 """
 import json
@@ -64,8 +66,8 @@ import sys
 
 
 # EDIT THIS LIST with your project names — these must match the names
-# as they appear in your Claude.ai conversation titles (e.g., "Tech 42"
-# means "Tech" should be in this list).
+# as they appear in your Claude.ai conversation titles (e.g., "MyProject 42"
+# means "MyProject" should be in this list).
 KNOWN_PROJECTS = [
     "MyProject",
     # Add your project names here
@@ -123,7 +125,7 @@ def main(argv):
         print(f"not found: {conv_path}")
         return 1
 
-    with open(conv_path) as f:
+    with open(conv_path, encoding="utf-8") as f:
         convos = json.load(f)
     print(f"loaded {len(convos)} conversations from {conv_path}")
 
@@ -138,7 +140,7 @@ def main(argv):
                 continue
             by_project.setdefault(project, []).append((num, c))
         elif project and num is None:
-            decimal_warnings.append((project, c.get("name", ""), c["uuid"]))
+            decimal_warnings.append((project, c.get("name", ""), c.get("uuid", "")))
         else:
             unmatched.append(c)
 
@@ -175,16 +177,34 @@ def main(argv):
     manifest_lines = []
     total_written = 0
 
+    total_duplicates = 0
+
     for project in sorted(by_project):
         proj_dir = os.path.join(output_dir, project)
         os.makedirs(proj_dir, exist_ok=True)
+        written_nums = set()
         for num, c in by_project[project]:
+            if num in written_nums:
+                # Duplicate number: quarantine for manual resolution rather than
+                # silently overwriting the conversation already written.
+                dup_dir = os.path.join(output_dir, "_duplicates")
+                os.makedirs(dup_dir, exist_ok=True)
+                filename = f"{project}_{num:04d}_{c.get('uuid', '')[:8]}.json"
+                filepath = os.path.join(dup_dir, filename)
+                with open(filepath, "w", encoding="utf-8") as f:
+                    json.dump(c, f, indent=2, ensure_ascii=False)
+                manifest_lines.append(
+                    f"{filename}  {c.get('created_at', '')[:10]}  {c.get('name', '')}  DUPLICATE NUMBER — resolve manually"
+                )
+                total_duplicates += 1
+                continue
+            written_nums.add(num)
             filename = f"{project}_{num:04d}.json"
             filepath = os.path.join(proj_dir, filename)
-            with open(filepath, "w") as f:
+            with open(filepath, "w", encoding="utf-8") as f:
                 json.dump(c, f, indent=2, ensure_ascii=False)
             manifest_lines.append(
-                f"{filename}  {c['created_at'][:10]}  {c.get('name', '')}"
+                f"{filename}  {c.get('created_at', '')[:10]}  {c.get('name', '')}"
             )
             total_written += 1
 
@@ -194,18 +214,20 @@ def main(argv):
         for i, c in enumerate(unmatched, 1):
             filename = f"unmatched_{i:03d}.json"
             filepath = os.path.join(un_dir, filename)
-            with open(filepath, "w") as f:
+            with open(filepath, "w", encoding="utf-8") as f:
                 json.dump(c, f, indent=2, ensure_ascii=False)
             manifest_lines.append(
-                f"{filename}  {c['created_at'][:10]}  {c.get('name', '')}"
+                f"{filename}  {c.get('created_at', '')[:10]}  {c.get('name', '')}"
             )
             total_written += 1
 
     manifest_path = os.path.join(output_dir, "manifest.txt")
-    with open(manifest_path, "w") as f:
+    with open(manifest_path, "w", encoding="utf-8") as f:
         f.write("\n".join(manifest_lines) + "\n")
 
     print(f"\nwrote {total_written} files to {output_dir}")
+    if total_duplicates:
+        print(f"QUARANTINED {total_duplicates} duplicate-numbered conversation(s) to _duplicates/ — resolve manually before placing")
     print(f"manifest: {manifest_path}")
     return 0
 
@@ -213,4 +235,4 @@ def main(argv):
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
 
-# Version 4.5
+# Version 4.6

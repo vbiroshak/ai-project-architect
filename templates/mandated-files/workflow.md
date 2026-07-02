@@ -32,4 +32,4 @@ Sections follow in order, each with a `---` separator and ALL CAPS heading:
 Project-specific sections (2, 4 file pointers, 5 pointers, 12 entries) get filled with project content. All others use the template text verbatim.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*

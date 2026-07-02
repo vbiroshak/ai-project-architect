@@ -39,4 +39,4 @@ The compaction re-read line ensures the AI reloads its governing document when t
 Add project-specific startup steps as additional numbered steps. Keep CLAUDE.md under 200 lines.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*

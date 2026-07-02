@@ -150,4 +150,4 @@ Anthropic's official documentation (capabilities may have changed since this gui
 - [Desktop extensions collection](https://support.claude.com/en/collections/17879657-desktop-extensions)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.5*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*
