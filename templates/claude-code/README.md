@@ -49,4 +49,4 @@ Resources for setting up or migrating to Claude Code. See [claude-code-setup.md]
 - Bash allow rules match by prefix. `Bash(grep *)` allows any grep command without prompting. Keep destructive commands (rm, mv, etc.) behind prompts.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*

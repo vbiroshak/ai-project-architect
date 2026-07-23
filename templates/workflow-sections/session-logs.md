@@ -11,6 +11,8 @@ SESSION LOGS
 Location: Workflow Files/Session Logs/
 Naming: Session_XXXX.txt (four-digit, zero-padded, sequential across the project). One log per session, numbered to match the session number.
 
+TITLE LINE: The first line of each log file: PROJECT — SESSION NNN — Month DD, YYYY. Example: MYPROJECT — SESSION 042 — July 15, 2026. The date is the day the session started; if a later entry lands on a different day, extend it to a range: MYPROJECT — SESSION 038 — June 25 – July 2, 2026.
+
 ENTRY FORMAT: Each entry begins with a header line: [Date, ~Time Timezone] TOPIC
 
 WHAT TO LOG: Decisions, state changes, reasoning, and the current state of evolving work. Not process narration. Thoroughness applies to coverage. Conciseness applies to expression.
@@ -42,4 +44,4 @@ For files overwritten wholesale (HANDOFF, STATUS) or newly created, both lines c
 ```
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*

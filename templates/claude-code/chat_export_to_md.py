@@ -41,6 +41,8 @@ USAGE
   python3 chat_export_to_md.py <file.json> ...  # convert specific files
   python3 chat_export_to_md.py <dir> --glob 'MyProject_*.json'
 
+On Windows, invoke with python instead of python3.
+
 Each <name>.json writes/overwrites <name>.md beside it. The .json is never
 modified. Verify after: there should be zero "This block is not supported"
 strings in the output.
@@ -156,4 +158,4 @@ def main(argv):
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
 
-# Version 4.6
+# Version 4.7

@@ -36,6 +36,8 @@ matches conversations whose name field follows the pattern
 USAGE
   python3 split_export.py <batch-dir> <output-dir> [--project MyProject] [--dry-run]
 
+On Windows, invoke with python instead of python3.
+
   <batch-dir>   the data-export batch directory containing conversations.json
   <output-dir>  where to write the per-project directories
 
@@ -235,4 +237,4 @@ def main(argv):
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
 
-# Version 4.6
+# Version 4.7

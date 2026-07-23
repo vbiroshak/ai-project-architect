@@ -9,6 +9,8 @@ Startup orientation file. Overwritten with each session log (paired writes). See
 Last updated: [date] (Session NNN)
 Last reviewed: [date]
 
+Orientation only, not a record. The next session reads the latest session log — do not repeat or summarize it. Write only what the next session picks up or points to. Finished work goes in the session log and comes out of the handoff at the same overwrite. Rules, operating knowledge, and reference facts go in the governing documents. Preserve this header on every overwrite.
+
 ---
 ACTIVE WORK
 
@@ -26,4 +28,4 @@ FOR DEPTH
 ```
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*

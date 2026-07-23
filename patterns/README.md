@@ -5,4 +5,4 @@ Supporting patterns for the workspace architecture. Each document is standalone 
 See the main [README](../README.md) for an overview of each pattern.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*

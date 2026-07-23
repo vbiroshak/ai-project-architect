@@ -78,4 +78,4 @@ When remaining work from a completed sub-project becomes a new sub-project, seed
 The archive convention is carried in the governing document's sub-project activation section: see the [Chat template](../templates/workflow-sections/sub-project-activation.md) or the [Code template](../templates/claude-code/PROJECT-CONTEXT-template.md). For the ARCHIVE_INDEX.txt format, see the [archive index template](../templates/mandated-files/archive-index.md).
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*

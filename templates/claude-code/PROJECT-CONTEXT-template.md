@@ -11,6 +11,10 @@ Last reviewed: [Month DD, YYYY]
 
 This is the project's governing document. It contains the rules, procedures, and project context that tell Claude how this project works and how to work in it. The startup procedure lives in CLAUDE.md; everything else lives here.
 
+[Include the following paragraph only in coordinated multi-project setups — see The Coordinator Project in the architecture doc. The section list names what the coordinator actually maintains in this document:]
+
+Sections maintained by the coordinator project and updated by propagation: [SECTION NAMES]. Don't edit them locally, even to apply a correction from the user — route corrections to the coordinator's inbox. Every other section is this project's own.
+
 ---
 WHAT THIS PROJECT DOES
 
@@ -46,6 +50,8 @@ SESSION LOGS
 Location: Project/Session Logs/
 Naming: Session_XXXX.txt (four-digit, zero-padded, sequential across the project). One log per session, numbered to match the session number.
 
+TITLE LINE: The first line of each log file: PROJECT — SESSION NNN — Month DD, YYYY. Example: MYPROJECT — SESSION 042 — July 15, 2026. The date is the day the session started; if a later entry lands on a different day, extend it to a range: MYPROJECT — SESSION 038 — June 25 – July 2, 2026.
+
 ENTRY FORMAT: Each entry begins with a header line: [Date, ~Time Timezone] TOPIC
 
 WHAT TO LOG: Decisions, state changes, reasoning, and the current state of evolving work. Not process narration. Thoroughness applies to coverage. Conciseness applies to expression.
@@ -76,7 +82,7 @@ HANDOFF
 
 Location: Project/HANDOFF.txt
 
-The handoff gives the current state snapshot: where things stand, what to read for depth. Session logs are the archive. The handoff is the orientation. It is overwritten fresh with each paired write. The handoff controls how much context loads at startup — scale the pointers to the complexity of the work.
+The handoff gives the current state snapshot: where things stand, what to read for depth. Session logs are the archive. The handoff is the orientation. It is overwritten fresh with each paired write. Each overwrite removes finished items — nothing left to do, watch for, or resume. Completion is recorded in the session log, not the handoff. A live item keeps its tracking: completed steps in a series it is working through, and work also carried in TASKS.txt or a status file, stay until the item itself is done. Preserve the scope header at the top of the file — it defines what belongs. The handoff controls how much context loads at startup — scale the pointers to the complexity of the work.
 
 Sections:
 
@@ -85,8 +91,6 @@ Sections:
   STANDING ITEMS — active work that is paused but not completed, one item per line. Items here are ongoing, not queued — they can be picked up any session.
 
   FOR DEPTH — which session logs to read for additional context. After structural or meta work, note which earlier sessions contain the last domain work and carry forward the domain work narrative, prioritizing it above structural project system work.
-
-Scope: handoff is limited to what the next session needs to continue the work. Rules, operating knowledge, and reference facts belong in governing documents. Completed work belongs in the session log.
 
 ---
 INBOX
@@ -122,6 +126,8 @@ Project/TASKS.txt tracks open work only. No DONE section — completions go in s
 
 Add new items as they come up. On completion, remove from TASKS.txt and note in the session log.
 
+TASKS.txt holds work to do; decisions to remember are reference data and go in reference files. Rationale lives in session logs; state files point to logs instead of repeating them. Don't create a new file for content that already has a home.
+
 ---
 SHARED KNOWLEDGE BASE
 
@@ -146,4 +152,4 @@ Sections marked "[Include this section only if...]" are optional. Remove them if
 The PROJECT CONTEXT section at the end is where project-specific corrections and behavioral entries accumulate through use. FACTUAL GROUNDING is the seed entry — replace the bracketed domain examples with examples relevant to your project.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*

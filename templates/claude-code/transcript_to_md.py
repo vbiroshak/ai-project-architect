@@ -167,4 +167,4 @@ if __name__ == "__main__":
         sys.exit(1)
     render(sys.argv[1], sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else None)
 
-# Version 4.6
+# Version 4.7

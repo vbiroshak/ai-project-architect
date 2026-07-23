@@ -140,6 +140,8 @@ Knowledge flows upward through three levels: sub-project reference files (domain
 
 To build a new project in Code using this architecture:
 
+**Platform note:** the steps below run as written on macOS and Linux. On Windows, two prerequisites come first: the desktop app's Code tab requires Git for Windows (the app prompts on first open — install it and restart the app), and the hooks in step 4 require Python (verify with `python --version` or `py --version`; if neither responds, install from [python.org](https://www.python.org/downloads/) with "Add python.exe to PATH" checked). Windows command and path forms appear in step 5. If you are an AI building this for a user, determine the platform before starting and apply the Windows notes as you reach them.
+
 ### 1. Create the project directory
 
 Create the project directory with this structure:
@@ -262,11 +264,31 @@ Key points:
 - **Deny rules use `//`** (double slash) for absolute paths. A single leading slash is project-relative in Code. Do not "fix" `//` to `/`.
 - **Hook commands** use `${CLAUDE_PROJECT_DIR:-$PWD}` rather than bare relative paths, so they resolve correctly regardless of where Code is launched.
 
+**Windows:**
+
+- On the desktop app, hook commands run through Git Bash (installed with Git for Windows, which the Code tab requires), so the commands above work with one substitution: `python` in place of `python3`.
+- CLI setups without Git Bash fall back to PowerShell, where `${CLAUDE_PROJECT_DIR:-$PWD}` does not expand. Register the PowerShell form instead:
+
+```json
+"hooks": {
+  "SessionStart": [
+    { "hooks": [{ "type": "command", "shell": "powershell", "command": "python \"$env:CLAUDE_PROJECT_DIR\\.claude\\hooks\\archive-transcripts.py\"" }] }
+  ],
+  "UserPromptSubmit": [
+    { "hooks": [{ "type": "command", "shell": "powershell", "command": "python \"$env:CLAUDE_PROJECT_DIR\\.claude\\hooks\\temporal-awareness.py\"" }] }
+  ]
+}
+```
+
+- Absolute permission rules use POSIX-normalized drive syntax: paths are normalized before matching (`C:\Users\alice` becomes `/c/Users/alice`), so write `//c/Users/Name/project/**`.
+- Other absolute-path values (`autoMemoryDirectory`, `additionalDirectories`) take standard Windows paths with JSON-escaped backslashes: `C:\\Users\\Name\\...`.
+- If you are an AI performing the setup: confirm which Python command responds (`python --version` or `py --version`) before writing settings.json, and confirm the hooks fire in step 7 rather than assuming registration worked. See the [hooks documentation](https://code.claude.com/docs/en/hooks) for shell selection behavior.
+
 The template's default permissions are conservative: full read/write access within the project directory, read access to external resources, and grep/find without prompting. Everything else prompts for approval. This is a safe starting posture — functional without being permissive. Adjust the scope as the project's needs become clear.
 
 See the [permissions documentation](https://code.claude.com/docs/en/permissions) for the full rule syntax.
 
-**Workspace trust:** Claude Code does not apply project-level settings until the workspace is trusted. The Desktop app prompts on first open — accept and you're done. The CLI may not always prompt; if it doesn't, it will report that project settings were ignored because the workspace has not been trusted. To enable your permissions from the first session in the CLI, add the project path to `~/.claude.json` before launching:
+**Workspace trust:** Claude Code does not apply project-level settings until the workspace is trusted. The Desktop app prompts on first open — accept and you're done. The CLI may not always prompt; if it doesn't, it will report that project settings were ignored because the workspace has not been trusted. To enable your permissions from the first session in the CLI, add the project path to `~/.claude.json` (on Windows, `%USERPROFILE%\.claude.json`) before launching:
 
 ```json
 "projects": {
@@ -321,6 +343,8 @@ After the first session ends, start a second session and check:
 - Archive hook copied the first session's transcript into Project/Sessions/ with the correct name
 - Readable .md companion file was generated alongside the .jsonl
 
+If either hook fails to fire, re-check the hook command against the Windows notes in step 5 — the wrong Python command name or the wrong shell form are the likely causes on Windows.
+
 Do real work in the first session to confirm continuity. The second session's startup procedure is the real test — it proves the full cycle works.
 
 ### Adopting for existing projects
@@ -370,4 +394,4 @@ These are optional extensions that develop as the project matures.
 **[Rules](https://code.claude.com/docs/en/memory#organize-rules-with-claude/rules/)** are instruction files in `.claude/rules/`. Rules without `paths:` frontmatter load at session start and are re-injected from disk after compaction, same as CLAUDE.md. Rules with `paths:` frontmatter load only when Claude works with matching files, and are lost on compaction until a matching file is read again. If you prefer splitting your operating instructions across multiple files rather than maintaining one large PROJECT_CONTEXT.md, rules are the mechanism for that.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*

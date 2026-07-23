@@ -24,4 +24,4 @@ See Workflow Files/PROJECT_INDEX.txt for file structure.
 The domain-specific examples line in SUB-PROJECT ACTIVATION also varies by project. The sub-project list here and the reference file pointers in SUB-PROJECT ACTIVATION must stay in sync.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*

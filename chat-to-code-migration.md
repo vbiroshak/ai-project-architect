@@ -48,7 +48,7 @@ Some conversations that were deleted in the Chat UI may still appear in the expo
 
 Before running, edit the `KNOWN_PROJECTS` list at the top of the script with your project names — the script matches conversation names only against that list, so run as shipped it matches nothing.
 
-Usage: `python3 split_export.py <batch-dir> <output-dir> [--project ProjectName] [--dry-run]`
+Usage: `python3 split_export.py <batch-dir> <output-dir> [--project ProjectName] [--dry-run]` (on Windows, invoke with `python` or `py -3` instead of `python3` — here and in the commands below)
 
 The script matches only integer-named conversations (e.g., "MyProject 42"). Unnamed conversations are counted but not written unless `--include-unnamed` is passed. Conversations whose number collides with one already written are quarantined into `_duplicates/` for manual resolution.
 
@@ -203,4 +203,4 @@ The architecture's core is unchanged in Code:
 - All domain content and working files
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*

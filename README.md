@@ -14,6 +14,8 @@ Follow the guide for your platform to get started, and you can read [workspace-a
 
 **[Migrate a project](chat-to-code-migration.md)** — move your projects from Chat to Code.
 
+Both tracks run on macOS and Windows; Windows specifics (hook registration, path forms) are covered in the Code setup guide.
+
 **Other tools:** [download the repo](https://github.com/vbiroshak/ai-project-architect/tags) and provide the files to any AI. The architecture design is broadly platform-agnostic and can be adapted to any AI with filesystem access.
 
 ## What's in this repo
@@ -65,4 +67,4 @@ Active development. Tested across multiple projects in different domains, contin
 [MIT](LICENSE)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.6*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*
