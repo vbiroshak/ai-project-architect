@@ -2,6 +2,8 @@
 
 How to build and run a project using this workspace architecture in Claude Chat using the Desktop app with the Filesystem extension. You can read [workspace-architecture.md](workspace-architecture.md) for the principles and patterns behind the system. To migrate an existing Chat project to Claude Code, see [chat-to-code-migration.md](chat-to-code-migration.md).
 
+Before setting up in Chat, read [Chat or Code](README.md#how-to-set-it-up) in the README. Claude Code is the recommended place to set up, and Anthropic is changing the part of the Claude app that this setup depends on.
+
 ---
 
 ## The Chat Project Structure
@@ -104,7 +106,7 @@ The clock check comes early because temporal context informs how everything afte
 
 When writing a handoff after structural or meta work, note which earlier session contains the last domain work. The startup log may be about structural changes, not the actual work.
 
-For projects with multiple sub-projects, each area's section in the handoff should include a "last active" pointer: the session number where that area was last worked, and the sub-project reference file to read. This prevents sub-projects from becoming unresurfaceable when other areas dominate the work.
+For projects with multiple sub-projects, each area's section in the handoff should include a "last active" pointer: the session number where that area was last worked, and the sub-project status file to read. This prevents sub-projects from becoming unresurfaceable when other areas dominate the work.
 
 ---
 
@@ -145,7 +147,7 @@ For the actual deployable text of each section, see the [workflow section templa
 
 **What This Project Does** — Brief project description and current sub-project list with one-line descriptions. Updated when sub-projects are added or archived.
 
-**Sub-Project Activation** — Three-step activation pattern: read reference file, read everything the handoff identifies for that sub-project, load additional files as needed. Loading depth varies by sub-project and is governed by the handoff's pointers. When reading a sub-project's status file, verify it is consistent with the handoff and fix discrepancies on the spot (see Fix on Contact in [workspace-architecture.md](workspace-architecture.md#fix-on-contact)). Universal pattern with project-specific reference file pointers. Also establishes the write direction: domain knowledge produced during work goes into files inside the sub-project directory, not PROJECT_INDEX.txt. Every sub-project listed must have a reference file; if the directory exists, a seeded file exists.
+**Sub-Project Activation** — Activation runs before the first action on any request that belongs to a sub-project. Three-step pattern: read the status file, read the files it points to for the work at hand, read everything the handoff identifies for that sub-project. Loading depth varies by sub-project and is governed by the handoff's pointers. When reading a sub-project's status file, verify it is consistent with the handoff and fix discrepancies on the spot (see Fix on Contact in [workspace-architecture.md](workspace-architecture.md#fix-on-contact)). Universal pattern with project-specific status file pointers. Also establishes the write direction: domain knowledge produced during work goes into files inside the sub-project directory, not PROJECT_INDEX.txt. Every sub-project listed must have a status file; if the directory exists, a seeded file exists.
 
 **Task Queue** — For projects that use a task queue. Standard location: Workflow Files/TASKS.txt. Active items only (no DONE section), read at startup, add immediately when items arise, remove on completion and note in session log. Include only in projects that maintain a task queue file.
 
@@ -214,4 +216,4 @@ If you have an existing unstructured project to migrate into this architecture:
 **File deletion.** The AI cannot delete files in Chat. It moves items to Inbox/ with "DELETE ME" at the front. The user handles the actual deletion.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*

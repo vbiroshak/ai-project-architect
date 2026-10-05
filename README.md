@@ -4,17 +4,25 @@ A workspace architecture that gives AI assistants persistent, structured project
 
 [Download the repo.](https://github.com/vbiroshak/ai-project-architect/tags)
 
+## What "project" means here
+
+In this repo, a project is a continuing body of work carried across a numbered series of sessions, with its instructions, working record, and files kept in a folder on your computer that the AI reads and maintains.
+
+Anthropic uses the same word for other things: a project in Claude Chat or Cowork, which stores chats, instructions, files, and memory in your Claude account, and Projects in Claude Code, which coordinates sessions running in the cloud. Where this repo means one of those, it says so by name. The setup guides explain how a project in this repo's sense is set up in Chat and in Code.
+
 ## How to set it up
 
 Follow the guide for your platform to get started, and you can read [workspace-architecture.md](workspace-architecture.md) for a full explanation of how the system works:
-
-**[Set up a new project in Chat](chat-setup.md)** — for Claude in Chat (Desktop app setup, mobile/web functionality) or any AI assistant with filesystem access.
 
 **[Set up a new project in Code](claude-code-setup.md)** — for Claude Code in the Desktop app or CLI.
 
 **[Migrate a project](chat-to-code-migration.md)** — move your projects from Chat to Code.
 
-Both tracks run on macOS and Windows; Windows specifics (hook registration, path forms) are covered in the Code setup guide.
+**[Set up a new project in Chat](chat-setup.md)** — for Claude in Chat (Desktop app setup, mobile/web functionality) or any AI assistant with filesystem access.
+
+**Chat or Code.** Set up new projects in Claude Code, and plan to move existing Chat projects there. This applies both to projects built with this system in Chat and to ordinary Chat projects you want to bring into it. A local Claude Code session runs on your computer, works directly in the folder you choose on your local disk for your project, and is saved on your computer. The Chat setup depends on the Claude desktop app reaching that folder from a Chat project, and Anthropic is changing how that part of the app works on local files. Anthropic is merging Chat and Cowork into one interface, and from October 6, 2026, on Pro and Max plans, new Cowork tasks no longer run only on your computer: they run on Anthropic's servers and reach your files through the desktop app. Anthropic's [notice of the change](https://support.claude.com/en/articles/15520349-use-claude-cowork-on-web-desktop-and-mobile#h_f951c27c48) says to use Claude Code for work that has to stay on your computer. If you keep projects in Chat, repeat the check in [step 5 of the Chat setup guide](chat-setup.md#5-verify) after app updates to confirm that a new session still starts up correctly.
+
+Both setups run on macOS and Windows; Windows specifics (hook registration, path forms) are covered in the Code setup guide.
 
 **Other tools:** [download the repo](https://github.com/vbiroshak/ai-project-architect/tags) and provide the files to any AI. The architecture design is broadly platform-agnostic and can be adapted to any AI with filesystem access.
 
@@ -67,4 +75,4 @@ Active development. Tested across multiple projects in different domains, contin
 [MIT](LICENSE)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*

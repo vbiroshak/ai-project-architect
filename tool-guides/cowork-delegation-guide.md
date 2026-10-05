@@ -2,6 +2,8 @@
 
 Reflects tool behavior as of April 2026. Cowork's capabilities evolve frequently; verify against the official documentation links at the bottom before modifying this guide.
 
+As of October 2026, Anthropic is merging Chat and Cowork into one interface on Pro and Max plans, and new Cowork tasks on those plans run on Anthropic's servers. This guide covers Cowork as a separate place to hand work to, with tasks running on your computer. Where the merged interface applies, see Anthropic's [Claude Cowork and chat are one Claude](https://support.claude.com/en/articles/16761823-claude-cowork-and-chat-are-one-claude) for what differs.
+
 Operational guide for delegating tasks to Cowork well. Read before writing a Cowork prompt. For the general methodology (when to delegate, the process, what stays in conversation), see the [Agentic Task Delegation](../patterns/agentic-delegation.md) pattern. This guide covers Cowork-specific operational knowledge: what it is, how to write prompts for it, and what to watch for.
 
 ---
@@ -153,4 +155,4 @@ Anthropic's official documentation (capabilities may have changed since this gui
 - [Install Claude Desktop](https://support.claude.com/en/articles/10065433-install-claude-desktop)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*

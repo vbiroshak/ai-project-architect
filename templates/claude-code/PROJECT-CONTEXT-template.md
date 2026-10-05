@@ -22,27 +22,27 @@ WHAT THIS PROJECT DOES
 
 Current sub-projects:
 
-  [Sub-Project Name]/ — [One-line description]
+  [Sub-Project Name]/ — [One-line description] Any request about [the kinds of request that belong here]: read [Sub-Project Name]/[SUBPROJECT]_STATUS.txt first.
 
-  [Sub-Project Name]/ — [One-line description]
+  [Sub-Project Name]/ — [One-line description] Any request about [the kinds of request that belong here]: read [Sub-Project Name]/[SUBPROJECT]_STATUS.txt first.
 
 See Project/PROJECT_INDEX.txt for file structure.
 
 ---
 SUB-PROJECT ACTIVATION
 
-To activate a sub-project:
+Activation runs before the first action on any request that belongs to a sub-project — a question, a search, a draft, an edit. Reading the status file is step one of the task, not preparation for it.
 
-1. Read the sub-project's reference file (see below)
-2. Read everything HANDOFF.txt identifies for that sub-project: session logs, work plans, status files. Scale loading depth to complexity — a lightweight sub-project may need one log; a large active effort may need a work plan and multiple session logs.
-3. Load any additional files needed for the current task
+1. Read the sub-project's status file (see below): the landing page with its current state, pending items, and pointers to the sub-project's other files.
+2. Read the files it points to for the kind of work at hand.
+3. Read everything HANDOFF.txt identifies for that sub-project: session logs, work plans. Scale loading depth to complexity — a lightweight sub-project may need one log; a large active effort may need a work plan and multiple session logs.
 
-Domain knowledge ([domain-specific examples]) goes in files inside the sub-project directory. PROJECT_INDEX.txt points to these files but does not hold domain content.
+Domain knowledge ([domain-specific examples]) goes in files inside the sub-project directory. PROJECT_INDEX.txt points to these files but does not hold domain content. Sub-project state — each live effort with its next step — goes in the status file, which is overwritten as state changes.
 
 Completed sub-projects or finished efforts can be moved to Archive/ at the project root to keep the directory focused on active work. Add a closing note to the status file before archiving. An ARCHIVE_INDEX.txt inside Archive/ tracks what's there.
 
-Sub-project reference files:
-  [Sub-Project Name]/ — [Sub-Project Name]/[REFERENCE_FILE].txt
+Sub-project status files:
+  [Sub-Project Name]/ — [Sub-Project Name]/[SUBPROJECT]_STATUS.txt
 
 ---
 SESSION LOGS
@@ -152,4 +152,4 @@ Sections marked "[Include this section only if...]" are optional. Remove them if
 The PROJECT CONTEXT section at the end is where project-specific corrections and behavioral entries accumulate through use. FACTUAL GROUNDING is the seed entry — replace the bracketed domain examples with examples relevant to your project.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*

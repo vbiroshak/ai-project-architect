@@ -1,6 +1,6 @@
 # Workspace Architecture for Sustained Knowledge Work with AI
 
-Version 4.7
+Version 4.8
 
 A workspace architecture designed for continuity across sessions.
 
@@ -320,7 +320,7 @@ A sub-project's internal structure mirrors the project level: an orientation fil
 
 Standard file roles:
 
-- **[SubProject]_STATUS.txt** — Orientation. Current state, what's active, what's pending, known issues. Read at activation. Overwritten as state changes. This is the sub-project analog of HANDOFF.txt at the project level. Required for any sub-project with ongoing work spanning multiple sessions.
+- **[SubProject]_STATUS.txt** — Orientation. Current state, what's active, what's pending, known issues, and pointers to the sub-project's other files. Read at activation. Overwritten as state changes. This is the sub-project analog of HANDOFF.txt at the project level. Required for any sub-project with ongoing work spanning multiple sessions.
 - **[SubProject]_REFERENCE.txt** — Domain knowledge. Accumulated understanding, specifications, procedures, configurations consulted during work. Read on demand. Grows over time. When it grows large, apply the indexed collection pattern.
 - **[named domain files]** — Working documents shaped by the domain. Case folders, design briefs, tracking lists, configuration files, research notes. Named for what they contain (e.g., voice_config.txt, not config.txt).
 - **[domain folders]** — Cases/, Testing Reports/, Research/, etc. Shaped by the work.
@@ -404,4 +404,4 @@ Scope: tool guides cover universal tool behavior. Task-specific operational deta
 **Project memory.** This system works with your AI application's project memory turned on or off. With memory on, you may find duplication between memory and filesystem state; with memory off, the filesystem is the sole source of continuity. Experiment with both to see what works for your use case.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*

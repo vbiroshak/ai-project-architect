@@ -1,24 +1,17 @@
 {
-  "_version": "4.7",
+  "_version": "4.8",
   "autoMemoryDirectory": "/absolute/path/to/your/project/Project/Claude Memory",
-  "additionalDirectories": [
-    "/path/to/external/resources"
-  ],
   "permissions": {
+    "additionalDirectories": [
+      "/path/to/external/resources"
+    ],
     "deny": [
-      "Edit(//path/to/read-only-source/**)",
-      "Write(//path/to/read-only-source/**)",
-      "MultiEdit(//path/to/read-only-source/**)",
-      "NotebookEdit(//path/to/read-only-source/**)"
+      "Edit(//path/to/read-only-source/**)"
     ],
     "allow": [
       "Read(//path/to/your/project/**)",
       "Edit(//path/to/your/project/**)",
-      "Write(//path/to/your/project/**)",
-      "MultiEdit(//path/to/your/project/**)",
-      "Read(//path/to/external/resources/**)",
-      "Bash(grep *)",
-      "Bash(find *)"
+      "Read(//path/to/external/resources/**)"
     ]
   },
   "hooks": {

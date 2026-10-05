@@ -15,6 +15,11 @@ Last reviewed: [date]
 [Brief sub-project description, 1-3 sentences.]
 
 ---
+DOCUMENTS
+
+[Each of the sub-project's other files on its own line: the file, and the kind of work to read it before.]
+
+---
 CURRENT STATE
 
 [What the sub-project looks like now. Active work, version numbers, recent completions. Dense factual summary.]
@@ -34,7 +39,9 @@ PENDING
 
 CURRENT STATE is always present. Effort-specific sections and PENDING appear as needed — a simple sub-project may have only CURRENT STATE; a complex one may have multiple effort sections.
 
+DOCUMENTS is the routing table: activation reads the status file first, then the files this table names for the work at hand. A file added to the sub-project is added to the table in the same edit — a file missing from the table is a file no later session is pointed to. A sub-project with no other files yet omits the section.
+
 Status files orient sessions to sub-project state without requiring session log parsing — the sub-project equivalent of HANDOFF.txt.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*

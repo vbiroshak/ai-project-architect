@@ -12,7 +12,7 @@ Claude Code gives the AI native filesystem access and several features this arch
 - **[Event hooks](https://code.claude.com/docs/en/hooks)** — scripts that run on specific events (session start, each user message, and others). Used for temporal awareness and transcript archiving.
 - **[Settings](https://code.claude.com/docs/en/settings)** — project-level permissions controlling which files can be read or written, which shell commands are allowed without prompting, and which paths are denied.
 - **[Output styles](https://code.claude.com/docs/en/output-styles)** — per-project behavioral profiles that modify the system prompt. Set role, tone, and output format without repeating instructions every turn.
-- **[Auto memory](https://code.claude.com/docs/en/memory#auto-memory)** — notes Claude writes across sessions: build commands, debugging insights, preferences it discovers. Complements the project's own file-based memory.
+- **[Auto memory](https://code.claude.com/docs/en/memory#auto-memory)** — notes Claude saves for itself across sessions: your preferences, corrections you give it, and project context it can't derive from the files. Optional alongside the project's own file-based memory.
 - **[Skills](https://code.claude.com/docs/en/skills)** — reusable prompts invoked by name (`/skill-name`) or automatically when Claude recognizes a matching task. Each skill is a folder with a SKILL.md file plus supporting files.
 - **[Subagents](https://code.claude.com/docs/en/sub-agents)** — specialized agents with their own context window, system prompt, and tool access. Run parallel work or isolated tasks without cluttering the main session.
 - **[Rules](https://code.claude.com/docs/en/memory#organize-rules-with-claude/rules/)** — topic-scoped instructions in `.claude/rules/` that can be gated by file path, loading only when Claude works with matching files.
@@ -29,7 +29,7 @@ CLAUDE.md at the project root is the entry point (auto-loaded every session). PR
   CLAUDE.md                   auto-loaded startup procedure
   .claude/                    Code configuration
     settings.json             permissions, hooks, memory redirect
-    settings.local.json       output style, personal overrides (gitignored)
+    settings.local.json       output style, personal overrides
     hooks/                    event scripts (optional but recommended)
     output-styles/            behavioral profiles (optional)
     skills/                   reusable prompts (optional)
@@ -77,13 +77,13 @@ Inbox/ at the project root is the asynchronous interface between the user and th
 
 Each functional area gets its own directory at the project root. Standard file roles inside a sub-project:
 
-- **[SubProject]_STATUS.txt** — orientation. Current state, what's active, what's pending. Read at activation.
+- **[SubProject]_STATUS.txt** — orientation. Current state, what's active, what's pending, and pointers to the sub-project's other files. Read at activation.
 - **[SubProject]_REFERENCE.txt** — domain knowledge. Accumulated understanding consulted during work. Read on demand.
 - **Domain files and folders** — shaped by the work.
 
 Sub-project names must be in the filename (RESEARCH_STATUS.txt, not STATUS.txt) so the file identifies itself when read into context. Every sub-project directory gets at least a status file at creation.
 
-Activation: read the status file, read everything the handoff identifies for that sub-project, load additional files as needed. Domain knowledge produced during work goes into files inside the sub-project directory, not into PROJECT_INDEX.txt.
+Activation runs before the first action on any request that belongs to a sub-project: read the status file, read the files it points to for the work at hand, read everything the handoff identifies for that sub-project. Domain knowledge produced during work goes into files inside the sub-project directory, not into PROJECT_INDEX.txt.
 
 When a sub-project completes, move it to Archive/ at the project root with a completion-date name (e.g., "Project Name - 2026-03"). Add a closing note to the status file before archiving. ARCHIVE_INDEX.txt inside Archive/ tracks inventory.
 
@@ -140,7 +140,7 @@ Knowledge flows upward through three levels: sub-project reference files (domain
 
 To build a new project in Code using this architecture:
 
-**Platform note:** the steps below run as written on macOS and Linux. On Windows, two prerequisites come first: the desktop app's Code tab requires Git for Windows (the app prompts on first open — install it and restart the app), and the hooks in step 4 require Python (verify with `python --version` or `py --version`; if neither responds, install from [python.org](https://www.python.org/downloads/) with "Add python.exe to PATH" checked). Windows command and path forms appear in step 5. If you are an AI building this for a user, determine the platform before starting and apply the Windows notes as you reach them.
+**Platform note:** the steps below run as written on macOS and Linux. On Windows, two things come first. Install [Git for Windows](https://git-scm.com/downloads/win): Claude Code runs without it, but the hook commands in step 5 are written for the Git Bash shell it provides (without it, register the PowerShell form shown there). The hooks in step 4 also require Python (verify with `python --version` or `py --version`; if neither responds, install from [python.org](https://www.python.org/downloads/) with "Add python.exe to PATH" checked). After installing either one, restart the desktop app, or open a new terminal if you use the CLI. Windows command and path forms appear in step 5. If you are an AI building this for a user, determine the platform before starting and apply the Windows notes as you reach them.
 
 ### 1. Create the project directory
 
@@ -158,7 +158,7 @@ The following components are optional. If you are an AI building this for a user
 |-----------|-------------|---------------|
 | Task queue | File-based cross-session task tracking | Project/TASKS.txt + section in PROJECT_CONTEXT.md + `@` import in CLAUDE.md |
 | Auto memory redirect | Makes auto memory files visible inside the project | `autoMemoryDirectory` in settings.json + Project/Claude Memory/ |
-| Additional directories | Read access to folders outside the project | `additionalDirectories` in settings.json |
+| Additional directories | File access to folders outside the project | `permissions.additionalDirectories` in settings.json |
 | Tool guides | Pre-read reference for specific tools | Section in PROJECT_CONTEXT.md + Project/Tool Guides/ |
 | Shared knowledge base | Cross-project shared resources | Section in PROJECT_CONTEXT.md |
 | Output style | Role, tone, and behavioral profile | .claude/output-styles/ + `outputStyle` in settings.local.json (step 6) |
@@ -230,16 +230,15 @@ When a hook produces derived data that the session will query (e.g., a regenerat
 ```json
 {
   "autoMemoryDirectory": "/absolute/path/to/your/project/Project/Claude Memory",
-  "additionalDirectories": ["/path/to/sibling/resources"],
   "permissions": {
+    "additionalDirectories": ["/path/to/external/resources"],
     "allow": [
-      "Read(//path/to/external/resources/**)",
-      "Bash(grep *)",
-      "Bash(find *)"
+      "Read(//path/to/your/project/**)",
+      "Edit(//path/to/your/project/**)",
+      "Read(//path/to/external/resources/**)"
     ],
     "deny": [
-      "Edit(//path/to/read-only-sources/**)",
-      "Write(//path/to/read-only-sources/**)"
+      "Edit(//path/to/read-only-sources/**)"
     ]
   },
   "hooks": {
@@ -260,14 +259,15 @@ When a hook produces derived data that the session will query (e.g., a regenerat
 Key points:
 
 - **`autoMemoryDirectory`** — redirects auto memory into the project. Requires an absolute path or `~/`-prefixed path. Optional: Code's default location works fine if you don't need the memory files visible inside the project.
-- **`additionalDirectories`** — grants access to folders outside the project root. Useful for reading sibling projects or shared resource directories.
-- **Deny rules use `//`** (double slash) for absolute paths. A single leading slash is project-relative in Code. Do not "fix" `//` to `/`.
+- **`additionalDirectories`** — inside `permissions`. Adds folders outside the project root as working directories, such as sibling projects or shared resource directories. Files there become readable without prompts, and edits there follow the current permission mode. To keep an added folder read-only in every mode, add an `Edit` deny rule for its path.
+- **File rules use `Read` and `Edit`.** An `Edit` rule covers every tool that changes files. A path rule written for another tool name, such as `Write`, is accepted but never checked.
+- **Absolute paths in rules use `//`** (double slash). A single leading slash is project-relative in Code. Do not "fix" `//` to `/`.
 - **Hook commands** use `${CLAUDE_PROJECT_DIR:-$PWD}` rather than bare relative paths, so they resolve correctly regardless of where Code is launched.
 
 **Windows:**
 
-- On the desktop app, hook commands run through Git Bash (installed with Git for Windows, which the Code tab requires), so the commands above work with one substitution: `python` in place of `python3`.
-- CLI setups without Git Bash fall back to PowerShell, where `${CLAUDE_PROJECT_DIR:-$PWD}` does not expand. Register the PowerShell form instead:
+- With Git for Windows installed, hook commands run through Git Bash, so the commands above work with one substitution: `python` in place of `python3`.
+- Without Git for Windows, hook commands run through PowerShell, where `${CLAUDE_PROJECT_DIR:-$PWD}` does not expand. Register the PowerShell form instead:
 
 ```json
 "hooks": {
@@ -284,9 +284,18 @@ Key points:
 - Other absolute-path values (`autoMemoryDirectory`, `additionalDirectories`) take standard Windows paths with JSON-escaped backslashes: `C:\\Users\\Name\\...`.
 - If you are an AI performing the setup: confirm which Python command responds (`python --version` or `py --version`) before writing settings.json, and confirm the hooks fire in step 7 rather than assuming registration worked. See the [hooks documentation](https://code.claude.com/docs/en/hooks) for shell selection behavior.
 
-The template's default permissions are conservative: full read/write access within the project directory, read access to external resources, and grep/find without prompting. Everything else prompts for approval. This is a safe starting posture — functional without being permissive. Adjust the scope as the project's needs become clear.
+**What the template grants.** The template's rules pre-approve reading and editing inside the project directory and reading the external resources you list, and the file registers the two hooks. Nothing else is pre-approved.
 
-See the [permissions documentation](https://code.claude.com/docs/en/permissions) for the full rule syntax.
+**What decides the rest.** Every other action follows the session's [permission mode](https://code.claude.com/docs/en/permission-modes), which sets how much Claude does without asking, from asking before each edit and command to working without prompts. Rules in settings.json sit on top of the mode: allow rules pre-approve specific actions, and deny rules block them in every mode.
+
+**What you can adjust.** These are yours to set to the way you want to work:
+
+- The permission mode for a session, and the mode new sessions start in (`permissions.defaultMode`).
+- Allow rules, to pre-approve commands or paths you use often.
+- Ask and deny rules, to require a prompt for specific actions or to block them.
+- Additional directories, to extend file access beyond the project.
+
+See the [permissions documentation](https://code.claude.com/docs/en/permissions) for the rule syntax and the [permission modes documentation](https://code.claude.com/docs/en/permission-modes) for what each mode does.
 
 **Workspace trust:** Claude Code does not apply project-level settings until the workspace is trusted. The Desktop app prompts on first open — accept and you're done. The CLI may not always prompt; if it doesn't, it will report that project settings were ignored because the workspace has not been trusted. To enable your permissions from the first session in the CLI, add the project path to `~/.claude.json` (on Windows, `%USERPROFILE%\.claude.json`) before launching:
 
@@ -324,11 +333,13 @@ Select the style in `.claude/settings.local.json`:
 }
 ```
 
-Pre-creating `settings.local.json` with the output style means it's active from the first session. `settings.local.json` is gitignored and holds personal overrides that accumulate as you approve actions during work.
+Pre-creating `settings.local.json` with the output style means it's active from the first session. `settings.local.json` holds your personal settings for this project, including the approvals you save during work. If the project is a git repository and you create this file by hand, add it to `.gitignore` yourself; Claude Code only does that for a file it creates.
 
 **User preferences** go in the global `~/.claude/CLAUDE.md`, which loads into every session across all projects. Interaction style, formatting rules, behavioral constraints that apply everywhere. See [CLAUDE.md scoping](https://code.claude.com/docs/en/memory#choose-where-to-put-claude-md-files) for the full hierarchy.
 
 ### 7. Verify
+
+A project in this guide's sense runs as local sessions in its folder: start each session in the project's folder, on your own machine. In the CLI that means running `claude` from inside the folder; in the desktop app it means a Local session with the project's folder selected. The **Projects** feature in Claude Code, which coordinates sessions running in the cloud, is a different thing and is not used here. For how to start a session, see Anthropic's [CLI quickstart](https://code.claude.com/docs/en/quickstart) or [desktop quickstart](https://code.claude.com/docs/en/desktop-quickstart).
 
 Write the following verification checklist into the new project's HANDOFF.txt under ACTIVE WORK so the first session checks each item:
 
@@ -365,13 +376,15 @@ If you have an existing unstructured Code project, adopt the architecture by cre
 
 ### Working with auto memory
 
-Code has a built-in [auto memory](https://code.claude.com/docs/en/memory#auto-memory) system where it stores notes across sessions: build commands, debugging insights, preferences it discovers. For projects using this workspace architecture, the project files themselves are the primary memory (the handoff, session logs, status files, and project context carry everything a session needs). Auto memory serves a different purpose: it captures behavioral knowledge about how to work with you and with the project's tooling.
+Code has a built-in [auto memory](https://code.claude.com/docs/en/memory#auto-memory) system where Claude saves notes for itself across sessions: your preferences, corrections you give it, and project context it can't derive from the files. For projects using this workspace architecture, the project files themselves are the primary memory (the handoff, session logs, status files, and project context carry everything a session needs). Auto memory overlaps with them where it records project context, so decide how the two should coexist.
 
-Two reasonable approaches:
+Three options:
 
 **Redirect auto memory into the project.** Add `"autoMemoryDirectory": "/absolute/path/to/your/project/Project/Claude Memory"` to settings.json (the setting requires an absolute or `~/`-prefixed path). This puts the memory files inside the project's infrastructure where they're visible and manageable. The project files govern; a note that contradicts them is stale and deleted on contact.
 
-**Use both layers as-is.** Let auto memory handle what it's designed for (behavioral preferences, tool quirks, correction patterns) in its default location while the project architecture handles what it's designed for (work state, decisions, orientation). These are complementary: auto memory is a small notebook about how to work; the project files are the record of what work was done.
+**Use both layers as-is.** Leave auto memory in its default location for preferences and corrections, while the project files carry work state, decisions, and orientation. Where a memory note and a project file disagree, the project file governs.
+
+**Turn auto memory off.** Set `"autoMemoryEnabled": false` in settings.json to rely on the project files alone.
 
 ### Managing accumulated permissions
 
@@ -394,4 +407,4 @@ These are optional extensions that develop as the project matures.
 **[Rules](https://code.claude.com/docs/en/memory#organize-rules-with-claude/rules/)** are instruction files in `.claude/rules/`. Rules without `paths:` frontmatter load at session start and are re-injected from disk after compaction, same as CLAUDE.md. Rules with `paths:` frontmatter load only when Claude works with matching files, and are lost on compaction until a matching file is read again. If you prefer splitting your operating instructions across multiple files rather than maintaining one large PROJECT_CONTEXT.md, rules are the mechanism for that.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*

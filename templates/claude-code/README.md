@@ -24,7 +24,7 @@ Resources for setting up or migrating to Claude Code. See [claude-code-setup.md]
 
 | File | What it is |
 |------|-----------|
-| settings-template.json | Example `.claude/settings.json` showing the permission structure, deny rules, Bash allow patterns, hook registration, and auto memory redirect. Replace paths with your own. |
+| settings-template.json | Example `.claude/settings.json` showing the permission structure (allow rules, a deny rule, additional directories), hook registration, and auto memory redirect. Replace paths with your own. |
 
 ### Transcript processing (for migration)
 
@@ -44,9 +44,10 @@ Resources for setting up or migrating to Claude Code. See [claude-code-setup.md]
 
 - All scripts use only Python standard library (no dependencies to install).
 - The archiver copies transcripts; it never deletes source files.
-- Deny rules in settings.json use `//` (double slash) for absolute paths. A single leading slash is project-relative.
-- `additionalDirectories` grants read access to folders outside your project root.
-- Bash allow rules match by prefix. `Bash(grep *)` allows any grep command without prompting. Keep destructive commands (rm, mv, etc.) behind prompts.
+- Absolute paths in settings.json rules use `//` (double slash). A single leading slash is project-relative.
+- File rules use `Read(...)` and `Edit(...)`. An `Edit` rule covers every tool that changes files.
+- `permissions.additionalDirectories` adds folders outside your project root as working directories: readable without prompts, with edits following the current permission mode.
+- The template pre-approves no shell commands. If you add Bash allow rules, they match by prefix: `Bash(grep *)` allows any grep command without prompting. Keep destructive commands (rm, mv, etc.) behind prompts.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.7*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*
