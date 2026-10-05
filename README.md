@@ -8,21 +8,29 @@ A workspace architecture that gives AI assistants persistent, structured project
 
 In this repo, a project is a continuing body of work carried across a numbered series of sessions, with its instructions, working record, and files kept in a folder on your computer that the AI reads and maintains.
 
-Anthropic uses the same word for other things: a project in Claude Chat or Cowork, which stores chats, instructions, files, and memory in your Claude account, and Projects in Claude Code, which coordinates sessions running in the cloud. Where this repo means one of those, it says so by name. The setup guides explain how a project in this repo's sense is set up in Chat and in Code.
+Anthropic uses the same word for other things: a project in Claude Chat, which stores chats, instructions, files, and memory in your Claude account, and Projects in Claude Code, which coordinates sessions running in the cloud. Where this repo means one of those, it says so by name. The setup guide explains how a project in this repo's sense is set up in Claude Code.
 
 ## How to set it up
 
-Follow the guide for your platform to get started, and you can read [workspace-architecture.md](workspace-architecture.md) for a full explanation of how the system works:
+> [!IMPORTANT]
+> **This system runs in Claude Code.** Claude Code is not only a command-line tool. It also runs in the Claude desktop app, in a conversation window much like Chat. If your projects are in Chat, migrate them.
 
-**[Set up a new project in Code](claude-code-setup.md)** — for Claude Code in the Desktop app or CLI.
+Claude does the setup. You tell it what you want and answer its questions.
 
-**[Migrate a project](chat-to-code-migration.md)** — move your projects from Chat to Code.
+- **A new project.** Put the repo in the folder that will hold the project, start a Claude Code session in that folder, and tell Claude to install it. Claude follows the [setup guide](claude-code-setup.md); the guide's last step tells you how to confirm the project works.
+- **A project you are moving from Chat.** Start at [Starting a Migration](chat-to-code-migration.md#starting-a-migration) in the migration guide. It covers projects built with this system and Chat projects that were not.
 
-**[Set up a new project in Chat](chat-setup.md)** — for Claude in Chat (Desktop app setup, mobile/web functionality) or any AI assistant with filesystem access.
+Read [workspace-architecture.md](workspace-architecture.md) for a full explanation of how the system works. The setup runs on macOS and Windows; Windows specifics (hook registration, path forms) are covered in the setup guide.
 
-**Chat or Code.** Set up new projects in Claude Code, and plan to move existing Chat projects there. This applies both to projects built with this system in Chat and to ordinary Chat projects you want to bring into it. A local Claude Code session runs on your computer, works directly in the folder you choose on your local disk for your project, and is saved on your computer. The Chat setup depends on the Claude desktop app reaching that folder from a Chat project, and Anthropic is changing how that part of the app works on local files. Anthropic is merging Chat and Cowork into one interface, and from October 6, 2026, on Pro and Max plans, new Cowork tasks no longer run only on your computer: they run on Anthropic's servers and reach your files through the desktop app. Anthropic's [notice of the change](https://support.claude.com/en/articles/15520349-use-claude-cowork-on-web-desktop-and-mobile#h_f951c27c48) says to use Claude Code for work that has to stay on your computer. If you keep projects in Chat, repeat the check in [step 5 of the Chat setup guide](chat-setup.md#5-verify) after app updates to confirm that a new session still starts up correctly.
+### Why Code
 
-Both setups run on macOS and Windows; Windows specifics (hook registration, path forms) are covered in the Code setup guide.
+This system needs the AI to read and write a folder on your computer.
+
+- **In Claude Code, that is how a session works.** A local session runs on your computer, works directly in the project's folder, and is saved there.
+- **You do not need the command line.** The Claude desktop app has a Code tab beside Chat. You type in a message box and Claude replies, as in Chat. See Anthropic's [desktop quickstart](https://code.claude.com/docs/en/desktop-quickstart).
+- **Chat reaches the folder indirectly.** A Chat session depends on the desktop app and an extension to reach the folder. Anthropic decides how that connection works, and it changes with app updates. A change there can stop a Chat project from reading its own files.
+
+The Chat setup guide and templates from earlier versions are in [release v4.8](https://github.com/vbiroshak/ai-project-architect/tree/v4.8).
 
 **Other tools:** [download the repo](https://github.com/vbiroshak/ai-project-architect/tags) and provide the files to any AI. The architecture design is broadly platform-agnostic and can be adapted to any AI with filesystem access.
 
@@ -31,10 +39,9 @@ Both setups run on macOS and Windows; Windows specifics (hook registration, path
 | File | What it is |
 |------|-----------|
 | [workspace-architecture.md](workspace-architecture.md) | The architecture: principles, patterns, file roles, knowledge organization. |
-| [chat-setup.md](chat-setup.md) | Setting up in Chat: project structure, startup procedure, WORKFLOW section registry, temporal awareness. |
 | [claude-code-setup.md](claude-code-setup.md) | Setting up in Claude Code: project structure, fresh setup, hooks, permissions, Code-specific features. |
-| [chat-to-code-migration.md](chat-to-code-migration.md) | Migrating a Chat project to Code: transcript processing, structural transformation, verification. |
-| [templates/](templates/) | Deployable text for every file in the system. [Chat templates](templates/workflow-sections/) for WORKFLOW.txt sections. [Mandated file templates](templates/mandated-files/) for HANDOFF, PROJECT_INDEX, and other required files. [Code templates](templates/claude-code/) for CLAUDE.md, PROJECT_CONTEXT.md, hooks, settings, and scripts. |
+| [chat-to-code-migration.md](chat-to-code-migration.md) | Migrating a Chat project to Code: what to carry over, transcript processing, structural transformation, verification. |
+| [templates/](templates/) | Deployable text for every file in the system. [Code templates](templates/claude-code/) for CLAUDE.md, PROJECT_CONTEXT.md, PROJECT_INDEX.txt, hooks, settings, and scripts. [Mandated file templates](templates/mandated-files/) for HANDOFF, status files, indexes, and the task queue. |
 | [patterns/](patterns/) | Supporting patterns: [temporal awareness](patterns/temporal-awareness.md), [evolving state](patterns/evolving-state.md), [archiving](patterns/archive-pattern.md), [agentic delegation](patterns/agentic-delegation.md). |
 | [tool-guides/](tool-guides/) | Operational reference for using specific tools well. Adopted per-project, loaded on demand. |
 
@@ -50,12 +57,12 @@ Works for a single project or many. Multiple projects can share a common knowled
 
 At minimum, walk through these steps with the user before building anything:
 
-1. Platform — Chat, Code, or migrating an existing Chat project to Code?
+1. Starting point — a new project, an existing folder to build the project around, or a Chat project being migrated?
 2. Location — install in this directory or elsewhere?
 3. Name — what to call the project
 4. Description — what the project does
 5. Optional components — which to include (task queue, lessons, tool guides, etc.)
-6. Software engineering instructions (Code only) — keep or remove from the output style
+6. Software engineering instructions — keep or remove from the output style
 7. Cleanup — keep or remove the downloaded repo files after setup
 
 ## Contributing
@@ -75,4 +82,4 @@ Active development. Tested across multiple projects in different domains, contin
 [MIT](LICENSE)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*

@@ -1,6 +1,6 @@
 # Workspace Architecture for Sustained Knowledge Work with AI
 
-Version 4.8
+Version 4.9
 
 A workspace architecture designed for continuity across sessions.
 
@@ -14,10 +14,9 @@ Default AI project tools aren't designed for sustained knowledge work. Project k
 
 The workspace pattern solves this by moving project knowledge to files on your filesystem that the AI reads, writes, and maintains directly.
 
-This document describes the architecture: the principles, patterns, and file roles that make the system work. It is platform-agnostic. For setup instructions specific to your platform:
+This document describes the architecture: the principles, patterns, and file roles that make the system work. It is platform-agnostic. For setup instructions:
 
-- **Chat:** [Setting Up in Chat](chat-setup.md)
-- **Code:** [Setting Up in Claude Code](claude-code-setup.md)
+- **Setup:** [Setting Up in Claude Code](claude-code-setup.md)
 - **Migration:** [Migrating from Chat to Code](chat-to-code-migration.md)
 
 ---
@@ -66,7 +65,7 @@ Handoff notes flag known fragilities, not just steps. A task with hidden complex
 
 ### Lean Governing Document, Structural Index
 
-The governing document keeps only what earns its place in every context window: project description, logging guidance, and project context. In Chat, the governing document (WORKFLOW.txt) also contains the startup procedure directly. In Code, the startup procedure lives in a separate file (CLAUDE.md) that imports the governing document (PROJECT_CONTEXT.md).
+The governing document keeps only what earns its place in every context window: project description, logging guidance, and project context. The startup procedure lives in a separate file (CLAUDE.md) that imports the governing document (PROJECT_CONTEXT.md).
 
 The project's file structure lives in PROJECT_INDEX.txt: a pure structural index listing what exists and where. It is not a container for domain knowledge, procedures, or format specifications — those belong in the governing document (if they earn their place in every context window) or in sub-project reference files (if they're domain-specific). Both files read at startup, but they serve different roles: the governing document carries procedure and behavioral rules, PROJECT_INDEX carries the structural map.
 
@@ -185,9 +184,9 @@ Both lines always present. If a file has never been reviewed separately from its
 
 ### Which Files
 
-All architecture-prescribed files carry both freshness lines: WORKFLOW.txt (Chat) or PROJECT_CONTEXT.md (Code), HANDOFF.txt, PROJECT_INDEX.txt, STATUS files, TASKS.txt, INDEX.txt files, sub-project reference files, and LESSONS_INDEX.txt. The title line carries only the file's identity. Freshness lines occupy lines 2-3.
+All architecture-prescribed files carry both freshness lines: PROJECT_CONTEXT.md, HANDOFF.txt, PROJECT_INDEX.txt, STATUS files, TASKS.txt, INDEX.txt files, sub-project reference files, and LESSONS_INDEX.txt. The title line carries only the file's identity. Freshness lines occupy lines 2-3.
 
-Session logs do not carry freshness lines (they are append-only historical records with timestamps in their entries). In Chat projects, the Clock file (used for temporal awareness) is also excluded — it is a mechanism file, not a content document.
+Session logs do not carry freshness lines (they are append-only historical records with timestamps in their entries).
 
 Archived files retain whatever freshness lines they had at the time of archiving. Do not maintain freshness lines on files after they are archived. During the archiving process itself, refresh both freshness lines as part of the closing write (the closing note changes content and confirms final state).
 
@@ -214,9 +213,8 @@ Freshness lines are maintained as part of existing workflow triggers, not as a s
 The governing document's SESSION LOGS section carries a compressed version of the definitions and maintenance rules so that every session has them in context. The full specification lives in this document; the governing document carries the operational instructions:
 
 ```
-FRESHNESS LINES: Every project file (except session logs;
-in Chat projects, also the Clock file) carries two lines
-after its title:
+FRESHNESS LINES: Every project file (except session logs)
+carries two lines after its title:
 
   Last updated: [Month DD, YYYY] (Session NNN)
   Last reviewed: [Month DD, YYYY]
@@ -399,9 +397,9 @@ Scope: tool guides cover universal tool behavior. Task-specific operational deta
 
 ## Known Limitations
 
-**Filesystem required for full functionality.** Requires an AI application with filesystem read/write access. Web and mobile interfaces don't have filesystem access. When accessing a project without filesystem access, the AI will note what needs syncing when filesystem access is next available.
+**Filesystem access required.** Requires an AI application whose sessions can read and write the project folder directly. A session that cannot reach the folder cannot run the project.
 
-**Project memory.** This system works with your AI application's project memory turned on or off. With memory on, you may find duplication between memory and filesystem state; with memory off, the filesystem is the sole source of continuity. Experiment with both to see what works for your use case.
+**Built-in memory.** If your AI application has a memory feature of its own, this system works with it on or off. With it on, you may find duplication between memory and filesystem state; with it off, the filesystem is the sole source of continuity. Experiment with both to see what works for your use case.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*

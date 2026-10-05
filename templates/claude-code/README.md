@@ -8,7 +8,7 @@ Resources for setting up or migrating to Claude Code. See [claude-code-setup.md]
 
 | File | What it is |
 |------|-----------|
-| temporal-awareness.py | Hook script (UserPromptSubmit): injects the current local time into every turn. Replaces the Clock file mechanism. Drop into `.claude/hooks/` and register in settings.json. |
+| temporal-awareness.py | Hook script (UserPromptSubmit): injects the current local time into every turn. Drop into `.claude/hooks/` and register in settings.json. |
 | archive-transcripts.py | Hook script (SessionStart): copies completed session transcripts into the project's Sessions/ folder with human-readable names. Set `PROJECT_NAME` at the top of the script to your project's name. |
 | transcript_to_md.py | Renderer: converts .jsonl transcripts into readable collapsed-view Markdown. Called automatically by the archiver if present alongside it in `.claude/hooks/`. Also usable standalone. |
 
@@ -50,4 +50,4 @@ Resources for setting up or migrating to Claude Code. See [claude-code-setup.md]
 - The template pre-approves no shell commands. If you add Bash allow rules, they match by prefix: `Bash(grep *)` allows any grep command without prompting. Keep destructive commands (rm, mv, etc.) behind prompts.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*

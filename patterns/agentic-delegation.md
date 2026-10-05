@@ -84,11 +84,11 @@ The conversational AI reviews what the delegate produced: checks outputs, reads 
 
 ## Examples
 
-The examples below use Claude's Cowork feature, but the pattern applies to any agentic delegation: Claude Code, custom scripts, or equivalent features in other AI platforms.
+The pattern applies to any agentic delegation: a subagent, a separate session, a custom script, or the equivalent in other AI platforms.
 
-**Cowork (Claude Desktop):** Has full filesystem access including the ability to delete files. Can coordinate and run sub-agents in parallel. Can run code. Can process files at scale. The prompt should provide context and constraints, not step-by-step procedure. Cowork will figure out the approach. See the companion [Cowork Delegation Guide](../tool-guides/cowork-delegation-guide.md) for operational details.
+**A subagent in Claude Code:** Runs with its own context window, system prompt, and tool access, so it starts without the conversation's context. Several can run in parallel. The prompt should provide context and constraints, not step-by-step procedure.
 
-**Claude Code:** Runs in the terminal. Has code execution and filesystem access. Strong at programmatic tasks: writing and running scripts, git operations, code refactoring. The prompt can describe the goal and let it choose the implementation.
+**A separate Claude Code session:** Has code execution and filesystem access. Strong at programmatic tasks: writing and running scripts, git operations, code refactoring. The prompt can describe the goal and let it choose the implementation.
 
 **Custom scripts or smaller models:** May need more explicit structure, verification steps, and output format specifications depending on capability.
 
@@ -101,4 +101,4 @@ The delegate handles work that is bounded and describable without project contex
 The division: the delegate reads, processes, sorts, audits, and documents. The conversational AI judges, writes, connects, and integrates.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*

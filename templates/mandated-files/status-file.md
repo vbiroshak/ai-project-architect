@@ -44,4 +44,4 @@ DOCUMENTS is the routing table: activation reads the status file first, then the
 Status files orient sessions to sub-project state without requiring session log parsing — the sub-project equivalent of HANDOFF.txt.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*

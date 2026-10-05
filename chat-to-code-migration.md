@@ -1,6 +1,52 @@
 # Migrating from Chat to Code
 
-A guide for migrating an existing Chat-based project to Claude Code. For the target state (what a Code project looks like), see [claude-code-setup.md](claude-code-setup.md). This document covers only the migration-specific work: how to get from Chat to Code.
+A guide for moving a project out of Claude Chat and into Claude Code. Claude Code runs in the Claude desktop app as well as in a terminal, so the move does not require the command line; see [Why Code](README.md#why-code) in the README. For the target state (what a Code project looks like), see [claude-code-setup.md](claude-code-setup.md). This document covers only the migration-specific work: how to get from Chat to Code.
+
+---
+
+## Starting a Migration
+
+Claude does the migration. Start a Claude Code session in a folder that holds this repo, tell Claude you are migrating a Chat project, and tell it where the project's files are. The path depends on those files.
+
+**The project has a folder on your computer with a WORKFLOW.txt in it.** It was built with this system. Put the repo in a separate folder, not the project's own, and start the session there. Claude converts the project in place, following this guide from [Setting Up the Migration Session](#setting-up-the-migration-session) onward.
+
+**The project has a folder on your computer with no WORKFLOW.txt.** Put the repo in that folder and start the session there. The files stay in that folder, and Claude builds the project structure around them, following [Adopting for existing projects](claude-code-setup.md#adopting-for-existing-projects) in the setup guide.
+
+**The project has no folder on your computer.** Its instructions and files are in your Claude account. Create the folder that will hold the project, put the repo in it, and start the session there. Claude builds a new project, following [claude-code-setup.md](claude-code-setup.md).
+
+On every path, parts of the project are still in your Claude account. A data export brings them to your computer (see [The data export](#the-data-export)). Give the export to Claude along with the project:
+
+- **Conversations.** See [Transcript Processing](#transcript-processing).
+- **Instructions, documents, and memory.** See [Project Data in the Export](#project-data-in-the-export). If you have the original files of documents you added to the Chat project, put them in the project's Inbox/ folder.
+- **User preferences.** These are not in the project. See [Move user preferences](#6-move-user-preferences).
+
+---
+
+## What a Chat Project Built with This System Contains
+
+The layout this guide converts:
+
+```
+[Project]/
+  WORKFLOW.txt              governing document: startup procedure,
+                            project description, logging guidance,
+                            project context
+  Inbox/
+  Workflow Files/           project infrastructure
+    HANDOFF.txt
+    PROJECT_INDEX.txt
+    TASKS.txt               (if the project uses a task queue)
+    Clock/timestamp.txt     time source
+    Config/
+      PROJECT_INSTRUCTIONS.txt
+    Lessons/                (if used)
+    Tool Guides/            (if used)
+    Session Logs/           one log file per session
+  [Sub-Project A]/
+    [SubProj]_STATUS.txt
+```
+
+WORKFLOW.txt is the governing document and carries the startup procedure. The instructions in the Chat project's settings tell the AI to read it at the start of every session; Config/PROJECT_INSTRUCTIONS.txt is a backup copy of those instructions. The Clock file is the time source: the AI writes to it and reads its modification time.
 
 ---
 
@@ -38,7 +84,9 @@ Before starting, verify the transcript count matches the project's known Chat se
 
 ### The data export
 
-Anthropic's data export bundles all conversations across all projects into a single `conversations.json` file. Projects are listed separately in the export but do not reference their conversations, and conversations do not carry a project identifier. The most reliable way to associate a conversation with its project is by the conversation's `name` field.
+Request the export from the Claude app's settings; see Anthropic's [Export your Claude data](https://support.claude.com/en/articles/9450526-export-your-claude-data). The download is either a single archive or a small manifest file that lists several archives (conversations, projects, memories, and others), each with its own link. If you receive a manifest, download every archive it lists promptly, because the links expire. Unzip everything into one folder.
+
+The folder holds `conversations.json`, which bundles all conversations across all projects into a single file; an entry for each project, with its name, instructions, and documents; and the saved memory, including each project's memory under the project's ID. Projects do not reference their conversations, and conversations do not carry a project identifier. The most reliable way to associate a conversation with its project is by the conversation's `name` field.
 
 Some conversations that were deleted in the Chat UI may still appear in the export with empty content — message shells with no text, no tool calls, no attachments. These can be identified and ignored.
 
@@ -72,7 +120,7 @@ After conversion, verify:
 
 Session logs are the canonical navigation system. Logs keep their original sequential numbers with 4-digit padding — they are never renamed in a way that changes the session number the AI uses inside the file and in cross-references. A renamed log whose filename no longer matches its internal session number breaks every reference to that session.
 
-Transcripts are named to match their primary log number: the first log a chat wrote determines the transcript's number. To find which log each chat wrote, extract the write events from the transcripts mechanically (look for Filesystem:write_file calls targeting Session Logs/).
+Transcripts are named to match their primary log number: the first log a chat wrote determines the transcript's number. To find which log each chat wrote, extract the write events from the transcripts mechanically (look for calls to the file-writing tool that target Session Logs/; its name ends in `write_file`, and the prefix in front of it varies).
 
 **Write out the full alignment plan before executing.** Map every transcript to its destination number. Verify the plan at sample points before renaming anything. Renaming without a plan leads to cascading corrections.
 
@@ -92,6 +140,27 @@ The naming conventions:
 Create Project/Sessions/ (or Workflow Files/Sessions/ if placing before the directory rename). Copy both the `.json` and `.md` files. The `.json` is the canonical record; the `.md` is the readable companion.
 
 Going forward in Code, the archive hook names transcripts from `/rename` (checked first) or the "This is ProjectName NNN" session opener (fallback). Number-named sessions are formatted as `ProjectName_NNNN.jsonl`. The first Code session number = last log number + 1.
+
+---
+
+## Project Data in the Export
+
+Besides the conversations, the export holds data that belongs to the project: its instructions, the documents added to it, and what Claude's memory saved for it. Find the project's entry in the export by the project's name and note its ID; the memory is filed under that ID. Incorporate all three into the project. Nothing the project needs should be left only in the export.
+
+**Instructions.** In a project built with this system, the instructions only point to WORKFLOW.txt; CLAUDE.md replaces them and nothing is carried over. In any other project they are the project's real instructions. What describes the work goes into PROJECT_CONTEXT.md (WHAT THIS PROJECT DOES and the PROJECT CONTEXT entries). How the AI should behave goes into the output style. Ask the user where an instruction's place is unclear.
+
+**Documents.** Write each document into the sub-project it belongs to, under its original filename, and list it in that sub-project's status file. Where the project folder already holds the document, keep the project's copy.
+
+**Memory.** A memory entry is not evidence that its claim is true or still current. The export can hold the same memory twice, as one older block of text and as newer separate files; treat the newer as current. Work through the project's memory one item at a time; an entry that holds several facts or rules is several items. For each item:
+
+- If a file the project loads already states it, write nothing.
+- If it is knowledge about the work, write it into the sub-project file where it belongs.
+- If it is the state of some piece of work, compare it with the handoff, status files, and latest session log. Where they are newer, they govern and the item is dropped.
+- If it is a rule for the whole project, write it into the PROJECT CONTEXT entries.
+- If it describes how the Chat setup worked (tool names, the clock file, working without file access), drop it.
+- If it is incidental, or cannot be confirmed against the project's own record, drop it.
+
+Keep a short record of where each item went, and keep the export's memory file in the project's Archive/ as the original.
 
 ---
 
@@ -164,7 +233,7 @@ If the project directory changed location during migration, repoint self-referen
 
 ### 11. Fix stale references
 
-Grep all active files (excluding Session Logs/, Sessions/, Archive/, CHANGELOG) for: "Workflow Files", "Filesystem:", "copy_file_user_to_claude", "/mnt/", "Cowork", "Clock/".
+Grep all active files (excluding Session Logs/, Sessions/, Archive/, CHANGELOG) for: "Workflow Files", "Filesystem", "copy_file_user_to_claude", "/mnt/", "Cowork", "Clock/".
 
 For each hit: determine if it's a functional reference (needs fixing) or historical/factual context (leave it). Fix functional references. Intentional references to leave alone: HISTORY section in PROJECT_CONTEXT, Archive entries in PROJECT_INDEX, historical descriptions in reference files, lesson files describing Chat-era behavior.
 
@@ -203,4 +272,4 @@ The architecture's core is unchanged in Code:
 - All domain content and working files
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*

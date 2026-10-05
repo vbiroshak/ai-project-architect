@@ -95,7 +95,7 @@ The general principle: when something is in process, log the state of the proces
 
 ---
 
-The evolving state principle is deployed through the EVOLVING STATE subsection of the [session logs template](../templates/workflow-sections/session-logs.md).
+The evolving state principle is deployed through the EVOLVING STATE entry in the SESSION LOGS section of the [PROJECT_CONTEXT template](../templates/claude-code/PROJECT-CONTEXT-template.md).
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*

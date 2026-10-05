@@ -1,6 +1,6 @@
 # Setting Up in Claude Code
 
-How to build and run a project using this workspace architecture in Claude Code. You can read [workspace-architecture.md](workspace-architecture.md) for the principles and patterns behind the system. To set up in Chat instead, see [chat-setup.md](chat-setup.md). To migrate an existing Chat project, see [chat-to-code-migration.md](chat-to-code-migration.md).
+How to build and run a project using this workspace architecture in Claude Code. Claude Code runs in the Claude desktop app as well as in a terminal, and this guide covers both. You can read [workspace-architecture.md](workspace-architecture.md) for the principles and patterns behind the system. To migrate an existing Chat project, see [chat-to-code-migration.md](chat-to-code-migration.md).
 
 ---
 
@@ -360,7 +360,7 @@ Do real work in the first session to confirm continuity. The second session's st
 
 ### Adopting for existing projects
 
-If you have an existing unstructured Code project, adopt the architecture by creating the structure around it:
+If you have an existing folder of project files without this structure — an unstructured Code project, or a Chat project that kept its files in a local folder — adopt the architecture by creating the structure around it:
 
 1. Create Project/ with HANDOFF.txt, PROJECT_INDEX.txt, and Session Logs/
 2. Create CLAUDE.md with the startup procedure
@@ -407,4 +407,4 @@ These are optional extensions that develop as the project matures.
 **[Rules](https://code.claude.com/docs/en/memory#organize-rules-with-claude/rules/)** are instruction files in `.claude/rules/`. Rules without `paths:` frontmatter load at session start and are re-injected from disk after compaction, same as CLAUDE.md. Rules with `paths:` frontmatter load only when Claude works with matching files, and are lost on compaction until a matching file is read again. If you prefer splitting your operating instructions across multiple files rather than maintaining one large PROJECT_CONTEXT.md, rules are the mechanism for that.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*

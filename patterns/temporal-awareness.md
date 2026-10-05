@@ -27,7 +27,7 @@ Temporal awareness is a continuous behavior, not a startup event. It has two com
 1. **What time is it now?**
 2. **How long has it been since the last known time reference?**
 
-The mechanism depends on the platform. In Chat, a persistent Clock file and filesystem metadata provide the time source. In Code, a hook injects the current time into every turn automatically. Both approaches solve the same problem; the mechanism differs.
+The mechanism depends on what the platform can do. Where it can run a script on every message, the script injects the current time into each turn; this is how the Claude Code setup works. Where it cannot, a clock file and filesystem metadata provide the time source. Both approaches solve the same problem; the mechanism differs.
 
 ### Why Both Checks Are Required
 
@@ -47,10 +47,9 @@ Screenshot filenames often contain timestamps in the filename itself. Email head
 
 ## Implementation
 
-For how to set up temporal awareness in your project, see the setup guide for your platform:
+**With a per-message script (Claude Code).** A UserPromptSubmit hook injects the current local time into every turn automatically. See [claude-code-setup.md](../claude-code-setup.md) for the setup.
 
-- **Chat:** [chat-setup.md](../chat-setup.md) — uses a persistent Clock file and filesystem metadata. The AI writes to the file and reads the modification timestamp. Checked at startup and mid-chat.
-- **Code:** [claude-code-setup.md](../claude-code-setup.md) — uses a UserPromptSubmit hook that injects the current local time into every turn automatically. No Clock file needed.
+**With a clock file (platforms without per-message scripts).** Keep one small file for the purpose. To take a reading, the AI overwrites the file and reads its modified time. Read the modified time, not the created time: the created time is the file's birth and does not change when the file is overwritten. Take a reading at session start, and again mid-session before the first file operation in a response when the last reading is old.
 
 ---
 
@@ -58,11 +57,11 @@ For how to set up temporal awareness in your project, see the setup guide for yo
 
 Timestamps are approximate. The time on a file reflects when the AI wrote it, not when the user sent the message that prompted it. There's a delay between the message and the write that depends on how much work the AI does before writing the file.
 
-Filesystem-based temporal awareness only works with filesystem access (typically a desktop application or CLI). On mobile or web, the AI has no file metadata to work with.
+The clock-file method only works where the session can reach the filesystem. A session without filesystem access has no file metadata to work with.
 
 File metadata reflects the timezone of the machine, which is useful but means the AI needs to note the timezone in log entries.
 
 Within a single rapid exchange (messages seconds apart), the timestamps won't be meaningfully different. The mid-session check is designed to detect gaps of hours, not seconds.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*

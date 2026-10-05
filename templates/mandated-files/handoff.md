@@ -1,6 +1,6 @@
 # HANDOFF.txt
 
-Startup orientation file. Overwritten with each session log (paired writes). See the [handoff workflow section](../workflow-sections/handoff.md) for the governing rules.
+Startup orientation file. Overwritten with each session log (paired writes). See the HANDOFF section of the [PROJECT_CONTEXT template](../claude-code/PROJECT-CONTEXT-template.md) for the governing rules.
 
 ## Structural Template
 
@@ -28,4 +28,4 @@ FOR DEPTH
 ```
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.8*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*

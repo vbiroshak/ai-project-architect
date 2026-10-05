@@ -1,5 +1,5 @@
 {
-  "_version": "4.8",
+  "_version": "4.9",
   "autoMemoryDirectory": "/absolute/path/to/your/project/Project/Claude Memory",
   "permissions": {
     "additionalDirectories": [
