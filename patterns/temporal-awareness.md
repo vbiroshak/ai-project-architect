@@ -64,4 +64,4 @@ File metadata reflects the timezone of the machine, which is useful but means th
 Within a single rapid exchange (messages seconds apart), the timestamps won't be meaningfully different. The mid-session check is designed to detect gaps of hours, not seconds.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.10*

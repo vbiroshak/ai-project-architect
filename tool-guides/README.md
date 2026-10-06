@@ -17,4 +17,4 @@ Tool guides are distinct from patterns. A pattern describes a type of thing in t
 Copy the guides you need into your project's `Project/Tool Guides/` directory. Save them with a `.txt` extension — the repo uses `.md` for GitHub rendering, but deployed project files use `.txt`. List them in your governing document's TOOL GUIDES section so the AI reads them on demand when relevant work begins.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.10*

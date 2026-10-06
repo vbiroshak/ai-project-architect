@@ -24,4 +24,4 @@ print(json.dumps({"hookSpecificOutput": {
 }}))
 sys.exit(0)
 
-# Version 4.9
+# Version 4.10

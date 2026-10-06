@@ -120,7 +120,7 @@ After conversion, verify:
 
 Session logs are the canonical navigation system. Logs keep their original sequential numbers with 4-digit padding — they are never renamed in a way that changes the session number the AI uses inside the file and in cross-references. A renamed log whose filename no longer matches its internal session number breaks every reference to that session.
 
-Transcripts are named to match their primary log number: the first log a chat wrote determines the transcript's number. To find which log each chat wrote, extract the write events from the transcripts mechanically (look for calls to the file-writing tool that target Session Logs/; its name ends in `write_file`, and the prefix in front of it varies).
+Transcripts are named to match their primary log number: the first log a chat wrote determines the transcript's number. To find which log each chat wrote, extract the write events from the transcripts mechanically (look for calls to the file-writing tool that target Session Logs/; its name ends in `write_file`, and the prefix in front of it varies). The filename in a write event is the log's name at the time it was written; if the project has renumbered its logs since, match the event to the current log by the log's title line and entry dates, not by filename.
 
 **Write out the full alignment plan before executing.** Map every transcript to its destination number. Verify the plan at sample points before renaming anything. Renaming without a plan leads to cascading corrections.
 
@@ -160,7 +160,7 @@ Besides the conversations, the export holds data that belongs to the project: it
 - If it describes how the Chat setup worked (tool names, the clock file, working without file access), drop it.
 - If it is incidental, or cannot be confirmed against the project's own record, drop it.
 
-Keep a short record of where each item went, and keep the export's memory file in the project's Archive/ as the original.
+Keep a short record of where each item went, and keep the project's own entries from the export's memory file in the project's Archive/ as the original; the file holds every project's memory.
 
 ---
 
@@ -188,7 +188,7 @@ Copy WORKFLOW.txt to Project/PROJECT_CONTEXT.md, then make surgical edits (do no
 - **Update** the SESSION LOGS naming line: "One log per session, numbered to match the session number." Change "multiple log files" to "multiple entries within the same log." Remove the KEEP LOGS CONCISE paragraph if present.
 - **Remove** "and Clock" from the FRESHNESS LINES exception list.
 - **Replace** the TEMPORAL AWARENESS section with the Code version (see the [PROJECT_CONTEXT template](templates/claude-code/PROJECT-CONTEXT-template.md)).
-- In PROJECT CONTEXT entries: remove FILE DELETION (Chat limitation) and FILESYSTEM SCOPE (Chat limitation). Keep all domain-specific entries.
+- In PROJECT CONTEXT entries: remove FILE DELETION (Chat limitation), FILESYSTEM SCOPE (Chat limitation), and any entry about Chat's memory feature (Code's memory is a different feature; instructions written for Chat's do not transfer). Keep all domain-specific entries.
 - Remove the preamble text from the PROJECT CONTEXT section ("Project-specific context and preferences not covered by...").
 
 Remove WORKFLOW.txt after its content has been placed.
@@ -272,4 +272,4 @@ The architecture's core is unchanged in Code:
 - All domain content and working files
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.10*

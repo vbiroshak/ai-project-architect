@@ -407,4 +407,4 @@ These are optional extensions that develop as the project matures.
 **[Rules](https://code.claude.com/docs/en/memory#organize-rules-with-claude/rules/)** are instruction files in `.claude/rules/`. Rules without `paths:` frontmatter load at session start and are re-injected from disk after compaction, same as CLAUDE.md. Rules with `paths:` frontmatter load only when Claude works with matching files, and are lost on compaction until a matching file is read again. If you prefer splitting your operating instructions across multiple files rather than maintaining one large PROJECT_CONTEXT.md, rules are the mechanism for that.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.10*

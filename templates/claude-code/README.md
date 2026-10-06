@@ -50,4 +50,4 @@ Resources for setting up or migrating to Claude Code. See [claude-code-setup.md]
 - The template pre-approves no shell commands. If you add Bash allow rules, they match by prefix: `Bash(grep *)` allows any grep command without prompting. Keep destructive commands (rm, mv, etc.) behind prompts.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.10*

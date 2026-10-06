@@ -1,6 +1,6 @@
 # Workspace Architecture for Sustained Knowledge Work with AI
 
-Version 4.9
+Version 4.10
 
 A workspace architecture designed for continuity across sessions.
 
@@ -402,4 +402,4 @@ Scope: tool guides cover universal tool behavior. Task-specific operational deta
 **Built-in memory.** If your AI application has a memory feature of its own, this system works with it on or off. With it on, you may find duplication between memory and filesystem state; with it off, the filesystem is the sole source of continuity. Experiment with both to see what works for your use case.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.9*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.10*
