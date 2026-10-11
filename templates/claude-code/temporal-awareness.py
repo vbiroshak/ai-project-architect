@@ -6,6 +6,14 @@ refresh mid-session. This hook provides time-of-day precision, refreshed
 every turn.
 
 Register in .claude/settings.json under hooks > UserPromptSubmit.
+
+CONTRACT (platform-neutral; a port to another platform meets the same terms):
+  Input: the platform's per-message event; stdin is not read.
+  Must: print the machine's current local time with the day of the week, the
+  date, the time of day and the timezone, so the model has an accurate time
+  reference before processing every user message.
+  Output: JSON on stdout, hookSpecificOutput.additionalContext carrying
+  "Local time: <stamp>".
 """
 import json
 import sys
@@ -24,4 +32,4 @@ print(json.dumps({"hookSpecificOutput": {
 }}))
 sys.exit(0)
 
-# Version 4.10
+# Version 4.11

@@ -25,8 +25,8 @@ to a readable .md.
 
 NAMING
 The conversation name "MyProject 42" becomes MyProject_0042.json. The number is
-extracted from the name. Conversations with decimal-style names
-(e.g., "MyProject 1.0") are reported as warnings and skipped.
+extracted from the name. A decimal-style name ("MyProject 1.4") becomes
+MyProject_1.4.json, the same form the archive hook gives such sessions in Code.
 
 SETUP
 Edit the KNOWN_PROJECTS list below with YOUR project names. The script
@@ -92,8 +92,12 @@ def identify_project(convo):
         name,
     )
     if m2:
-        return m2.group(1), None
+        return m2.group(1), m2.group(2)
     return None, None
+
+
+def filename_for(project, num):
+    return f"{project}_{num:04d}" if isinstance(num, int) else f"{project}_{num}"
 
 
 def main(argv):
@@ -132,7 +136,6 @@ def main(argv):
     print(f"loaded {len(convos)} conversations from {conv_path}")
 
     by_project = {}
-    decimal_warnings = []
     unmatched = []
 
     for c in convos:
@@ -141,31 +144,29 @@ def main(argv):
             if filter_projects and project not in filter_projects:
                 continue
             by_project.setdefault(project, []).append((num, c))
-        elif project and num is None:
-            decimal_warnings.append((project, c.get("name", ""), c.get("uuid", "")))
         else:
             unmatched.append(c)
 
     for project in by_project:
-        by_project[project].sort(key=lambda x: x[0])
+        by_project[project].sort(key=lambda x: float(x[0]))
 
     print()
     for project in sorted(by_project):
         nums = [n for n, _ in by_project[project]]
-        print(f"  {project}: {len(nums)} conversations (#{min(nums)}-#{max(nums)})")
-        expected = set(range(min(nums), max(nums) + 1))
-        missing = expected - set(nums)
-        if missing:
-            print(f"    WARNING: missing numbers: {sorted(missing)}")
+        ints = [n for n in nums if isinstance(n, int)]
+        decimals = [n for n in nums if not isinstance(n, int)]
+        print(f"  {project}: {len(nums)} conversations" + (f" (#{min(ints)}-#{max(ints)})" if ints else ""))
+        if decimals:
+            print(f"    decimal-named: {decimals}")
+        if ints:
+            expected = set(range(min(ints), max(ints) + 1))
+            missing = expected - set(ints)
+            if missing:
+                print(f"    WARNING: missing numbers: {sorted(missing)}")
         from collections import Counter
         dupes = [n for n, count in Counter(nums).items() if count > 1]
         if dupes:
             print(f"    WARNING: duplicate numbers: {sorted(dupes)}")
-
-    if decimal_warnings:
-        print(f"\n  {len(decimal_warnings)} decimal-named conversations (skipped):")
-        for proj, name, uuid in decimal_warnings:
-            print(f"    {proj}: {name}")
 
     print(f"\n  {len(unmatched)} unmatched conversations")
 
@@ -191,7 +192,7 @@ def main(argv):
                 # silently overwriting the conversation already written.
                 dup_dir = os.path.join(output_dir, "_duplicates")
                 os.makedirs(dup_dir, exist_ok=True)
-                filename = f"{project}_{num:04d}_{c.get('uuid', '')[:8]}.json"
+                filename = f"{filename_for(project, num)}_{c.get('uuid', '')[:8]}.json"
                 filepath = os.path.join(dup_dir, filename)
                 with open(filepath, "w", encoding="utf-8") as f:
                     json.dump(c, f, indent=2, ensure_ascii=False)
@@ -201,7 +202,7 @@ def main(argv):
                 total_duplicates += 1
                 continue
             written_nums.add(num)
-            filename = f"{project}_{num:04d}.json"
+            filename = f"{filename_for(project, num)}.json"
             filepath = os.path.join(proj_dir, filename)
             with open(filepath, "w", encoding="utf-8") as f:
                 json.dump(c, f, indent=2, ensure_ascii=False)
@@ -237,4 +238,4 @@ def main(argv):
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
 
-# Version 4.10
+# Version 4.11

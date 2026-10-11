@@ -11,14 +11,31 @@ Naming priority: numbered custom-title (/rename) → numbered text pattern ("Thi
 → free-form custom-title → UUID. Sanitizes titles for filesystem safety.
 
 Copies only; never deletes a source transcript.
+
+CONTRACT (platform-neutral; a port to another platform meets the same terms):
+  Input: JSON on stdin with cwd (the project folder), transcript_path (the live
+  session's transcript) and session_id.
+  Must: find every finished transcript of this project in the platform's store;
+  skip the live session; name each copy <Project>_NNNN from the session number
+  the user gave (their chosen form), falling back to the platform's session
+  identifier; never overwrite a different session's archive; leave files that are
+  not in this platform's transcript format alone; render a readable Markdown
+  companion beside each copy; report what it archived and any conflict.
+  Output: JSON on stdout, hookSpecificOutput.additionalContext carrying the report.
 """
 
-import json, sys, os, re, shutil, glob
+import json, sys, os, re, shutil, glob, unicodedata
 
 PROJECT_NAME = ""
 
-NAME_NUM_RE = re.compile(r"^([\w-]+)\s+(\d+(?:\.\d+)?)$")
-TEXT_PATTERN_RE = re.compile(r"^[Tt]his is ([\w-]+)\s+(\d+(?:\.\d+)?)")
+# The name may contain spaces ("My Project 42"). Text is normalized to NFC
+# before matching so accented names typed in decomposed form (macOS) still match.
+NAME_NUM_RE = re.compile(r"^(.+?)\s+(\d+(?:\.\d+)?)$")
+TEXT_PATTERN_RE = re.compile(r"^[Tt]his is (.+?)\s+(\d+(?:\.\d+)?)\b")
+
+
+def nfc(s):
+    return unicodedata.normalize("NFC", s)
 
 
 def load_config(config_path):
@@ -63,7 +80,7 @@ def custom_title_from_transcript(path):
                 except Exception:
                     continue
                 if o.get("type") == "custom-title":
-                    title = o.get("customTitle", "").strip()
+                    title = nfc(o.get("customTitle", "")).strip()
                     if title:
                         last_title = title
     except Exception:
@@ -97,7 +114,7 @@ def text_pattern_from_transcript(path):
                     txt = c
                 else:
                     continue
-                txt = txt.strip()
+                txt = nfc(txt).strip()
                 if not txt or txt.startswith("<"):
                     continue
                 # Only the first real user message counts as the opener.
@@ -140,12 +157,12 @@ def resolve_transcripts_dir(config, project_dir):
 
 def resolve_project_name(config, project_dir):
     """Resolve project name and its authority tier. Returns (name, tier) where tier 1-2 are authoritative, tier 3 is inferred."""
-    name = config.get("project_name", "")
+    name = nfc(config.get("project_name", ""))
     if name:
         return (name, 1)
     if PROJECT_NAME:
-        return (PROJECT_NAME, 2)
-    basename = os.path.basename(project_dir)
+        return (nfc(PROJECT_NAME), 2)
+    basename = nfc(os.path.basename(project_dir))
     if basename:
         return (basename, 3)
     return ("", 4)
@@ -235,9 +252,11 @@ def main():
                 if os.path.exists(friendly):
                     # A different session already archived under this name is a
                     # naming conflict — preserve the existing archive and report.
+                    # A file with no readable session id is another platform's
+                    # archive of a session with the same number: same treatment.
                     src_sid = transcript_session_id(src)
                     dst_sid = transcript_session_id(friendly)
-                    if src_sid and dst_sid and src_sid != dst_sid:
+                    if dst_sid is None or (src_sid and src_sid != dst_sid):
                         conflicts.append(fname)
                         continue
                     if os.path.getsize(friendly) >= ssize:
@@ -268,6 +287,8 @@ def main():
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
         for jp in glob.glob(os.path.join(sessions_dir, "*.jsonl")):
+            if transcript_session_id(jp) is None:
+                continue  # another platform's transcript: its own archiver renders it
             mp = jp[:-6] + ".md"
             if (not os.path.exists(mp)) or os.path.getmtime(jp) > os.path.getmtime(mp):
                 mod.render(jp, mp)
@@ -279,7 +300,7 @@ def main():
         notes.append("Archived transcript(s): " + ", ".join(copied))
     if conflicts:
         notes.append(
-            "NAMING CONFLICT — not archived (a different session is already archived under this name; "
+            "NAMING CONFLICT — not archived (a different session, or another platform's archive, already holds this name; "
             "renumber one of them with /rename, it will archive at the next session start): "
             + ", ".join(conflicts)
         )
@@ -294,4 +315,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-# Version 4.10
+# Version 4.11

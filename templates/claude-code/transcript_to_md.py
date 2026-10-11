@@ -1,9 +1,16 @@
 # Render a Claude Code transcript (.jsonl) as a human- and Claude-readable Markdown file.
 #
 # The .jsonl stays the canonical, complete record; this .md is the readable companion (open in
-# QuickLook / TextEdit). It mirrors the chat UI's COLLAPSED view: User and AI messages in full,
+# QuickLook / TextEdit). It mirrors the chat UI's COLLAPSED view: User and AI messages, and messages another session sent in, in full,
 # AI reasoning shown, and each tool call as a single summary line — the tool's inputs and results
 # are NOT expanded here (they live complete in the .jsonl). That keeps the readable view legible.
+#
+# CONTRACT (platform-neutral; a renderer for another platform's format meets the same terms):
+#   Input: one transcript file in the platform's own format, and the output path.
+#   Must: write a Markdown file that shows the user's messages, messages another session sent into this one, and the AI's replies in full,
+#   each under a heading with its timestamp, and each tool call as one summary line naming
+#   the tool and what it acted on; omit tool results and platform-injected text; skip records
+#   it does not recognize rather than fail. The transcript file stays the complete record.
 import json, sys, os, re
 from datetime import datetime, timezone
 
@@ -107,6 +114,32 @@ def _format_timestamp(ts_str):
         return None
 
 
+_PEER_RE = re.compile(r"<cross-session-message\b([^>]*)>(.*?)</cross-session-message>", re.DOTALL)
+_PEER_NAME_RE = re.compile(r'\bname="([^"]*)"')
+
+
+def _peer_message(o):
+    """A message another session sent into this one. The app stores it as a hidden (isMeta) user
+    record, but shows it in the chat as a received message; return (sender name, text) or None."""
+    origin = o.get("origin")
+    if not isinstance(origin, dict) or origin.get("kind") != "peer":
+        return None
+    m = o.get("message")
+    content = m.get("content") if isinstance(m, dict) else None
+    if isinstance(content, list):
+        content = "\n".join(b.get("text", "") for b in content if isinstance(b, dict) and b.get("type") == "text")
+    if not isinstance(content, str):
+        return None
+    hit = _PEER_RE.search(content)
+    if not hit:
+        return None
+    text = hit.group(2).strip()
+    if not text:
+        return None
+    name = _PEER_NAME_RE.search(hit.group(1))
+    return (name.group(1) if name and name.group(1) else "another session"), text
+
+
 def _has_text(content):
     if isinstance(content, str):
         return bool(_strip_system_tags(content))
@@ -133,6 +166,14 @@ def render(jsonl_path, md_path, title=None):
             except Exception:
                 continue
             if o.get("type") not in ("user", "assistant"):
+                continue
+            peer = _peer_message(o)
+            if peer:
+                ts = _format_timestamp(o.get("timestamp") or o.get("created_at") or o.get("ts"))
+                lines.append("## From %s — %s" % (peer[0], ts) if ts else "## From %s" % peer[0])
+                lines.append("")
+                lines.append(peer[1])
+                lines.append("")
                 continue
             if o.get("isMeta"):
                 continue  # system-injected content (skill loads, etc.) — not visible in chat UI
@@ -167,4 +208,4 @@ if __name__ == "__main__":
         sys.exit(1)
     render(sys.argv[1], sys.argv[2], sys.argv[3] if len(sys.argv) > 3 else None)
 
-# Version 4.10
+# Version 4.11

@@ -1,38 +1,54 @@
 # AI Project Architect
 
-A workspace architecture that gives AI assistants persistent, structured project knowledge on your local filesystem.
+A workspace architecture that gives an AI assistant persistent, structured project knowledge in a folder on your computer.
 
-[Download the repo.](https://github.com/vbiroshak/ai-project-architect/tags)
+**Quick start**
 
-## What "project" means here
+1. [Download the repo](https://github.com/vbiroshak/ai-project-architect/tags) and put it in the folder that will hold the project.
+2. Give it to your AI and ask it to build the project.
+3. Answer its questions. [Set it up](#set-it-up) below has the detail.
 
-In this repo, a project is a continuing body of work carried across a numbered series of sessions, with its instructions, working record, and files kept in a folder on your computer that the AI reads and maintains.
+## What it does
 
-Anthropic uses the same word for other things: a project in Claude Chat, which stores chats, instructions, files, and memory in your Claude account, and Projects in Claude Code, which coordinates sessions running in the cloud. Where this repo means one of those, it says so by name. The setup guide explains how a project in this repo's sense is set up in Claude Code.
+The project lives in a folder you own. Its instructions, its record, its files, and the AI's notes are plain text there, readable by any AI that can work in that folder and by you with a text editor. Nothing the project depends on lives inside one application, so you can move the project to another device, account, service, or AI, and the next session reads the folder and continues.
 
-## How to set it up
+In every new session the AI picks up where you left off. It logs its own work, knows the time and how long you have been away, and reads at startup as much as the work needs. Drop files in the inbox and the AI notices them, relates them to ongoing work, and files them in the project as needed. What the AI learns goes into files it keeps and indexes. When you are done, say so, or type `/handoff`, and the AI closes the session so the next one can continue.
+
+Works for a single project or many. Several projects can share a knowledge base folder, and a coordinator project can manage them all.
+
+## What this system requires
+
+An AI that can open a folder on your computer, read the instructions in it, write to it, and follow its instructions and documentation in that session and in every session after it. The project also keeps a copy of every session's transcript in its folder, taken at the start of the next session, so the application the AI runs in must keep each session's transcript on disk.
+
+This system was built with Claude and has been tested with OpenAI Codex. It should adapt to any AI that works with folder-based projects in this way. The architecture document applies to any platform; the setup guide, the templates, and the migration guide are written for Claude Code; the [adaptation guide](platform-adaptation.md) covers running on another AI.
+
+## Set it up
 
 > [!IMPORTANT]
-> **This system runs in Claude Code.** Claude Code is not only a command-line tool. It also runs in the Claude desktop app, in a conversation window much like Chat. If your projects are in Chat, migrate them.
+> **Built in Claude Code and tested there; the setup below is written for it.** Claude Code runs in the Claude desktop app as well as in the terminal. If your projects are in Chat, migrate them.
 
-Claude does the setup. You tell it what you want and answer its questions.
+The AI does the setup. You tell it what you want and answer its questions.
 
-- **A new project.** Put the repo in the folder that will hold the project, start a Claude Code session in that folder, and tell Claude to install it. Claude follows the [setup guide](claude-code-setup.md); the guide's last step tells you how to confirm the project works.
-- **A project you are moving from Chat.** Start at [Starting a Migration](chat-to-code-migration.md#starting-a-migration) in the migration guide. It covers projects built with this system and Chat projects that were not.
+- **A new project.** Put the repo in the folder that will hold the project, start a Claude Code session in that folder, and tell Claude to install it. Claude follows the [setup guide](claude-code-setup.md) and leaves a checklist in the project's handoff; your next session in that folder runs the checks and confirms the project works.
+- **A project you are moving from Chat.** Put the repo in a folder, start a Claude Code session in that folder, and tell Claude you are moving a Chat project and where its files are. The folder you start the Code session in can be the project's own, but another folder is better: the migration is then not one of the project's sessions, and the project's next Code session is the next number in its sequence and continues where Chat left off. Claude follows the [migration guide](chat-to-code-migration.md), which covers projects built with this system and Chat projects that were not, and will ask you for a data export of your Claude account. A [coordinator project](workspace-architecture.md#the-coordinator-project) can migrate all of your Chat projects, set up new ones, and manage the project architecture going forward.
+- **A project on another AI.** Put the repo in the folder, start a session there, and tell the AI to build the project adapted to itself. For an existing project, tell the AI to adapt it; it will ask whether to keep both platforms' configuration or replace the old one. The AI follows the [adaptation guide](platform-adaptation.md). A Chat project goes to Claude Code first, by the bullet above, and is adapted from there, because the migration guide is written for Claude Code.
 
-Read [workspace-architecture.md](workspace-architecture.md) for a full explanation of how the system works. The setup runs on macOS and Windows; Windows specifics (hook registration, path forms) are covered in the setup guide.
+The setup runs on macOS and Windows. Windows specifics (hook registration, path forms) are in the setup guide.
 
-### Why Code
+## Why Code, not Chat
 
-This system needs the AI to read and write a folder on your computer.
-
-- **In Claude Code, that is how a session works.** A local session runs on your computer, works directly in the project's folder, and is saved there.
-- **You do not need the command line.** The Claude desktop app has a Code tab beside Chat. You type in a message box and Claude replies, as in Chat. See Anthropic's [desktop quickstart](https://code.claude.com/docs/en/desktop-quickstart).
-- **Chat reaches the folder indirectly.** A Chat session depends on the desktop app and an extension to reach the folder. Anthropic decides how that connection works, and it changes with app updates. A change there can stop a Chat project from reading its own files.
+- **A Code session works in the folder.** In Claude Code a local session runs on your computer, works directly in the project's folder, and saves data there.
+- **Code runs in the desktop app or the terminal.** In the app, the Code tab sits beside Chat: you type in a message box and Claude replies. See Anthropic's [desktop quickstart](https://code.claude.com/docs/en/desktop-quickstart).
+- **Chat reaches a folder only through the desktop app and an extension.** Anthropic changes that connection with app updates, and a change there can stop a Chat project from reading its own files.
+- **Chat cannot build a Code project.** Claude in Chat does not have Code's tools and does not know how a Code session works, so it cannot build one even with this repo in front of it. Setup and migration run in Claude Code.
 
 The Chat setup guide and templates from earlier versions are in [release v4.8](https://github.com/vbiroshak/ai-project-architect/tree/v4.8).
 
-**Other tools:** [download the repo](https://github.com/vbiroshak/ai-project-architect/tags) and provide the files to any AI. The architecture design is broadly platform-agnostic and can be adapted to any AI with filesystem access.
+## What "project" means here
+
+A project here is a working area: a folder on your computer, and a numbered series of sessions in it, each continuing from the last. It can be a topic, a domain, a body of work, or a project that holds sub-projects across several of those. Its instructions, its record, and its files are in the folder, and the AI reads and maintains them.
+
+Anthropic uses the same word for two other things: a project in Chat, which stores chats, instructions, files, and memory in your Claude account; and Projects in Claude Code, which coordinates sessions running in the cloud. This repo names those two in full, "a Chat project" and "Projects in Claude Code"; "project" on its own means the working area described above. "Chat" in this repo is the side of the Claude app and claude.ai that is not the Code tab: the app labels it "Claude", Anthropic's documentation calls it chat, and it includes what Anthropic called Cowork before merging the two.
 
 ## What's in this repo
 
@@ -41,45 +57,31 @@ The Chat setup guide and templates from earlier versions are in [release v4.8](h
 | [workspace-architecture.md](workspace-architecture.md) | The architecture: principles, patterns, file roles, knowledge organization. |
 | [claude-code-setup.md](claude-code-setup.md) | Setting up in Claude Code: project structure, fresh setup, hooks, permissions, Code-specific features. |
 | [chat-to-code-migration.md](chat-to-code-migration.md) | Migrating a Chat project to Code: what to carry over, transcript processing, structural transformation, verification. |
-| [templates/](templates/) | Deployable text for every file in the system. [Code templates](templates/claude-code/) for CLAUDE.md, PROJECT_CONTEXT.md, PROJECT_INDEX.txt, hooks, settings, and scripts. [Mandated file templates](templates/mandated-files/) for HANDOFF, status files, indexes, and the task queue. |
-| [patterns/](patterns/) | Supporting patterns: [temporal awareness](patterns/temporal-awareness.md), [evolving state](patterns/evolving-state.md), [archiving](patterns/archive-pattern.md), [agentic delegation](patterns/agentic-delegation.md). |
-| [tool-guides/](tool-guides/) | Operational reference for using specific tools well. Adopted per-project, loaded on demand. |
+| [platform-adaptation.md](platform-adaptation.md) | Running on another AI platform: what the project needs from a platform, what maps to what, the rules for the adapting AI, a worked example. |
+| [templates/](templates/) | Deployable text for every file in the system. [Code templates](templates/claude-code/) for CLAUDE.md, PROJECT_CONTEXT.md, PROJECT_INDEX.txt, hooks, settings, scripts, and the session close skill. [Mandated file templates](templates/mandated-files/) for HANDOFF, status files, indexes, the task queue, and the changelog. |
+| [patterns/](patterns/) | Supporting patterns: [temporal awareness](patterns/temporal-awareness.md), [evolving state](patterns/evolving-state.md), [archiving](patterns/archive-pattern.md). |
 
-## How it works
+## For the AI doing the setup
 
-Most built-in AI project features don't carry knowledge well across sessions. Memory is unreliable, there's no awareness of time, no way to build and maintain reference materials, no task tracking. This architecture solves that by giving the AI a directory on your local drive that it reads, writes, and maintains directly — using only the native tools your AI application already has.
+Read every file in this repo before building anything. Work from the repo's files, the project's files and the user's answers; infer nothing you can read or ask. Then tell the user what will happen: you will ask a few questions, then build the folders and files the project needs. Ask the questions and wait for the answers before writing anything. Settle these with the user:
 
-The AI picks up where you left off in every new session. It logs its own work, knows what time it is and how long you've been away, and lets you make your startup reads as lean or as rich as your work demands. Drop files in an inbox and the project notices them, relates items to ongoing work, and won't let them fall through the cracks. The AI organizes what it learns into files it maintains and indexes, reading, creating, and editing relevant project files on demand. The whole project lives on your filesystem, not on the cloud, making it portable to any device, account, or service.
+1. Starting point: a new project, an existing folder to build the project around, or a Chat project being migrated?
+2. Location: install in this directory or elsewhere?
+3. Name: what to call the project. The name comes from the user, never from the opening message of the session.
+4. Description: what the project does.
+5. First sub-project: what to call the folder for the work the project will do, and what it covers. The name comes from the user, not from the description.
+6. Optional components: which to include (the setup guide lists them).
+7. Software engineering instructions: keep or remove from the output style.
+8. Cleanup: keep or remove the downloaded repo files after setup.
+9. Session naming: how the user will give each session its number. The suggested form is to open every session with "This is [Project] N". The Claude Code archiver reads that form and a `/rename` title of the project name and a number; a session named any other way is archived under its title or its UUID. On another platform, build the archiver to read the form the user chooses. Write the chosen form into the governing document.
 
-Works for a single project or many. Multiple projects can share a common knowledge base folder and you can manage them all through a dedicated coordinator project.
+Then follow the [setup guide](claude-code-setup.md) or the [migration guide](chat-to-code-migration.md). Deploy the template text as written: fill in the brackets and change nothing else. If you are not Claude Code, follow the [adaptation guide](platform-adaptation.md) as well; it says what changes for your platform and what does not.
 
-## Setting up a new project
+## About
 
-At minimum, walk through these steps with the user before building anything:
+A project I maintain for my own work, built by a non-developer through iterative design and daily use across several projects in different domains. In active development. If you find it useful and run into problems or have suggestions, open an issue on the repo.
 
-1. Starting point — a new project, an existing folder to build the project around, or a Chat project being migrated?
-2. Location — install in this directory or elsewhere?
-3. Name — what to call the project
-4. Description — what the project does
-5. Optional components — which to include (task queue, lessons, tool guides, etc.)
-6. Software engineering instructions — keep or remove from the output style
-7. Cleanup — keep or remove the downloaded repo files after setup
-
-## Contributing
-
-This is a project I maintain for my own work. Hopefully you find it useful and can adapt it to yours. If you run into problems or have suggestions, open an issue on the repo.
-
-## Background
-
-Built by a non-developer through iterative design and daily use.
-
-## Status
-
-Active development. Tested across multiple projects in different domains, continually being refined and updated.
-
-## License
-
-[MIT](LICENSE)
+[MIT License](LICENSE)
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.10*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.11*

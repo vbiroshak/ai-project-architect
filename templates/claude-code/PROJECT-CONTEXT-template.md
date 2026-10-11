@@ -9,7 +9,7 @@ Governing document for a Code project. Place at `Project/PROJECT_CONTEXT.md`. Im
 Last updated: [Month DD, YYYY] (Session NNN)
 Last reviewed: [Month DD, YYYY]
 
-This is the project's governing document. It contains the rules, procedures, and project context that tell Claude how this project works and how to work in it. The startup procedure lives in CLAUDE.md; everything else lives here.
+This is the project's governing document. It contains the rules, procedures, and project context that tell the AI how this project works and how to work in it. The startup procedure lives in CLAUDE.md; everything else lives here.
 
 [Include the following paragraph only in coordinated multi-project setups — see The Coordinator Project in the architecture doc. The section list names what the coordinator actually maintains in this document:]
 
@@ -49,6 +49,8 @@ SESSION LOGS
 
 Location: Project/Session Logs/
 Naming: Session_XXXX.txt (four-digit, zero-padded, sequential across the project). One log per session, numbered to match the session number.
+
+SESSION NUMBER: The user gives each session its number in the opening message, in the form they use — the suggested form is "This is [PROJECTNAME] N". The session log and the archived transcript carry that number.
 
 TITLE LINE: The first line of each log file: PROJECT — SESSION NNN — Month DD, YYYY. Example: MYPROJECT — SESSION 042 — July 15, 2026. The date is the day the session started; if a later entry lands on a different day, extend it to a range: MYPROJECT — SESSION 038 — June 25 – July 2, 2026.
 
@@ -93,6 +95,11 @@ Sections:
   FOR DEPTH — which session logs to read for additional context. After structural or meta work, note which earlier sessions contain the last domain work and carry forward the domain work narrative, prioritizing it above structural project system work.
 
 ---
+SESSION CLOSE
+
+When the user says the session is ending, make sure the session log, the handoff, and every other project file touched this session are current, complete, and ready for a new session to pick up and continue where this one left off.
+
+---
 INBOX
 
 Location: Inbox/ (at project root)
@@ -105,17 +112,6 @@ Contents change at any time. List the directory before any reference to its cont
 TEMPORAL AWARENESS
 
 The temporal-awareness hook injects the current local time with every user message, so every turn has an accurate time reference. Consult it before any time-referential statement — greetings, "today"/"this morning", elapsed-time remarks.
-
----
-TOOL GUIDES
-
-[Include this section only if the project uses tools that need pre-read guides.]
-
-Required guides to read before using tools.
-
-  CHROME BROWSER: The web_fetch tool returns stale cached content for some sites therefore Claude may need to use Chrome for live web tasks. Before loading any Claude in Chrome tool via tool_search, read Project/Tool Guides/chrome-devtools-guide.txt. Try the tool first; if Chrome isn't running, the tool will say so and you can then ask the user to open it.
-
-[Add entries for other project-specific tool guides as needed. Remove this entry if the project doesn't use Chrome.]
 
 ---
 TASK QUEUE
@@ -149,7 +145,9 @@ PROJECT CONTEXT
 
 Sections marked "[Include this section only if...]" are optional. Remove them if the project doesn't need them.
 
-The PROJECT CONTEXT section at the end is where project-specific corrections and behavioral entries accumulate through use. FACTUAL GROUNDING is the seed entry — replace the bracketed domain examples with examples relevant to your project.
+The PROJECT CONTEXT section at the end is where project-specific corrections and behavioral entries accumulate through use. FACTUAL GROUNDING is the seed entry — replace the bracketed domain examples with examples relevant to the project.
+
+SESSION NUMBER states the form the user chose for naming sessions at setup. Replace the bracketed project name; if the user uses a different form, write that form in its place.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.10*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.11*

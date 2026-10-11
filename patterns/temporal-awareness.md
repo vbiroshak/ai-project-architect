@@ -12,9 +12,9 @@ This creates two failure modes:
 
 **At session start:** The AI doesn't know how long it's been since the last session. A return after a long gap feels the same as a continuation from moments ago.
 
-**Mid-chat:** In a long conversation that spans hours or days, the AI has no way to know the human left and came back. If a gap passes between messages in the same chat, the AI continues as if moments elapsed, writes timestamps based on its last clock reading or guesses entirely, and produces logs that are hours wrong.
+**Mid-session:** In a long session that spans hours or days, the AI has no way to know the human left and came back. If a gap passes between messages in the same session, the AI continues as if moments elapsed, writes timestamps based on its last clock reading or guesses entirely, and produces logs that are hours wrong.
 
-The second failure mode is worse because it's invisible. A startup procedure has a defined moment to check the clock. A mid-chat return has no trigger unless one is built in. Without one, the AI's only time reference is its startup clock reading. When the user returns after a long gap, the AI has no signal that time has passed and may confidently fabricate timestamps based on the stale reading. Nothing in the AI's internal state flags the error.
+The second is worse because it is invisible: a startup procedure has a defined moment to check the clock, a mid-session return has no trigger unless one is built in. Without one, the AI's only time reference is its startup reading, so when the user returns after a long gap it has no signal that time has passed and may fabricate timestamps from the stale reading, with nothing to flag the error.
 
 This matters because the filesystem is a long-term record. Logs with fabricated timestamps corrupt the project's timeline and mislead future sessions.
 
@@ -27,21 +27,7 @@ Temporal awareness is a continuous behavior, not a startup event. It has two com
 1. **What time is it now?**
 2. **How long has it been since the last known time reference?**
 
-The mechanism depends on what the platform can do. Where it can run a script on every message, the script injects the current time into each turn; this is how the Claude Code setup works. Where it cannot, a clock file and filesystem metadata provide the time source. Both approaches solve the same problem; the mechanism differs.
-
-### Why Both Checks Are Required
-
-The startup check handles the common case: a new session orienting to the project. The mid-session check handles the case the startup check cannot: a human who leaves a continuing conversation and returns hours or days later.
-
-Without a mid-session check, the AI's only time reference is its startup reading. When the human returns after a gap, the AI has no signal that time has passed. It writes timestamps based on the stale reading or fabricates them entirely.
-
-### File Metadata as Context
-
-When processing files the human drops in an inbox or working directory, the modified timestamp on those files tells you when the human placed them there. Email files (.eml) also contain send/receive timestamps in their headers. Both sources help reconstruct the timeline of events that happened between work sessions.
-
-### Cross-Referencing Timestamps
-
-Screenshot filenames often contain timestamps in the filename itself. Email headers contain send times. PDF metadata may contain creation dates. These all serve as independent time references when a single time source isn't sufficient.
+The mechanism depends on what the platform can do. Where it can run a script on every message, the script injects the current time into each turn; this is how the Claude Code setup works. Where it cannot, a clock file and filesystem metadata provide the time source.
 
 ---
 
@@ -55,13 +41,13 @@ Screenshot filenames often contain timestamps in the filename itself. Email head
 
 ## Limitations
 
-Timestamps are approximate. The time on a file reflects when the AI wrote it, not when the user sent the message that prompted it. There's a delay between the message and the write that depends on how much work the AI does before writing the file.
+Timestamps are approximate: the time on a file is when the AI wrote it, not when the user sent the message, and the delay depends on how much work the AI does before writing.
 
-The clock-file method only works where the session can reach the filesystem. A session without filesystem access has no file metadata to work with.
+The clock-file method needs a session that can reach the filesystem; without file access there is no file metadata.
 
-File metadata reflects the timezone of the machine, which is useful but means the AI needs to note the timezone in log entries.
+File metadata is in the machine's timezone, so the AI notes the timezone in log entries.
 
-Within a single rapid exchange (messages seconds apart), the timestamps won't be meaningfully different. The mid-session check is designed to detect gaps of hours, not seconds.
+Within a rapid exchange (messages seconds apart) the timestamps barely differ; the mid-session check detects gaps of hours, not seconds.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.10*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.11*

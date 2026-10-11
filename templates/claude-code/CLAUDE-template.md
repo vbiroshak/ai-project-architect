@@ -34,9 +34,9 @@ Project/PROJECT_CONTEXT.md in full before continuing.
 
 The `@` syntax imports files into context at load time. See [CLAUDE.md imports](https://code.claude.com/docs/en/memory#import-additional-files).
 
-The compaction re-read line ensures the AI reloads its governing document when the context window is compressed mid-session.
+The compaction re-read line ensures the AI reloads its governing document when the [context window is compressed](https://code.claude.com/docs/en/context-window) mid-session.
 
 Add project-specific startup steps as additional numbered steps. Keep CLAUDE.md under 200 lines.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.10*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.11*

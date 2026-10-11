@@ -41,7 +41,7 @@ CURRENT STATE is always present. Effort-specific sections and PENDING appear as 
 
 DOCUMENTS is the routing table: activation reads the status file first, then the files this table names for the work at hand. A file added to the sub-project is added to the table in the same edit — a file missing from the table is a file no later session is pointed to. A sub-project with no other files yet omits the section.
 
-Status files orient sessions to sub-project state without requiring session log parsing — the sub-project equivalent of HANDOFF.txt.
+Status files orient a session to the sub-project's state without reading session logs: the sub-project's HANDOFF.txt.
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.10*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.11*

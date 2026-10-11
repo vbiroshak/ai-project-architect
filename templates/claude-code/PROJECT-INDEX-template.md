@@ -22,7 +22,7 @@ PROJECT FILE STRUCTURE
 ## Example File Structure
 
 ```
-Project/
+[Project]/
   CLAUDE.md                 startup procedure (auto-loaded by Code)
   .claude/                  Code configuration
     settings.json           permissions, hooks
@@ -38,9 +38,7 @@ Project/
     PROJECT_INDEX.txt       this file
     TASKS.txt               active work items
     CHANGELOG.txt           structural/infrastructure changes
-    Claude Memory/          auto memory (redirected)
     Lessons/                operational knowledge (indexed)
-    Tool Guides/            on-demand tool reference
     Session Logs/
       Session_XXXX.txt
     Sessions/               archived transcripts
@@ -49,9 +47,9 @@ Project/
 
 ## Notes
 
-PROJECT_INDEX.txt is a pure structural index. It contains the project's directory tree with one-line descriptions and nothing else. It does not hold domain knowledge (that belongs in sub-project reference files) or operating instructions (that's in PROJECT_CONTEXT.md).
+PROJECT_INDEX.txt is a structural index: the directory tree with one-line descriptions and nothing else. Domain knowledge belongs in sub-project reference files; operating instructions in PROJECT_CONTEXT.md.
 
 PROJECT_INDEX.txt must stay current when directory structure changes (see STRUCTURE CHANGES in the [PROJECT_CONTEXT template](PROJECT-CONTEXT-template.md)).
 
 ---
-*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.10*
+*Part of [AI Project Architect](https://github.com/vbiroshak/ai-project-architect) — Version 4.11*
